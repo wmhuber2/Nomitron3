@@ -1,4 +1,4 @@
-active: 'False'
+active: 'True'
 autostart: false
 id: nomitron
 path: /home/wolfgang/Ships/Nomitron3/ship_config
@@ -6,4 +6,4 @@ service: docker
 startARG: ''
 stopARG: ''
 tag: Nomitron
-time: 1621023145.2771096
+time: 1621118941.054281
