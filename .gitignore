@@ -1,3 +1,5 @@
 passkeys.txt
 data/BackupDataFiles
 *.secret
+DiscordBot_Data.yml
+
