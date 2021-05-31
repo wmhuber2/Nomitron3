@@ -10,7 +10,7 @@ default_server_id = 707705708346343434
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
 serverid = 841541867774672916
-Admins = ['Fenris Wolf#6136', 'Crorem#6962', 'iann39#8298']
+Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 BotChannels = ['actions','voting','proposals', 'mod-lounge', 'bot-spam', 'DM']
 
 '''

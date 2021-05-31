@@ -5,9 +5,11 @@ import sys, os,datetime
 from shutil import copyfile
 
 
+admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
+
 async def restart(Data, payload, *text):
     message = payload['raw']
-    admins = ['Fenris Wolf#6136', 'Crorem#6962', 'iann39#8298']
+    print('Restarting',payload['Author'])
     if payload['Author'] in admins:
         await message.channel.send('Going for Restart')
         print("Going For Restart...")
@@ -21,7 +23,6 @@ Main Run Function
 """
 async def on_message(Data, payload):
     message = payload['raw']
-    admins = ['Fenris Wolf#6136', 'Crorem#6962', 'iann39#8298']
     botCharacter = '!'
 
     #if '❤' == payload['Content']:
