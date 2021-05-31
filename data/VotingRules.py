@@ -102,21 +102,21 @@ async def on_reaction(Data, payload):
         pass
 
     if payload['Channel'].name == 'queue' and payload['emoji'] == '👍' and payload['mode'] == 'add':
-        author = payload['Content'].split("'s Proposal:")[0]
+        author = payload['Content'].split("'s Proposal")[0]
         await payload['message'].remove_reaction('👍', payload['user'])
         if payload['name'] not in Data['PlayerData'][author]['Proposal']['Supporters']:
             Data['PlayerData'][author]['Proposal']['Supporters'].append(payload['name'])
         await create_queue(Data, payload)
 
     if payload['Channel'].name == 'queue' and payload['emoji'] == '👎' and payload['mode'] == 'add':
-        author = payload['Content'].split("'s Proposal:")[0]
+        author = payload['Content'].split("'s Proposal")[0]
         await payload['message'].remove_reaction('👎', payload['user'])
         if payload['name'] in Data['PlayerData'][author]['Proposal']['Supporters']:
             Data['PlayerData'][author]['Proposal']['Supporters'].remove(payload['name'])
         await create_queue(Data, payload)
 
     if payload['Channel'].name == 'queue' and payload['emoji'] == 'ℹ️' and payload['mode'] == 'add':
-        author = payload['Content'].split("'s Proposal:")[0]
+        author = payload['Content'].split("'s Proposal")[0]
         await payload['message'].remove_reaction('ℹ️', payload['user'])
 
         msg =   f"------\n **{author}'s Proposal Info:**\n```Supporters:"
@@ -205,7 +205,7 @@ async def create_queue(Data, payload, force = False):
     if len(pasmessages) != len(Data['PlayerData']):
         print("More players then Queues", len(Data['PlayerData']), len(pasmessages))
         for msg in pasmessages: await msg.delete()
-        for player in Data['PlayerData']: await payload['refs']['channels']['queue'].send(f"{player}'s Proposal (None)")
+        for player in Data['PlayerData']: await payload['refs']['channels']['queue'].send(f"{player}'s Proposal: (None)")
 
 
     pasmessages = list(await payload['refs']['channels']['queue'].history(limit=100).flatten())[::-1]
@@ -226,7 +226,7 @@ async def create_queue(Data, payload, force = False):
         Data['Queue'] = newQ
         for msg in pasmessages: await msg.delete()
         for player in Data['PlayerData']:
-            if player not in newQ: await payload['refs']['channels']['queue'].send(f"{player}'s Proposal (None)")
+            if player not in newQ: await payload['refs']['channels']['queue'].send(f"{player}'s Proposal: (None)")
 
         for player in Data['Queue'][::1]:
             msg = await payload['refs']['channels']['queue'].send(
@@ -238,7 +238,7 @@ async def create_queue(Data, payload, force = False):
             await msg.add_reaction('ℹ️')
     else:
         for msg in pasmessages:
-            player = msg.content.split("'s Proposal:")[0]
+            player = msg.content.split("'s Proposal")[0]
             await msg.edit(
                 content = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})")
     print('Q',Data['Queue'])
