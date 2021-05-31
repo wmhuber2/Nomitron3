@@ -10,7 +10,7 @@ default_server_id = 707705708346343434
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
 Admins = ['Fenris Wolf#6136', 'Crorem#6962', 'iann39#8298']
-
+BotChannels = ['actions','voting','proposals', 'mod-lounge', 'bot-spam', 'DM']
 
 '''
 Implement Modules By Placing Module Python File In Same Directory
@@ -29,7 +29,7 @@ class DiscordNomicBot():
         try:
             global discord
             discord = importlib.import_module('discord')
-            print (discord.__version__)
+            print ("Discord Version:", discord.__version__)
         except KeyboardInterrupt:# ImportError:
             print ("Discord Library Not Found, install by \"pip install discord\"")
             sys.exit(0)
@@ -51,7 +51,9 @@ class DiscordNomicBot():
             self.moduleNames.append(mod)
 
         self.loop = asyncio.get_event_loop()
-        self.client = discord.Client(loop = self.loop, heartbeat_timeout=120)
+        intents = discord.Intents.default()
+        intents.members = True
+        self.client = discord.Client(loop = self.loop, heartbeat_timeout=120, intents=intents)
         self.token = open(path+'token.secret','r').readlines()[0].strip()
         print("Using Token: ..." + self.token[-6:])
 
@@ -105,8 +107,8 @@ class DiscordNomicBot():
         payload['Server'] = message.guild
         payload['refs'] = self.refs
         for file in message.attachments:
-            payload['Attachments'][file.filename] = file.url
-        #print(payload['Content'])
+            payload['Attachments'][file.filename] = file
+            print(file)
         return payload
 
 
@@ -116,6 +118,7 @@ class DiscordNomicBot():
                 try:
                     payload_tmp = None
                     if payload is not None: payload_tmp = dict(payload)
+                    payload_tmp['refs'] = self.refs
                     if args is None:  tmp = await getattr(mod, function)(self.Data, payload_tmp)
                     else:             tmp = await getattr(mod, function)(self.Data, payload_tmp, *args)
 
@@ -139,26 +142,32 @@ class DiscordNomicBot():
                  path + 'BackupDataFiles/'+ savefile + '-' + str(datetime.datetime.now()))
 
 
-        self.refs['server'] = self.client.guilds[0]
-        self.refs['channels'] = []
+
+        for s in self.client.guilds:
+            print( s.name, s.id)
 
         if not 'server' in self.Data:
-            print(self.client.guilds[0], self.client.guilds[0].id)
-            self.Data['server'] = self.client.guilds[0].id
-        if not 'channels' in self.Data:
-            self.Data['channels'] = []
-        for channel in self.client.guilds[0].text_channels:
-            self.Data['channels'].append( channel.id )
-            self.refs['channels'].append( channel )
+            self.Data['server'] = self.client.guilds[-1].id
+
+        self.refs['server'] = await self.client.fetch_guild(self.Data['server'])
+        self.refs['channels'] = {}
+        self.refs['roles'] = {}
+        self.Data['channels'] = {}
+
+        for role in await self.refs['server'].fetch_roles():
+            self.refs['roles'][role.name]= role
+        for channel in await self.refs['server'].fetch_channels():
+            self.Data['channels'][channel.name]= channel.id
+            self.refs['channels'][channel.name]= channel
         self.printInfo()
 
-        payload = {'ctx': self.client}
+        payload = {'ctx': self.client, 'Server': self.refs['server'], 'refs':self.refs}
         await self.passToModule('setup', dict(payload))
         self.saveData()
         print('Setup Finished!')
 
         while 1:
-            sys.stdout.flush()
+
             await asyncio.sleep(8)
             await self.passToModule('update', dict(payload))
             self.saveData()
@@ -170,9 +179,10 @@ class DiscordNomicBot():
     async def on_message(self, message):
         if message.author == self.client.user: return
         payload = self.convertToPayload(message)
+        if payload['Channel'] not in BotChannels: return
 
         found = False
-        if payload['Content'].split(' ')[0][0] == '!':
+        if len(payload['Content']) > 0 and payload['Content'][0][0] == '!':
             functionName = payload['Content'][1:].split(' ')[0]
             for i in range(len(self.moduleNames)):
                 mod = self.modules[i]
@@ -188,7 +198,7 @@ class DiscordNomicBot():
         if not found:
             await self.passToModule('on_message', payload)
 
-        sys.stdout.flush()
+
         self.saveData()
 
     """
@@ -201,19 +211,19 @@ class DiscordNomicBot():
         channel = self.client.get_channel(payload.channel_id)
         msg = await channel.fetch_message(payload.message_id)
 
-        react_payload = dict(payload)
+        react_payload = self.convertToPayload(msg)
+        react_payload['raw']     = payload
         react_payload['mode']    = mode
         react_payload['message'] = msg
         react_payload['user']    = user
-        react_payload['channel'] = channel
+        react_payload['Channel'] = channel
+        react_payload['emoji'] = str(payload.emoji.name)
         react_payload['name']    = user.name + '#' + user.discriminator
 
-
-        server = msg.guild
         await self.passToModule('on_reaction', react_payload)
 
         if str(payload.emoji) == str('🔄') and react_payload['name'] in Admins: await self.on_message(msg)
-        sys.stdout.flush()
+
         self.saveData()
 
 
@@ -258,7 +268,7 @@ class DiscordNomicBot():
               + "System Time: " + str(datetime.datetime.now()) + '\n' \
               + "Host: " + socket.gethostname() + '\n'
 
-        msg += "\n\nServer: " + str(self.Data['server']) + "\nModules Loaded:"
+        msg += "\n\nServer: " + str(self.refs['server'].name) + "\nModules Loaded:"
         for m in self.moduleNames: msg += '\n- ' + m
         print(msg)
         print('-'*24)
