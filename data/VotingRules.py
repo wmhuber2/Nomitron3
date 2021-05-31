@@ -144,10 +144,10 @@ Main Run Function On Messages
 async def on_message(Data, payload):
     if payload['Channel'] == 'voting':
         vote = payload['Content'].lower().strip()
-        vote =    1* (vote in ['y', 'yes','yay', 'aye'])
-                + 2* (vote in ['n', 'no', 'nay'])
+        vote =    1* (vote in ['y', 'yes','yay', 'aye']) \
+                + 2* (vote in ['n', 'no', 'nay']) \
                 + 4* ('withdraw' in vote)
-                
+
         if vote == 1:
             if payload['Author'] not in Data['Votes']['Yay']:
                 Data['Votes']['Yay'].append(payload['Author'])

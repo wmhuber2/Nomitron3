@@ -6,7 +6,6 @@ from shutil import copyfile
 from threading import Thread
 discord = None
 import traceback
-default_server_id = 707705708346343434
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
 serverid = 841541867774672916
@@ -133,7 +132,7 @@ class DiscordNomicBot():
     """
     async def on_ready(self):
         print()
-        print('Logged in as ' + self.client.user.name)
+        print('*Logged in as ' + self.client.user.name)
         print('Bot Started!')
         print('-'*20)
 
@@ -143,15 +142,15 @@ class DiscordNomicBot():
                  path + 'BackupDataFiles/'+ savefile + '-' + str(datetime.datetime.now()))
 
 
+        if 'server' not in self.Data:
+            self.Data['server'] = serverid
 
         for s in self.client.guilds:
-            print( s.name, s.id)
+            print( s.name, s.id, serverid)
+            if s.id == self.Data['server']:
+                self.Data['server'] = serverid
+                self.refs['server'] = s
 
-        self.Data['server'] = serverid
-        if not 'server' in self.Data:
-            self.Data['server'] = self.client.guilds[-1].id
-
-        self.refs['server'] = await self.client.fetch_guild(self.Data['server'])
         self.refs['channels'] = {}
         self.refs['roles'] = {}
         self.Data['channels'] = {}

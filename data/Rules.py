@@ -7,6 +7,9 @@ import pickle, sys, urllib, discord, io
 Main Run Function On Messages
 """
 
+async def r(Data, payload, *text):
+    await rule(Data, payload, *text)
+
 async def rule(Data, payload, *text):
     argv = text[0]
     message = payload['raw']
@@ -28,7 +31,7 @@ async def rule(Data, payload, *text):
                 response = ""
             if(paragraph.startswith(">>")):
                 fname = paragraph.strip()[2:]
-                flink = 'https://raw.githubusercontent.com/dmouscher/nomic/master/Game_4/images/'+fname
+                flink = 'https://gitlab.com/nomicgame/nomic/-/raw/master/images/'+fname
                 img = None
                 with urllib.request.urlopen(flink) as res:
                     print("Loading image: " + fname)
@@ -49,17 +52,17 @@ async def find(Data, payload, *text):
 
     if query[ 0] == '"': query = query[1:  ]
     if query[-1] == '"': query = query[ :-1]
-    print (query)
+    print ('Searching for', query)
     if len(query) <= 3: await message.channel.send("Must Search Words Longer Then 3 Letters")
     else:
         found = False
         rulecount = 5
+        roundmsg = ""
         for rule in Data['RuleList'].keys():
             low = Data['RuleList'][rule].lower()
 
             if query in low and rulecount <= 0:
-
-                await message.channel.send("and in rule "+str(rule))
+                roundmsg += str(rule) + ', '
             if query in low and rulecount >= 0:
                 rulecount-=1
                 isIn = 1
@@ -91,6 +94,8 @@ async def find(Data, payload, *text):
                 if count <= 0:
                     msg += '...and more...'
                 await message.channel.send(msg)
+        if len(roundmsg) != 0:
+            await message.channel.send('and in rules: '+roundmsg)
         if not found:
             await message.channel.send("Couldn't Find A Match For "+query)
 
@@ -107,17 +112,18 @@ Handles Change In Server Structure and the like. Probably Can Leave Alone.
 async def setup(Data, payload):
     # Do Stuff Here
     Data['RuleList'] = {}
-    with urllib.request.urlopen('https://raw.githubusercontent.com/dmouscher/nomic/master/Game_4/rules-s.txt') as response:
+    with urllib.request.urlopen('https://gitlab.com/nomicgame/nomic/-/raw/master/rules.md') as response:
         rules = response.read().decode("utf-8")
-        ruletxt = rules.split("\n----------------------------------------------------------------------\n")[1:]
+        ruletxt = rules.split("## ")[1:]
+        print(f'Found {len(ruletxt)} Rules')
         for rule in ruletxt:
-            try:
+            rule = rule.replace('\n',' \n')
+            if 1:#try:
                 #rule = rule.strip().split('\n\n',1)
-                rulenum = int(rule.split(' ')[1])
-
-                with urllib.request.urlopen('https://raw.githubusercontent.com/dmouscher/nomic/master/Game_4/rules/txt/' + str(rulenum) + '.txt') as ruleresponse:
-                    #print("Loading Rule " + str(rulenum))
-                    Data['RuleList'][rulenum] = ruleresponse.read().decode("utf-8")#[1].replace('&nbsp;', ' ').replace('\\n', '\n')
+                rulenum = rule.split(' ')[0]
+                rulenum = int(rulenum)
+                Data['RuleList'][rulenum] = rule
+            try: pass
             except:
                 print('ERROR')
                 print(rule)
