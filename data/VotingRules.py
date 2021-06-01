@@ -210,8 +210,24 @@ async def on_message(Data, payload):
         if len(payload['Attachments']) == 0:
             Data['PlayerData'][player]['Proposal']['File'] = payload['Content']
 
+        if Data['PlayerData'][player]['Proposal']['MSGID'] is not None:
+            oldmsg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][player]['Proposal']['MSGID'])
+            await oldmsg.delete()
+            Data['PlayerData'][player]['Proposal']['MSGID'] = None
+        if len(decoded) <= 1: return
+
+        msg = await payload['refs']['channels']['queue'].send(
+            f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})",
+            file=discord.File(fp=io.StringIO(Data['PlayerData'][player]['Proposal']['File']), filename=f"{player}'s Proposal.txt'")
+            )
+
         Data['PlayerData'][player]['Proposal']['DOB'] = time.time()
         Data['PlayerData'][player]['Proposal']['Supporters'] = []
+        Data['PlayerData'][player]['Proposal']['MSGID'] = msg.id
+        await msg.add_reaction('👍')
+        await msg.add_reaction('👎')
+        await msg.add_reaction('ℹ️')
+
         await create_queue(Data, payload, force = True)
     return Data
 
@@ -235,37 +251,10 @@ async def create_queue(Data, payload, force = False):
 
     pasmessages = list(await payload['refs']['channels']['queue'].history(limit=100).flatten())[::-1]
     i = 0
-    newQ = []
-    for player in list(sorted( dict(Data['PlayerData']).keys(),
-                    key=lambda key: len(Data['PlayerData'][key]['Proposal']['Supporters'])-
-                    1/(time.time() - Data['PlayerData'][key]['Proposal']['DOB']) )):
-        if Data['PlayerData'][player]['Proposal']['File'] is None: continue
-        newQ.append(player)
-        print(player,
-                len(Data['PlayerData'][player]['Proposal']['Supporters'])-
-                1/(time.time() - Data['PlayerData'][player]['Proposal']['DOB']) )
-
-
-    if newQ != Data['Queue'] or force:
-        print('Flashing Queue')
-        Data['Queue'] = newQ
-        for msg in pasmessages: await msg.delete()
-        for player in Data['PlayerData']:
-            if player not in newQ: await payload['refs']['channels']['queue'].send(f"{player}'s Proposal: (None)")
-
-        for player in Data['Queue'][::1]:
-            msg = await payload['refs']['channels']['queue'].send(
-                f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})",
-                file=discord.File(fp=io.StringIO(Data['PlayerData'][player]['Proposal']['File']), filename=f"{player}'s Proposal.txt'")
-                )
-            await msg.add_reaction('👍')
-            await msg.add_reaction('👎')
-            await msg.add_reaction('ℹ️')
-    else:
-        for msg in pasmessages:
-            player = msg.content.split("'s Proposal")[0]
-            await msg.edit(
-                content = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})")
+    for msg in pasmessages:
+        player = msg.content.split("'s Proposal")[0]
+        await msg.edit(
+            content = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})")
     print('Q',Data['Queue'])
     return Data
 
@@ -307,6 +296,9 @@ async def setup(Data,payload):
 
         if 'Proposal'   not in Data['PlayerData'][name]['Proposal']:
             Data['PlayerData'][name]['Proposal']['DOB'] = time.time()
+
+        if 'MSGID'   not in Data['PlayerData'][name]['Proposal']:
+            Data['PlayerData'][name]['Proposal']['MSGID'] = None
 
 
     return await create_queue(Data, payload)
