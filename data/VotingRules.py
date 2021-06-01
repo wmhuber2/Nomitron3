@@ -1,11 +1,34 @@
 #
 # Voting System Module For Discord Bot
 ################################
-import pickle, sys, time, io, discord, datetime, urllib
+import pickle, sys, time, io, discord, datetime, urllib, re
 tz = datetime.timezone.utc
 """
 For a Custom Command !commandMe
 """
+
+async def purgeProposal(Data, payload, *text):
+    playerid = payload['Content'].split(' ')[1]
+    name = await getPlayer(playerid, payload)
+    print('Purging proposals for ',name)
+
+    Data['PlayerData'][name]['Proposal'] = {}
+    Data['PlayerData'][name]['Proposal']['File'] = None
+    Data['PlayerData'][name]['Proposal']['Supporters'] = []
+    Data['PlayerData'][name]['Proposal']['DOB'] = time.time()
+
+
+async def getPlayer(playerid, payload):
+    if len(playerid) == 0:
+        return None
+    else:
+        player = payload['refs']['server'].get_member(int(re.search(r'\d+', playerid).group()))
+        if player is not None:
+            playerName = player.name + "#" + str(player.discriminator)
+            return playerName
+        else:
+            await channel.send('Player with id, ' + playerid + ' cannot be found.')
+    return None
 
 async def tick12(Data, payload, *text):
     Data['VotePop'] = time.time()
@@ -31,8 +54,6 @@ async def tally(Data, payload, *text):
         await payload['refs']['channels']['actions'].send(f"""{player}'s Proposal Failed
         Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
         """)
-
-
 
 
 async def popProposal(Data, payload, *text):

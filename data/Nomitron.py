@@ -8,7 +8,7 @@ discord = None
 import traceback
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
-serverid = 841541867774672916
+serverid = 846623056230875197
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 BotChannels = ['actions','voting','proposals', 'mod-lounge', 'bot-spam', 'DM']
 
