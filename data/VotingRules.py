@@ -12,11 +12,15 @@ async def purgeProposal(Data, payload, *text):
     name = await getPlayer(playerid, payload)
     print('Purging proposals for ',name)
 
+    try:
+        msg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][name]['Proposal']['MSGID'])
+        await msg.delete()
+    except: pass
     Data['PlayerData'][name]['Proposal'] = {}
     Data['PlayerData'][name]['Proposal']['File'] = ''
     Data['PlayerData'][name]['Proposal']['Supporters'] = []
     Data['PlayerData'][name]['Proposal']['DOB'] = time.time()
-
+    Data['PlayerData'][name]['Proposal']['MSGID'] = None
 
 async def getPlayer(playerid, payload):
     if len(playerid) == 0:
@@ -83,9 +87,16 @@ async def popProposal(Data, payload, *text):
         playerprop : Data['PlayerData'][playerprop]['Proposal']['File']
     }}
 
+    try:
+        msg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][playerprop]['Proposal']['MSGID'])
+        await msg.delete()
+    except: pass
     Data['PlayerData'][playerprop]['Proposal']['File'] = ''
     Data['PlayerData'][playerprop]['Proposal']['Supporters'] = []
     Data['PlayerData'][playerprop]['Proposal']['DOB'] = time.time()
+    Data['PlayerData'][playerprop]['Proposal']['MSGID'] = None
+
+
     Data['Proposal#'] += 1
     await create_queue(Data, payload, force = True)
 
