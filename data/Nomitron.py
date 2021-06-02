@@ -108,7 +108,6 @@ class DiscordNomicBot():
         payload['refs'] = self.refs
         for file in message.attachments:
             payload['Attachments'][file.filename] = file
-            print(file)
         return payload
 
 

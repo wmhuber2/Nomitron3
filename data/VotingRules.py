@@ -13,7 +13,7 @@ async def purgeProposal(Data, payload, *text):
     print('Purging proposals for ',name)
 
     Data['PlayerData'][name]['Proposal'] = {}
-    Data['PlayerData'][name]['Proposal']['File'] = None
+    Data['PlayerData'][name]['Proposal']['File'] = ''
     Data['PlayerData'][name]['Proposal']['Supporters'] = []
     Data['PlayerData'][name]['Proposal']['DOB'] = time.time()
 
@@ -60,7 +60,7 @@ async def popProposal(Data, payload, *text):
     print('PopP:', Data['Queue'])
     if len(Data['Queue']) == 0: return Data
 
-    playerprop = Data['Queue'].pop(-1)
+    playerprop = Data['Queue'].pop(0)
     msg = f"Proposal #{Data['Proposal#']}: \n\n "
 
     for line in Data['PlayerData'][playerprop]['Proposal']['File'].split('\n'):
@@ -83,7 +83,7 @@ async def popProposal(Data, payload, *text):
         playerprop : Data['PlayerData'][playerprop]['Proposal']['File']
     }}
 
-    Data['PlayerData'][playerprop]['Proposal']['File'] = None
+    Data['PlayerData'][playerprop]['Proposal']['File'] = ''
     Data['PlayerData'][playerprop]['Proposal']['Supporters'] = []
     Data['PlayerData'][playerprop]['Proposal']['DOB'] = time.time()
     Data['Proposal#'] += 1
@@ -105,7 +105,7 @@ async def on_member_join(Data,player):
 
 
     if 'File'       not in Data['PlayerData'][name]['Proposal']:
-        Data['PlayerData'][name]['Proposal']['File'] = None
+        Data['PlayerData'][name]['Proposal']['File'] = ''
 
     if 'Supporters' not in Data['PlayerData'][name]['Proposal'] or type(Data['PlayerData'][name]['Proposal']['Supporters']) is type(set()):
         Data['PlayerData'][name]['Proposal']['Supporters'] = []
@@ -211,10 +211,11 @@ async def on_message(Data, payload):
             Data['PlayerData'][player]['Proposal']['File'] = payload['Content']
 
         if Data['PlayerData'][player]['Proposal']['MSGID'] is not None:
-            oldmsg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][player]['Proposal']['MSGID'])
-            await oldmsg.delete()
+            try: oldmsg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][player]['Proposal']['MSGID'])
+            except: oldmsg = None
+            if oldmsg is not None: await oldmsg.delete()
             Data['PlayerData'][player]['Proposal']['MSGID'] = None
-        if len(decoded) <= 1: return
+        if len(Data['PlayerData'][player]['Proposal']['File']) <= 1: return
 
         msg = await payload['refs']['channels']['queue'].send(
             f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})",
@@ -242,20 +243,63 @@ async def update(Data, payload):
 
 
 async def create_queue(Data, payload, force = False):
-    pasmessages = await payload['refs']['channels']['queue'].history(limit=100).flatten()
-    if len(pasmessages) != len(Data['PlayerData']):
-        print("More players then Queues", len(Data['PlayerData']), len(pasmessages))
-        for msg in pasmessages: await msg.delete()
-        for player in Data['PlayerData']: await payload['refs']['channels']['queue'].send(f"{player}'s Proposal: (None)")
-
+    sortedQ = list(sorted( dict(Data['PlayerData']).keys(),
+                    key=lambda key: len(Data['PlayerData'][key]['Proposal']['Supporters'])-
+                    1./(time.time() - Data['PlayerData'][key]['Proposal']['DOB']) +
+                    int(len(Data['PlayerData'][key]['Proposal']['File']) > 1)
+                     ))
+    Data['Queue'] = sortedQ[::-1]
 
     pasmessages = list(await payload['refs']['channels']['queue'].history(limit=100).flatten())[::-1]
-    i = 0
-    for msg in pasmessages:
-        player = msg.content.split("'s Proposal")[0]
-        await msg.edit(
-            content = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})")
-    print('Q',Data['Queue'])
+    for player in Data['PlayerData']:
+
+        if Data['PlayerData'][player]['Proposal']['File'] is None or len(Data['PlayerData'][player]['Proposal']['File']) <= 1: continue
+        if Data['PlayerData'][player]['Proposal']['MSGID'] is not None:
+            try: msg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][player]['Proposal']['MSGID'])
+            except: msg = None
+        else: msg = None
+
+        cont = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})"
+        if msg is not None and msg.content != cont:
+            await msg.edit( content = cont )
+
+        elif msg is None:
+            msg = await payload['refs']['channels']['queue'].send(
+                cont,
+                file=discord.File(fp=io.StringIO(Data['PlayerData'][player]['Proposal']['File']), filename=f"{player}'s Proposal.txt'")
+                )
+
+            Data['PlayerData'][player]['Proposal']['DOB'] = time.time()
+            Data['PlayerData'][player]['Proposal']['Supporters'] = []
+            Data['PlayerData'][player]['Proposal']['MSGID'] = msg.id
+            await msg.add_reaction('👍')
+            await msg.add_reaction('👎')
+            await msg.add_reaction('ℹ️')
+
+
+        if  (not '🥇' in list(map(str,msg.reactions))) and player == Data['Queue'][0]:
+            await msg.add_reaction('🥇')
+            #await msg.pin()
+        elif    ('🥇' in list(map(str,msg.reactions))):
+            await msg.clear_reaction('🥇') #1st
+            #if msg.pinned: await msg.unpin()
+
+        if  (not '🥈' in list(map(str,msg.reactions))) and player == Data['Queue'][1]:
+            await msg.add_reaction('🥈')
+            #await msg.pin()
+        elif    ('🥈' in list(map(str,msg.reactions))):
+            await msg.clear_reaction('🥈') #2st
+            #if msg.pinned: await msg.unpin()
+
+        if  (not '🥉' in list(map(str,msg.reactions))) and player == Data['Queue'][2]:
+            await msg.add_reaction('🥉')
+            #await msg.pin()
+        elif    ('🥉' in list(map(str,msg.reactions))):
+            await msg.clear_reaction('🥉') #3st
+            #if msg.pinned: await msg.unpin()
+
+
+    print('Queue',Data['Queue'])
     return Data
 
 """
@@ -287,9 +331,11 @@ async def setup(Data,payload):
         if 'Proposal' not in Data['PlayerData'][name]:
             Data['PlayerData'][name]['Proposal'] = {}
 
-
         if 'File'       not in Data['PlayerData'][name]['Proposal']:
-            Data['PlayerData'][name]['Proposal']['File'] = None
+            Data['PlayerData'][name]['Proposal']['File'] = ''
+
+        if Data['PlayerData'][name]['Proposal']['File'] is None:
+            Data['PlayerData'][name]['Proposal']['File'] = ''
 
         if 'Supporters' not in Data['PlayerData'][name]['Proposal'] or type(Data['PlayerData'][name]['Proposal']['Supporters']) is type(set()):
             Data['PlayerData'][name]['Proposal']['Supporters'] = []
@@ -300,5 +346,5 @@ async def setup(Data,payload):
         if 'MSGID'   not in Data['PlayerData'][name]['Proposal']:
             Data['PlayerData'][name]['Proposal']['MSGID'] = None
 
-
+    await create_queue(Data, payload)
     return await create_queue(Data, payload)
