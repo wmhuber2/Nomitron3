@@ -6,6 +6,13 @@ tz = datetime.timezone.utc
 """
 For a Custom Command !commandMe
 """
+async def tally(Data, payload, *text):
+    await payload['raw'].channel.send(f"Current Vote Tally: {len(Data['Votes']['Yay'])} for, {len(Data['Votes']['Nay'])} against.")
+
+async def extendTurn(Data, payload, *text):
+    Data['VotePop'] += 24*60*60
+    await payload['raw'].channel.send('Turn extended 24 hrs. Use !tick12 to manually trigger the next turn if needed')
+    return Data
 
 async def purgeProposal(Data, payload, *text):
     playerid = payload['Content'].split(' ')[1]
@@ -36,7 +43,7 @@ async def getPlayer(playerid, payload):
 
 async def tick12(Data, payload, *text):
     Data['VotePop'] = time.time()
-    await tally(Data, payload)
+    await bot_tally(Data, payload)
     await popProposal(Data, payload)
 
 
@@ -46,7 +53,7 @@ async def setProp(Data, payload, *text):
     await payload['raw'].channel.send(f"Set Proposal to {Data['Proposal#']}")
 
 
-async def tally(Data, payload, *text):
+async def bot_tally(Data, payload, *text):
     if len(Data['Votes']['Proposal']) != 1: return
     player, rule = list(Data['Votes']['Proposal'].items())[0]
 
@@ -68,6 +75,7 @@ async def popProposal(Data, payload, *text):
     msg = f"Proposal #{Data['Proposal#']}: \n\n "
 
     for line in Data['PlayerData'][playerprop]['Proposal']['File'].split('\n'):
+        line += '\n'
         if len(msg + line) > 1950:
             await payload['refs']['channels']['voting'].send(msg)
             while len(line) > 1900:
@@ -158,6 +166,7 @@ async def on_reaction(Data, payload):
 
         msg = "**\nProposal:**\n"
         for line in Data['PlayerData'][author]['Proposal']['File'].split('\n'):
+            line += '\n'
             if len(msg + line) > 1900:
                 await payload['user'].send(msg)
                 while len(line) > 1900:
@@ -206,8 +215,8 @@ async def on_message(Data, payload):
                 Data['Votes']['Nay'].remove( payload['Author']  )
             await payload['raw'].add_reaction('✔️')
         else:
-            await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use yay, nay, or withdraw" )
-        print(Data['Votes'])
+            await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use apropiate yay, nay, or withdraw votes" )
+        #print(Data['Votes'])
 
     if payload['Channel'] == 'proposals':
         print('Saving Proposal')
@@ -229,7 +238,7 @@ async def on_message(Data, payload):
         if len(Data['PlayerData'][player]['Proposal']['File']) <= 1: return
 
         msg = await payload['refs']['channels']['queue'].send(
-            f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][player]['Proposal']['Supporters'])})",
+            f"{player}'s Proposal: (Supporters: {0})",
             file=discord.File(fp=io.StringIO(Data['PlayerData'][player]['Proposal']['File']), filename=f"{player}'s Proposal.txt'")
             )
 
@@ -261,7 +270,6 @@ async def create_queue(Data, payload, force = False):
                      ))
     Data['Queue'] = sortedQ[::-1]
 
-    pasmessages = list(await payload['refs']['channels']['queue'].history(limit=100).flatten())[::-1]
     for player in Data['PlayerData']:
 
         if Data['PlayerData'][player]['Proposal']['File'] is None or len(Data['PlayerData'][player]['Proposal']['File']) <= 1: continue
@@ -310,7 +318,7 @@ async def create_queue(Data, payload, force = False):
             #if msg.pinned: await msg.unpin()
 
 
-    print('Queue',Data['Queue'])
+    #print('Queue',Data['Queue'])
     return Data
 
 """
@@ -357,5 +365,7 @@ async def setup(Data,payload):
         if 'MSGID'   not in Data['PlayerData'][name]['Proposal']:
             Data['PlayerData'][name]['Proposal']['MSGID'] = None
 
+    print('Players In Game:',len(Data['PlayerData']))
+    
     await create_queue(Data, payload)
     return await create_queue(Data, payload)

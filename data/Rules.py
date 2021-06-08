@@ -19,36 +19,30 @@ async def rule(Data, payload, *text):
     else:
         print("Found Rule", rulequery)
         answer = Data['RuleList'][rulequery]
-        response = ""
-        for paragraph in answer.split("\n\n"):
-            paragraph = paragraph.replace('\\xe2\\x95\\x9e', ' ')
-            paragraph = paragraph.replace('\\xe2\\x95\\x90', ' ')
-            paragraph = paragraph.replace('\\xe2\\x95\\xa1', ' ')
-            paragraph = paragraph.replace('\\xe2\\x94\\x80', ' ')
-            if(len(response) + len(paragraph) + 6 > 1850 or paragraph.startswith(">>")):
-                #print(response)
-                await message.channel.send(response)
-                response = ""
-            if(paragraph.startswith(">>")):
-                fname = paragraph.strip()[2:]
-                flink = 'https://gitlab.com/nomicgame/nomic/-/raw/master/images/'+fname
-                img = None
-                with urllib.request.urlopen(flink) as res:
-                    print("Loading image: " + fname)
-                    img = io.BytesIO(res.read())
-                await message.channel.send(file=discord.File(img, fname))
-            elif len(paragraph) >1900:
-                print('Error: Paragraph too long!!! Length: ', len(paragraph))
-                print(paragraph)
-            else:
-                response = response + "\n\n" + paragraph
-        #print(response)
-        await message.channel.send(response)
+        answer = answer.replace('\\xe2\\x95\\x9e', ' ')
+        answer = answer.replace('\\xe2\\x95\\x90', ' ')
+        answer = answer.replace('\\xe2\\x95\\xa1', ' ')
+        answer = answer.replace('\\xe2\\x94\\x80', ' ')
+        msg = ""
+
+        for line in answer.split('\n'):
+            line += '\n'
+            if len(msg + line) > 1950:
+                await message.channel.send(msg)
+                while len(line) > 1900:
+                    msgend = line[1900:].index(' ')
+                    await  message.channel.send(line[:1900+msgend])
+                    line = line[1900+msgend:]
+                msg = line
+            else: msg += line
+        if len(msg) > 0: await  message.channel.send(msg)
+
 
 async def find(Data, payload, *text):
     argv = text[0]
     query = ' '.join(argv[1:]).lower()
     message = payload['raw']
+    if message.channel.name in ['game']: return
 
     if query[ 0] == '"': query = query[1:  ]
     if query[-1] == '"': query = query[ :-1]
