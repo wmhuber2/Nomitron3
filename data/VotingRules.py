@@ -6,6 +6,7 @@ tz = datetime.timezone.utc
 """
 For a Custom Command !commandMe
 """
+
 async def tally(Data, payload, *text):
     await payload['raw'].channel.send(f"Current Vote Tally: {len(Data['Votes']['Yay'])} for, {len(Data['Votes']['Nay'])} against.")
 
@@ -235,19 +236,10 @@ async def on_message(Data, payload):
             except: oldmsg = None
             if oldmsg is not None: await oldmsg.delete()
             Data['PlayerData'][player]['Proposal']['MSGID'] = None
-        if len(Data['PlayerData'][player]['Proposal']['File']) <= 1: return
 
-        msg = await payload['refs']['channels']['queue'].send(
-            f"{player}'s Proposal: (Supporters: {0})",
-            file=discord.File(fp=io.StringIO(Data['PlayerData'][player]['Proposal']['File']), filename=f"{player}'s Proposal.txt'")
-            )
-
-        Data['PlayerData'][player]['Proposal']['DOB'] = time.time()
-        Data['PlayerData'][player]['Proposal']['Supporters'] = []
-        Data['PlayerData'][player]['Proposal']['MSGID'] = msg.id
-        await msg.add_reaction('👍')
-        await msg.add_reaction('👎')
-        await msg.add_reaction('ℹ️')
+        if len(Data['PlayerData'][player]['Proposal']['File']) <= 1:
+            await create_queue(Data, payload, force = True)
+            return Data
 
         await create_queue(Data, payload, force = True)
     return Data
@@ -269,6 +261,7 @@ async def create_queue(Data, payload, force = False):
                     int(len(Data['PlayerData'][key]['Proposal']['File']) > 1)
                      ))
     Data['Queue'] = sortedQ[::-1]
+    print(Data['Queue'][:3])
 
     for player in Data['PlayerData']:
 
@@ -366,6 +359,6 @@ async def setup(Data,payload):
             Data['PlayerData'][name]['Proposal']['MSGID'] = None
 
     print('Players In Game:',len(Data['PlayerData']))
-    
+
     await create_queue(Data, payload)
     return await create_queue(Data, payload)
