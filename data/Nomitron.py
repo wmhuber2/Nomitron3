@@ -92,6 +92,7 @@ class DiscordNomicBot():
         if message == None:  return
         payload['raw'] = message
         payload['Author'] = message.author.name + "#" + str(message.author.discriminator)
+        payload['id'] = message.author.id
         payload['Nickname'] = message.author.name
         payload['Channel Type'] = self.getChannelType(message.channel)
         if payload['Channel Type'] == 'Text':
@@ -167,8 +168,8 @@ class DiscordNomicBot():
         print('Setup Finished!')
 
         while 1:
-
             await asyncio.sleep(8)
+            payload = {'ctx': self.client, 'Server': self.refs['server'], 'refs':self.refs}
             await self.passToModule('update', dict(payload))
             self.saveData()
 
