@@ -79,7 +79,7 @@ async def bot_tally(Data, payload, *text):
 
 
 async def popProposal(Data, payload, *text):
-    print('PopP:', Data['Queue'])
+    print('PopP')
     if len(Data['Queue']) == 0: return Data
 
     playerprop = Data['Queue'].pop(0)
@@ -173,8 +173,8 @@ Main Run Function On Messages
 async def on_message(Data, payload):
     if payload['Channel'] == 'voting':
         vote = payload['Content'].lower().strip()
-        vote =    1* (vote in ['y', 'yes','yay', 'aye']) \
-                + 2* (vote in ['n', 'no', 'nay']) \
+        vote =    1* (vote in ['y', 'yes','yay', 'aye', 'pog']) \
+                + 2* (vote in ['n', 'no', 'nay', 'sus']) \
                 + 4* ('withdraw' in vote)
 
         if vote == 1:
@@ -283,21 +283,21 @@ async def create_queue(Data, payload, force = False):
         if  (not '🥇' in list(map(str,msg.reactions))) and id == Data['Queue'][0]:
             await msg.add_reaction('🥇')
             #await msg.pin()
-        elif    ('🥇' in list(map(str,msg.reactions))):
+        elif    ('🥇' in list(map(str,msg.reactions))) and id != Data['Queue'][0]:
             await msg.clear_reaction('🥇') #1st
             #if msg.pinned: await msg.unpin()
 
         if  (not '🥈' in list(map(str,msg.reactions))) and id == Data['Queue'][1]:
             await msg.add_reaction('🥈')
             #await msg.pin()
-        elif    ('🥈' in list(map(str,msg.reactions))):
+        elif    ('🥈' in list(map(str,msg.reactions))) and id != Data['Queue'][1]:
             await msg.clear_reaction('🥈') #2st
             #if msg.pinned: await msg.unpin()
 
         if  (not '🥉' in list(map(str,msg.reactions))) and id == Data['Queue'][2]:
             await msg.add_reaction('🥉')
             #await msg.pin()
-        elif    ('🥉' in list(map(str,msg.reactions))):
+        elif    ('🥉' in list(map(str,msg.reactions))) and id != Data['Queue'][2]:
             await msg.clear_reaction('🥉') #3st
             #if msg.pinned: await msg.unpin()
 
