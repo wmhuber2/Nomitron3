@@ -1,11 +1,44 @@
 #
 # Voting System Module For Discord Bot
 ################################
-import pickle, sys, time, io, discord, datetime, urllib, re
+import pickle, sys, time, io, discord, datetime, urllib, re, random
 tz = datetime.timezone.utc
 """
 For a Custom Command !commandMe
 """
+
+
+
+async def postStatus(Data, payload, *text):
+    now = datetime.datetime.now()
+    phasesdict = {
+                                     '06-20': '🌓', '06-24': '🌕',
+        '07-01': '🌗', '07-09': '🌑', '07-17': '🌓', '07-23': '🌕',
+        '07-31': '🌗', '08-08': '🌑', '08-15': '🌓', '08-22': '🌕',
+        '08-30': '🌗', '09-06': '🌑', '09-13': '🌓', '09-20': '🌕',
+        '09-28': '🌗', '10-06': '🌑', '10-12': '🌓', '10-20': '🌕',
+        '10-28': '🌗', '11-04': '🌑', '11-11': '🌓', '11-19': '🌕',
+        '11-27': '🌗', '12-04': '🌑', '12-10': '🌓', '12-18': '🌕',
+        '12-26': '🌗', '01-02': '🌑', '01-09': '🌓', '01-17': '🌕',
+        '01-25': '🌗', '01-31': '🌑', '02-08': '🌓', '02-16': '🌕',
+        '02-23': '🌗', '03-02': '🌑', '03-10': '🌓', '03-18': '🌕',
+        '03-25': '🌗', '04-01': '🌑', '04-09': '🌓', '04-16': '🌕',
+        '04-23': '🌗', '04-30': '🌑', '05-08': '🌓', '05-15': '🌕',
+        '05-22': '🌗', '05-30': '🌑', '06-07': '🌓', '06-14': '🌕',
+    }
+
+    datestr = str(now.strftime("%m-%d"))
+    while datestr not in phasesdict:
+        now -= datetime.timedelta(days=1)
+        datestr = str(now.strftime("%m-%d"))
+
+    weather = random.choice(['⛈️', '☁️', '☀️', '☀️', '☀️'])
+    status = "Today's Forecast: "+weather+' '+phasesdict[datestr]
+    print('Stats',status, datestr)
+    await payload['refs']['channels']['actions'].send(status)
+    return Data
+
+
 async def removeSupporter(Data, payload, *text):
     playerid, nth = payload['Content'].split(' ')[1:3]
     player = await getPlayer(playerid, payload)
@@ -56,6 +89,7 @@ async def tick12(Data, payload, *text):
     Data['VotePop'] = time.time()
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
+    await postStatus(Data,payload)
 
 
 async def setProp(Data, payload, *text):
@@ -79,7 +113,7 @@ async def bot_tally(Data, payload, *text):
 
 
 async def popProposal(Data, payload, *text):
-    print('PopP:', Data['Queue'])
+    print('PopP')
     if len(Data['Queue']) == 0: return Data
 
     playerprop = Data['Queue'].pop(0)
@@ -173,8 +207,8 @@ Main Run Function On Messages
 async def on_message(Data, payload):
     if payload['Channel'] == 'voting':
         vote = payload['Content'].lower().strip()
-        vote =    1* (vote in ['y', 'yes','yay', 'aye']) \
-                + 2* (vote in ['n', 'no', 'nay']) \
+        vote =    1* (vote in ['pog',]) \
+                + 2* (vote in ['sus',]) \
                 + 4* ('withdraw' in vote)
 
         if vote == 1:
@@ -241,16 +275,22 @@ Update Function Called Every 10 Seconds
 async def update(Data, payload):
     if (datetime.datetime.now(tz).hour - 5 == 0) and (time.time() - Data['VotePop'] > 61*60):
         await tick12(Data, payload)
+    if (datetime.datetime.now(tz).hour != Data['Hour']):
+        Data['Hour'] = datetime.datetime.now(tz).hour
+        r = random.randrange(333)
+        print('Rand',r, 50)
+        if r == 50:
+            await payload['refs']['channels']['actions'].send("Let's Get This Bread!")
     return Data
     #return await create_queue(Data, payload)
 
 
 async def create_queue(Data, payload, force = False):
-    sortedQ = list(sorted( dict(Data['PlayerData']).keys(),
-                    key=lambda key: len(Data['PlayerData'][key]['Proposal']['Supporters'])-
-                    1./(time.time() - Data['PlayerData'][key]['Proposal']['DOB']) +
-                    int(len(Data['PlayerData'][key]['Proposal']['File']) > 1)
-                     ))
+    def keySort(key):
+        stri = (int(len(Data['PlayerData'][key]['Proposal']['Supporters']) + int(len(Data['PlayerData'][key]['Proposal']['File']) > 1)) << 32 ) | ((1 << 32) - int(Data['PlayerData'][key]['Proposal']['DOB']))
+        #print(Data['PlayerData'][key]['Name'], stri)
+        return stri
+    sortedQ = list(sorted( dict(Data['PlayerData']).keys(), key=keySort))
     Data['Queue'] = sortedQ[::-1]
 
     for id in Data['PlayerData']:
@@ -283,26 +323,26 @@ async def create_queue(Data, payload, force = False):
         if  (not '🥇' in list(map(str,msg.reactions))) and id == Data['Queue'][0]:
             await msg.add_reaction('🥇')
             #await msg.pin()
-        elif    ('🥇' in list(map(str,msg.reactions))):
+        elif    ('🥇' in list(map(str,msg.reactions))) and id != Data['Queue'][0]:
             await msg.clear_reaction('🥇') #1st
             #if msg.pinned: await msg.unpin()
 
         if  (not '🥈' in list(map(str,msg.reactions))) and id == Data['Queue'][1]:
             await msg.add_reaction('🥈')
             #await msg.pin()
-        elif    ('🥈' in list(map(str,msg.reactions))):
+        elif    ('🥈' in list(map(str,msg.reactions))) and id != Data['Queue'][1]:
             await msg.clear_reaction('🥈') #2st
             #if msg.pinned: await msg.unpin()
 
         if  (not '🥉' in list(map(str,msg.reactions))) and id == Data['Queue'][2]:
             await msg.add_reaction('🥉')
             #await msg.pin()
-        elif    ('🥉' in list(map(str,msg.reactions))):
+        elif    ('🥉' in list(map(str,msg.reactions))) and id != Data['Queue'][2]:
             await msg.clear_reaction('🥉') #3st
             #if msg.pinned: await msg.unpin()
 
 
-    #print('Queue',Data['Queue'])
+    print('Queue',Data['Queue'][:3])
     return Data
 
 """
@@ -321,6 +361,9 @@ async def setup(Data,payload):
 
     if 'VotePop' not in Data:
          Data['VotePop'] = 0
+
+    if 'Hour' not in Data:
+         Data['Hour'] = -1
 
     if 'Votes' not in Data:
          Data['Votes'] = {'Yay':[], 'Nay':[], 'Abstain':[], 'Proposal': {}}
@@ -352,7 +395,7 @@ async def setup(Data,payload):
         if 'Supporters' not in Data['PlayerData'][id]['Proposal'] or type(Data['PlayerData'][id]['Proposal']['Supporters']) is type(set()):
             Data['PlayerData'][id]['Proposal']['Supporters'] = []
 
-        if 'Proposal'   not in Data['PlayerData'][id]['Proposal']:
+        if 'DOB'   not in Data['PlayerData'][id]['Proposal']:
             Data['PlayerData'][id]['Proposal']['DOB'] = time.time()
 
         if 'MSGID'   not in Data['PlayerData'][id]['Proposal']:
