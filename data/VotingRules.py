@@ -114,23 +114,29 @@ async def bot_tally(Data, payload, *text):
 
 async def popProposal(Data, payload, *text):
     print('PopP')
+
+    for msg in await payload['refs']['channels']['voting'].pins():
+        await msg.unpin()
     if len(Data['Queue']) == 0: return Data
 
     playerprop = Data['Queue'].pop(0)
     msg = f"Proposal #{Data['Proposal#']}: \n\n "
+    topin = []
 
     for line in Data['PlayerData'][playerprop]['Proposal']['File'].split('\n'):
         line += '\n'
         if len(msg + line) > 1950:
-            await payload['refs']['channels']['voting'].send(msg)
+            topin.append(await payload['refs']['channels']['voting'].send(msg))
             while len(line) > 1900:
                 msgend = line[1900:].index(' ')
-                await payload['refs']['channels']['voting'].send(line[:1900+msgend])
+                topin.append(await payload['refs']['channels']['voting'].send(line[:1900+msgend]))
                 line = line[1900+msgend:]
             msg = line
         else: msg += line
 
-    if len(msg) > 0: await payload['refs']['channels']['voting'].send(msg)
+    if len(msg) > 0: topin.append(await payload['refs']['channels']['voting'].send(msg))
+
+    for msg in topin: await msg.pin()
 
     Data['Votes'] = {
     'Yay':[], #    Data['PlayerData'][playerprop]['Proposal']['Supporters'],
@@ -206,14 +212,14 @@ Main Run Function On Messages
 """
 async def on_message(Data, payload):
     if payload['Channel'] == 'voting':
+        if payload['raw'].author.id not in Data['PlayerData']:
+            print('Removing', payload['Content'])
+            await payload['raw'].delete()
+            return
         vote = payload['Content'].lower().strip()
-<<<<<<< HEAD
-        vote =    1* (vote in ['y', 'yes','yay', 'aye', 'pog']) \
-                + 2* (vote in ['n', 'no', 'nay', 'sus']) \
-=======
+
         vote =    1* (vote in ['pog',]) \
                 + 2* (vote in ['sus',]) \
->>>>>>> nomitron-fix
                 + 4* ('withdraw' in vote)
 
         if vote == 1:
