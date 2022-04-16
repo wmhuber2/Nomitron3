@@ -7,4 +7,4 @@ Bot Commands:
     !f KEY_WORDS    :  Display rules that contain text.
 
     !help           :  Display This Help Text
-    !roll #d#       :  Roll dice
+    !roll [[d]]#       :  Roll dice
