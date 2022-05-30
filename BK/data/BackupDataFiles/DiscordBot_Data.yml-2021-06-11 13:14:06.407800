@@ -1,0 +1,497 @@
+PlayerData:
+  Alekosen#6969:
+    Proposal:
+      DOB: 1623281290.1330316
+      File: "Amend Rule 302 to:\n\nDiscord bots may or may not interact with the game\
+        \ in a meaningful way. Interacting with the game in a meaningful way means\
+        \ that one or more of the bot\u2019s functions is described in the rules.\
+        \ This can be directly through explicit mention of the bot being intended\
+        \ to perform a function or indirectly if anything described in the rules is\
+        \ fulfilled by a bot in practice. Discord bots which interact with the game\
+        \ in a meaningful way must be open source."
+      MSGID: 850971821129334845
+      Supporters:
+      - Alekosen#6969
+      - Crorem#6962
+      - Coconutpies#7083
+      - Romulus#7239
+      - Fenris#6136
+  Boo#3053:
+    Proposal:
+      DOB: 1623281290.1329336
+      File: players can post their social security number for a number of points equal
+        to sum of their ssn's digits
+      MSGID: 851655713533329448
+      Supporters:
+      - Alekosen#6969
+      - iann39#8298
+      - Boo#3053
+      - THUNDER THIGHS#6151
+  Coconutpies#7083:
+    Proposal:
+      DOB: 1623296919.702958
+      File: 'Amend rule 203 in the following way:
+
+
+        ~~One turn consists of taking a proposal off the front of the Proposal Queue,
+        and having a vote on whether or not to adopt it.~~
+
+
+        One turn consists of taking a proposal from the Proposal Queue, and having
+        a vote on whether or not to adopt it. The proposal will be chosen at random
+        from the queue, with the probability of each weighted by the number of endorsements
+        it has.'
+      MSGID: 852393803784388639
+      Supporters:
+      - iann39#8298
+      - Coconutpies#7083
+  CosmicSands#4971:
+    Proposal:
+      DOB: 1623281290.1329448
+      File: ''
+      MSGID: 849164222843060274
+      Supporters: []
+  Crorem#6962:
+    Proposal:
+      DOB: 1623281290.1330135
+      File: 'Amend Rule 206:
+
+
+        Change "All players start the game as active." to "All players that join the
+        game are inactive until the start of the next turn, at which point they become
+        active."'
+      MSGID: 851021435836956673
+      Supporters:
+      - Alekosen#6969
+      - Crorem#6962
+      - Coconutpies#7083
+      - naeri#7884
+  Fenris#6136:
+    Proposal:
+      DOB: 1623281290.1328714
+      File: "The house consists of initially 36 rooms, more rooms may be added by\
+        \ other rules.\nEach room has a name of the form \"The Blank Room\", where\
+        \ Blank is replaced with a random noun from MIT's word list when it is created.\n\
+        \nRooms and players have descriptors\n  ex. This room has a red sofa.\n  \
+        \    This room is on fire every Tuesday(The room will be said to be on fire\
+        \ every Tuesday)\n      This room is adjacent to The Rabbit Room\n      This\
+        \ room gives players a bean.\n      Crorem has a hammer.\n      Crorem is\
+        \ infected with the plague.\n\nRoom descriptors have no effect on the game\
+        \ state outside of what is defined in this rule, unless explicitly defined\
+        \ in another rule.\n  ex. Descriptors cannot affect rules or judgements, even\
+        \ if the descriptor states so.\n\nNew room descriptors may not reference anything\
+        \ game regulated unless explicitly allowed to reference that item in a rule.\n\
+        \  ex. Once beans are defined in a rule, descriptors including beans are not\
+        \ allowed.\n\n\n\nOnce a turn, each player may interact with the room they\
+        \ are located in as it is described.\nAn interaction's resolution may edit,\
+        \ add, or remove one or more descriptors of players or rooms.\nInteractions\
+        \ are resolved in the order they were posted in <#846627642848706560>.\nInteractions\
+        \ are resolved in ways that mimic actual reality as closely as possible and\
+        \ follow reason and logic as much as possible when reality proves to be insufficient.\n\
+        Interactions may require resolution involving probability, if descriptors\
+        \ explicitly state so.\n      ex. I eat the bean\n\nShould descriptors and\
+        \ the interactions have a debatable or a not definite resolution, then a judgment\
+        \ will be called and a judge will resolve the situation as it would occur\
+        \ in reality. The verdict may require probability to resolve the situation\
+        \ if descriptors are insufficient in providing a definite resolution.\nUntil\
+        \ a verdict is given the resolution of more recent interactions and other\
+        \ changes to the game state regarding the house are postponed.\n\nA list of\
+        \ player and room descriptions will be posted in a dedicated channel.\n\n\n\
+        Doors:\nEach room consists of 3 doors (A, B, C) that connect to a corresponding\
+        \ door in some other room.\nInitially these connections are randomly generated.\
+        \  \nEach door and its connection is a descriptor for its corresponding room.\n\
+        Each player starts with their location being a randomly designated unoccupied\
+        \ room.\nAs an interaction, players may move to a different room provided\
+        \ that room is connected to the current player's room by a door."
+      MSGID: 851650519444750336
+      Supporters:
+      - Alekosen#6969
+      - Fenris#6136
+  FidelCa$hflo#5630:
+    Proposal:
+      DOB: 1623281290.1328893
+      File: ''
+      MSGID: null
+      Supporters: []
+  Haph#5187:
+    Proposal:
+      DOB: 1623281290.1330535
+      File: All players start with 50 health points. Every midnight 12:00 AM EST their
+        health drops by 1, with a minimum of 0.
+      MSGID: 849516257274494997
+      Supporters:
+      - Haph#5187
+      - Coconutpies#7083
+  JRK#3561:
+    Proposal:
+      DOB: 1623281290.1329904
+      File: ''
+      MSGID: null
+      Supporters: []
+  JTFR#2068:
+    Proposal:
+      DOB: 1623281290.132912
+      File: Ban transparent images
+      MSGID: 852007759062892544
+      Supporters:
+      - Alekosen#6969
+      - Romulus#8008
+  Jah Ming#3942:
+    Proposal:
+      DOB: 1623281290.1328168
+      File: ''
+      MSGID: null
+      Supporters: []
+  Josh#4919:
+    Proposal:
+      DOB: 1623281290.1329796
+      File: all players who both voted for and up voted this proposal get one addtional
+        vote in future elections
+      MSGID: 851657255694893096
+      Supporters:
+      - Josh#4919
+      - iann39#8298
+  Krozr#0878:
+    Proposal:
+      DOB: 1623387604.9267006
+      File: ''
+      MSGID: null
+      Supporters: []
+  MaxG#6592:
+    Proposal:
+      DOB: 1623281290.133075
+      File: ''
+      MSGID: 849164255894044682
+      Supporters: []
+  Paum#7183:
+    Proposal:
+      DOB: 1623281290.133107
+      File: ''
+      MSGID: 849164260424155156
+      Supporters: []
+  Romulus#7239:
+    Proposal:
+      DOB: 1623128403.7757525
+      File: ''
+      MSGID: null
+      Supporters: []
+  Romulus#8008:
+    Proposal:
+      DOB: 1623281290.1330962
+      File: ''
+      MSGID: null
+      Supporters: []
+  Saransh#6832:
+    Proposal:
+      DOB: 1623281290.1328363
+      File: ''
+      MSGID: 849164269383843860
+      Supporters: []
+  Shimawind#5068:
+    Proposal:
+      DOB: 1623281290.1330643
+      File: ''
+      MSGID: 849164273707909130
+      Supporters: []
+  SixShadesDeep#2006:
+    Proposal:
+      DOB: 1623281290.1330013
+      File: ''
+      MSGID: 849164277679784007
+      Supporters: []
+  THUNDER THIGHS#6151:
+    Proposal:
+      DOB: 1623301202.3697007
+      File: ''
+      MSGID: null
+      Supporters: []
+  Walidati#6018:
+    Proposal:
+      DOB: 1623281290.1329226
+      File: ''
+      MSGID: 849164291197108224
+      Supporters: []
+  crow#1451:
+    Proposal:
+      DOB: 1623281290.1331172
+      File: ''
+      MSGID: 849164295748714496
+      Supporters: []
+  iann39#8298:
+    Proposal:
+      DOB: 1623281290.1329687
+      File: 'Amend 208 to state: At the start of each turn, each player has their
+        number of votes set to one. This is tracked by their ''vote count''. If a
+        player has at least one vote, they may decrease their vote count by 1 to increase
+        another players vote count by 1. This can be done at any time. Players can
+        only vote if they have a vote count of at least 1. When a legal unambiguous
+        vote is cast, decrease that players vote count by 1. Changing an already cast
+        vote does not decrease their vote count. Withdrawing a legal vote previously
+        cast increases their vote count by 1. Players cannot vote if they have less
+        than one vote. Each vote a player casts is counted as a unique vote.'
+      MSGID: 851112201305194516
+      Supporters:
+      - iann39#8298
+      - JRK#3561
+      - THUNDER THIGHS#6151
+      - naeri#7884
+  naeri#7884:
+    Proposal:
+      DOB: 1623281290.1329558
+      File: ''
+      MSGID: 849164304333799444
+      Supporters: []
+Proposal#: 309
+Queue:
+- Alekosen#6969
+- iann39#8298
+- Boo#3053
+- Crorem#6962
+- Fenris#6136
+- JTFR#2068
+- Josh#4919
+- Haph#5187
+- Coconutpies#7083
+- Romulus#7239
+- Jah Ming#3942
+- Saransh#6832
+- FidelCa$hflo#5630
+- Walidati#6018
+- naeri#7884
+- CosmicSands#4971
+- SixShadesDeep#2006
+- JRK#3561
+- Shimawind#5068
+- MaxG#6592
+- Romulus#8008
+- crow#1451
+- Paum#7183
+- THUNDER THIGHS#6151
+- Krozr#0878
+RuleList:
+  101: "101 (IMMUTABLE) \n \nAll players must always abide by all the rules then in\
+    \ effect, in the form in which they are then in effect. The rules in the Initial\
+    \ Set are in effect whenever a game begins. The Initial Set consists of Rules\
+    \ 101-116 (immutable) and 201-216 (mutable). \n \n"
+  102: "102 (IMMUTABLE) \n \nInitially rules in the 100's are immutable and rules\
+    \ in the 200's are mutable. Rules subsequently enacted or transmuted (that is,\
+    \ changed from immutable to mutable or vice versa) may be immutable or mutable\
+    \ regardless of their numbers, and rules in the Initial Set may be transmuted\
+    \ regardless of their numbers. \n \n"
+  103: "103 (IMMUTABLE) \n \nA rule-change is any of the following: (1) the enactment,\
+    \ repeal, or amendment of a mutable rule; (2) the enactment, repeal, or amendment\
+    \ of an amendment of a mutable rule; or (3) the transmutation of an immutable\
+    \ rule into a mutable rule or vice versa. \n \n"
+  104: "104 (IMMUTABLE) \n \nAll proposed rule-changes must be written down. If they\
+    \ are adopted, they shall guide play in the form in which they were voted on.\
+    \ \n \n"
+  105: "105 (IMMUTABLE) \n \nAll rule-changes put to a vote in the proper way shall\
+    \ be adopted if and only if they receive the required number of votes. \n \n"
+  106: "106 (IMMUTABLE) \n \nNo rule-change may take effect earlier than the moment\
+    \ of the completion of the vote that adopted it, even if its wording explicitly\
+    \ states otherwise. No rule-change may have retroactive application. \n \n"
+  107: "107 (IMMUTABLE) \n \nEach proposed rule-change put to a vote shall be given\
+    \ a number for reference. The numbers shall begin with 301, and each proposed\
+    \ rule-change put to a vote in the proper way shall receive the next successive\
+    \ integer, whether or not the proposal is adopted. \n \nWhen a rule-change is\
+    \ adopted in the proper way, the rule it enacts receives said rule-change\u2019\
+    s number. \n \n"
+  108: "108 (IMMUTABLE) \n \nRule-changes that transmute immutable rules into mutable\
+    \ rules may be adopted if and only if the vote is unanimous among the eligible\
+    \ voters. Transmutation shall not be implied, but must be stated explicitly in\
+    \ a proposal to take effect. \n \n"
+  109: "109 (IMMUTABLE) \n \nIn a conflict between a mutable and an immutable rule,\
+    \ the immutable rule takes precedence and the mutable rule shall be entirely void.\
+    \ For the purposes of this rule a proposal to transmute an immutable rule does\
+    \ not \"conflict\" with that immutable rule. \n \nIf two or more mutable rules\
+    \ conflict with one another, or if two or more immutable rules conflict with one\
+    \ another, then the rule with the lowest ordinal number takes precedence. \n \n\
+    If at least one of the rules in conflict explicitly says of itself that it defers\
+    \ to another rule (or type of rule) or takes precedence over another rule (or\
+    \ type of rule), then such provisions shall supersede the numerical method for\
+    \ determining precedence. \n \nIf two or more rules claim to take precedence over\
+    \ one another or to defer to one another, then the numerical method again governs.\
+    \ \n \n"
+  110: "110 (IMMUTABLE) \n \nA player always has the option to forfeit the game rather\
+    \ than continue to play or incur a game penalty. No penalty worse than losing,\
+    \ in the judgment of the player to incur it, may be imposed. \n \n"
+  111: "111 (IMMUTABLE) \n \nThe adoption of rule-changes must never become completely\
+    \ impermissible. \n \n"
+  112: "112 (IMMUTABLE) \n \nRules can change their own text or repeal themselves.\
+    \ Rules cannot make any other changes to the rules unless the explicit authority\
+    \ for such a change is already present. \n \n"
+  113: "113 (IMMUTABLE) \n \nVotes must be unambiguous. A vote that would be ambiguous\
+    \ is not considered to be a vote. Additional rules may be made to clarify what\
+    \ constitutes ambiguity.  \n \n"
+  114: "114 (IMMUTABLE) \n \nServer moderators regulate the server and game. Their\
+    \ responsibilities include the creation of text and voice channels, the designation\
+    \ of which messages and actions go in which channels, the editing or deleting\
+    \ of messages that are inappropriate for the channel that they are in, and keeping\
+    \ track of the state of the game. \n \nThis game adheres to the Discord Terms\
+    \ of Service and the Discord Community Guidelines. Moderators are empowered to\
+    \ remove content that violates the terms and guidelines as well as sanction violating\
+    \ persons, up to and including banning. \n \nA person is a server moderator if\
+    \ and only if they have the \"Moderator\" role. \n \n"
+  115: "115 (IMMUTABLE) \n \nAll actions, including voting, endorsing, and rule-change\
+    \ proposals, must occur in the channel or channels that are designated for them.\
+    \ Any action that does not occur in said action\u2019s designated channel or channels\
+    \ is not considered a valid action. \n \n"
+  116: "116 (IMMUTABLE) \n \nWhatever is not prohibited or regulated by a rule is\
+    \ permitted and unregulated, with the sole exception of changing the rules, which\
+    \ is permitted only when a rule or set of rules explicitly or implicitly permits\
+    \ it. \n \n \n"
+  201: "201 \n \nThe Proposal Queue is a queue that proposed rule-changes, or proposals,\
+    \ go on. Players may have up to one proposal in the Proposal Queue. Active players\
+    \ may create a proposal to go on the Proposal Queue at any time; if a player that\
+    \ already has a proposal on the Proposal Queue creates another one, the first\
+    \ proposal is removed. Players may also remove their proposals from the Proposal\
+    \ Queue without replacement. Proposals may not be edited. \n \n"
+  202: "202 \n \nActive players may endorse any number of proposals in the Proposal\
+    \ Queue, including their own. Proposals in the Proposal Queue are sorted first\
+    \ in descending order of number of active endorsing players, then in ascending\
+    \ order of proposal creation time. \n \n"
+  203: "203 \n \nOne turn consists of taking a proposal off the front of the Proposal\
+    \ Queue, and having a vote on whether or not to adopt it. The voting period ends\
+    \ when the turn ends. \nIf the proposal queue is empty at the start of the turn,\
+    \ then no vote will be held. The duration of the turn will be unaffected. \n \n\
+    The length of a turn defaults to 24 hours. \n \n"
+  204: "204 \n \nA rule-change is adopted if and only if it receives a simple majority\
+    \ of votes in favor of its passing. Every active player is an eligible voter.\
+    \ \n \nOther rules may introduce additional conditions necessary for a proposed\
+    \ rule-change to be adopted, notwithstanding the above paragraph. \n \n"
+  205: "205 \n \nAn adopted rule-change takes full effect at the moment of the start\
+    \ of the turn following the turn that it was adopted on. \n \n"
+  206: "206 \n \nAll players start the game as active. An active player becomes inactive\
+    \ (*i.e.* loses their active status) if said active player has publicly declared\
+    \ that they are now inactive. Other rules may also grant and revoke activity status.\
+    \ \n \nA player that has become inactive via public declaration may become active\
+    \ again by attempting to cast a vote or endorse a proposal (the vote or endorsement\
+    \ will be counted as though the player had cast or granted it while active) or\
+    \ by publicly declaring that they are active. \n \n"
+  207: "207 \n \nPlayers that are required by the rules to perform an action have\
+    \ a total of 48 hours to perform said action. A player that does not perform said\
+    \ action within the allotted 48 hours becomes inactive until either they do perform\
+    \ said action or said action becomes impossible to perform. \n \n"
+  208: "208 \n \nEach player always has exactly one vote. \n \n"
+  209: "209 \n \nPlayers may change their votes by voting again. Players may withdraw\
+    \ their votes with the phrase \u201Cwithdraw\u201D. Players may not edit or delete\
+    \ their votes (*i.e.* alter the voting record). A vote that is edited loses its\
+    \ vote status. \n \nPlayers may grant and withdraw their endorsements freely and\
+    \ at any time. \n \n"
+  210: "210 \n \nThe following phrases, and only the following phrases, are considered\
+    \ to be unambiguous affirmative votes: \n \n* aye \n* yay \n* yes \n* y \n \n\
+    The following phrases, and only the following phrases, are considered to be unambiguous\
+    \ negative votes: \n \n* nay \n* no \n* n \n \nPhrases for voting are case-insensitive.\
+    \ \n \n"
+  211: "211 \n \nIf a section of a rule relies on a bot to be implemented to the point\
+    \ where its manual implementation would be infeasible, and there is no such bot,\
+    \ then said rule\u2019s section is void until said bot is functional. \n \n"
+  212: "212 \n \nAll players start with 0 points. The winner is the first player to\
+    \ achieve 100 (positive) points. \n \n"
+  213: "213 \n \nThe state of affairs that constitutes winning may not be altered\
+    \ from achieving *n* points to any other state of affairs. The magnitude of *n*\
+    \ and the means of earning points may be changed, and rules that establish a winner\
+    \ when play cannot continue may be enacted and (while they are mutable) be amended\
+    \ or repealed. \n \n"
+  214: "214 \n \nIf players disagree about the legality of a move or the interpretation\
+    \ or application of a rule, then an eligible player is to be the Judge and decide\
+    \ the question. Said player is to be selected uniformly at random. Disagreement\
+    \ for the purposes of this rule may be created by the insistence of any player.\
+    \ This process is called invoking Judgment. \n \nA player is eligible to be selected\
+    \ as Judge if and only if all of the following are true: \n \n* The player is\
+    \ active \n* The player has voted on the most recent proposal put to vote, or\
+    \ the player has voted on the second most recent proposal put to vote, or no more\
+    \ than two proposals have been put to vote since the start of the game \n* The\
+    \ player has not proposed a rule-change currently being voted on \n* The player\
+    \ has not yet been Judge this turn \n \nWhen Judgment is invoked for the first\
+    \ time in a turn, the current turn is extended by 24 hours unless the scheduled\
+    \ end of the turn was already more than 24 hours after Judgment\u2019s invocation.\
+    \ If the turn is extended in this manner, and there are still more than 24 hours\
+    \ left in the turn, a majority of active players may consent to revoke the extension.\
+    \ \n \nThe Judge's Judgment may be overruled only by either a unanimous vote of\
+    \ the other active players taken before the next turn is begun or a majority vote\
+    \ of server moderators before the next turn is begun. If a Judge's Judgment is\
+    \ overruled, then another eligible player becomes the new Judge for the question,\
+    \ and so on. \n \nThe server moderators can only overrule a Judge\u2019s Judgment\
+    \ if the Judgment egregiously conflicts with the rules and would cause lasting\
+    \ damage to the game. A majority vote of the other active players, taken before\
+    \ the next turn is begun, may nullify the overruling, in which case the original\
+    \ Judgment stands, the original Judge resumes their position as Judge, all Judgments\
+    \ issued by Judges between the overruling and the nullification of the overruling\
+    \ are nullified, and the server moderators are barred from overruling the Judge\
+    \ for the remainder of the turn.  \n \nUnless a Judge is overruled, one Judge\
+    \ settles all questions arising from the game until the next turn is begun, including\
+    \ questions as to his or her own legitimacy and jurisdiction as Judge. \n \nNew\
+    \ Judges are not bound by the decisions of old Judges. New Judges may, however,\
+    \ settle only those questions on which the players currently disagree and that\
+    \ affect the completion of the turn in which Judgment was invoked. All decisions\
+    \ by Judges shall be in accordance with all the rules then in effect; but when\
+    \ the rules are silent, inconsistent, or unclear on the point at issue, then the\
+    \ Judge shall consider game-custom and the spirit of the game before applying\
+    \ other standards. \n \n"
+  215: "215 \n \nIf the rules are changed so that further play is impossible, or if\
+    \ the legality of a move cannot be determined with finality, or if by the Judge's\
+    \ best reasoning, not overruled, a move appears equally legal and illegal, then\
+    \ the proposer of the proposal up for vote is the winner. If there is no proposal\
+    \ up for vote, then the proposer of the proposal at the front of the Proposal\
+    \ Queue at the time the game has become unplayable is the winner. If the Proposal\
+    \ Queue is empty, then there is no winner. \n \nThis rule takes precedence over\
+    \ every other rule determining the winner. \n \n"
+  216: "216 \n \nPersons wishing to become players may join by requesting to do so\
+    \ publicly. Persons may not act as multiple players at once. Persons that are\
+    \ found to have done this are banned from the game. \n \n"
+  301: "301 \n \nEach player can request 1 and only 1 emoji to be added to the discord.\
+    \ Emoji requests are made in actions and are reviewed by all 4 moderators to determine\
+    \ if they are appropriate or break the discord TOS and community guidelines. Players\
+    \ must have the emoji image posted as an image in their request. \n \n"
+  302: "302 \n \nAll bots that interact with the game must be open source \n \n"
+  305: "305 \n \n@Crorem and @JRK have to have a 15 minute podcast (which can include\
+    \ visual content to discuss certain topics) once a week where we discuss agreed\
+    \ upon topics proposed to @Crorem by @JRK. Podcasts shall be recorded and posted\
+    \ in the \u201Cgame\u201D chat and the podcast shall be named \u201CThe NomPod\u201D\
+    . The podcast will take place in nomic voice chat and @Crorem and @JRK can mute\
+    \ others during this set 15 minute period of time. \n \n"
+  306: "306 \n \nIf a player invokes Judgement in accordance with Rule 214, the player\
+    \ that invoked Judgement must wait one full turn before being able to invoke Judgement\
+    \ again. \n"
+VotePop: 1623387604.360798
+Votes:
+  Abstain: []
+  Nay:
+  - Coconutpies#7083
+  - Crorem#6962
+  - Alekosen#6969
+  - JRK#3561
+  - Fenris#6136
+  Proposal:
+    Krozr#0878: Whenever a player posts in the <#846623361630470165> channel their
+      post must somewhere include an idiom; if they fail to have an idiom somewhere
+      in their post they will immediately be removed from the game permanently by
+      a moderator.
+  Yay:
+  - iann39#8298
+  - Walidati#6018
+  - CosmicSands#4971
+  - THUNDER THIGHS#1111
+  - Jah Ming#3942
+  - JTFR#2068
+  - Romulus#8008
+channels:
+  actions: 846627642848706560
+  announcements: 846628002124398623
+  bot-spam: 846623739420475393
+  business: 846623056230875199
+  changelog: 846627984755392522
+  courtroom: 850258046952800276
+  discussion: 846623056230875198
+  game: 846623056230875200
+  join: 846627730043699230
+  mod-lounge: 846623705060081685
+  off-topic: 846623361630470165
+  official: 846627835543420989
+  proposals: 846627686180978688
+  queue: 846627659350147082
+  voice: 846623056230875201
+  voice-2: 851681252037886002
+  voting: 846627673986957332
+server: 846623056230875197
