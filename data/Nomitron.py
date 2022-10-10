@@ -1,14 +1,14 @@
-from datetime import datetime
-import time
-import sys, asyncio, os, importlib, glob, datetime, random,socket, multiprocessing, re, yaml
+import time, traceback, multiprocessing, re, yaml, socket
+import sys, asyncio, os, importlib, glob, datetime, random
 from shutil import copyfile
-
 from threading import Thread
+from datetime import datetime
+
+botCommandChar = '!'
 discord = None
-import traceback
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
-serverid = 846623056230875197
+serverid = 1028425604879634442 # Nomic 6
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 BotChannels = ['actions','voting','proposals', 'mod-lounge', 'bot-spam', 'DM', 'game', 'combat']
 
@@ -45,7 +45,7 @@ class DiscordNomicBot():
 
         for mod in glob.glob("*.py"):
             mod = mod[:-3]
-            if not 'Rule' in mod: continue
+            if mod in ['Blank', 'Nomitron']: continue
             print('Importing Module ',mod)
             self.modules.append(importlib.import_module(mod))
             self.moduleNames.append(mod)
@@ -77,9 +77,10 @@ class DiscordNomicBot():
     Ruturn Channel Type
     """
     def getChannelType(self,obj):
-        if type(obj) == discord.channel.DMChannel: return 'DM'
-        if type(obj) == discord.channel.TextChannel: return 'Text'
-        if type(obj) == discord.channel.GroupChannel: return 'Group'
+        if type(obj) == discord.channelType.private: return 'DM'
+        if type(obj) == discord.channelType.group:   return 'DM'
+        if type(obj) == discord.channelType.text:    return 'Text'
+        if type(obj) == discord.channelType.GroupChannel: return 'Group'
         return ''
 
 
@@ -90,23 +91,28 @@ class DiscordNomicBot():
         payload = {}
 
         if message == None:  return
+        payload['Server'] = message.guild
         payload['raw'] = message
+
         payload['Author'] = message.author.name + "#" + str(message.author.discriminator)
-        payload['id'] = message.author.id
+        payload['Author ID'] = message.author.id
         payload['Nickname'] = message.author.name
+
         payload['Channel Type'] = self.getChannelType(message.channel)
-        if payload['Channel Type'] == 'Text':
-            #payload['Nickname'] = message.author.nick
-            payload['Channel'] = message.channel.name
-            payload['Category'] = message.guild.get_channel(message.channel.category_id)
+        
         if payload['Channel Type'] == 'DM':
             payload['Channel'] = "DM"
             payload['Category'] = "DM"
+        else:
+            payload['Nickname'] = message.author.nick
+            payload['Channel'] = message.channel.name
+            payload['Category'] = message.guild.get_channel(message.channel.category_id)
+
         payload['Content'] = message.system_content.strip()
         payload['Attachments'] = {}
-        payload['ctx'] = self.client
-        payload['Server'] = message.guild
+        payload['ctx']  = self.client
         payload['refs'] = self.refs
+
         for file in message.attachments:
             payload['Attachments'][file.filename] = file
         return payload
@@ -128,7 +134,7 @@ class DiscordNomicBot():
                     print('Error',e, e.__cause__)
 
     """
-    Display All Server ,Detailssocket.gethostname()
+    Display All Server ,Details socket.gethostname()
     """
     async def on_ready(self):
         print()
@@ -142,24 +148,28 @@ class DiscordNomicBot():
                  path + 'BackupDataFiles/'+ savefile + '-' + str(datetime.datetime.now()))
 
 
-        if 'server' not in self.Data:
-            self.Data['server'] = serverid
+        if 'server' not in self.Data:   self.Data['server'] = serverid
 
         for s in self.client.guilds:
-            print( s.name, s.id, serverid)
+            print( 'Found Server:',s.name, s.id, serverid)
             if s.id == self.Data['server']:
                 self.Data['server'] = serverid
                 self.refs['server'] = s
+                print('Joining Server')
+                break
 
-        self.refs['channels'] = {}
-        self.refs['roles'] = {}
+
         self.Data['channels'] = {}
+        self.refs['channels'] = {}
+        self.refs['roles']    = {}
 
         for role in await self.refs['server'].fetch_roles():
             self.refs['roles'][role.name]= role
         for channel in await self.refs['server'].fetch_channels():
             self.Data['channels'][channel.name]= channel.id
             self.refs['channels'][channel.name]= channel
+        
+        
         self.printInfo()
 
         payload = {'ctx': self.client, 'Server': self.refs['server'], 'refs':self.refs}
@@ -168,7 +178,7 @@ class DiscordNomicBot():
         print('Setup Finished!')
 
         while 1:
-            await asyncio.sleep(8)
+            await asyncio.sleep(5)
             payload = {'ctx': self.client, 'Server': self.refs['server'], 'refs':self.refs}
             await self.passToModule('update', dict(payload))
             self.saveData()
@@ -183,7 +193,7 @@ class DiscordNomicBot():
         if payload['Channel'] not in BotChannels: return
 
         found = False
-        if len(payload['Content']) > 0 and payload['Content'][0][0] == '!':
+        if len(payload['Content']) > 0 and payload['Content'][0][0] == botCommandChar:
             functionName = payload['Content'][1:].split(' ')[0]
             for i in range(len(self.moduleNames)):
                 mod = self.modules[i]
@@ -196,10 +206,7 @@ class DiscordNomicBot():
                     except Exception as e:
                         print(e, 'Incorrectly Formatted Funtion for '+functionName+' in '+self.moduleNames[i])
 
-        if not found:
-            await self.passToModule('on_message', payload)
-
-
+        if not found: await self.passToModule('on_message', payload)
         self.saveData()
 
     """
@@ -218,12 +225,14 @@ class DiscordNomicBot():
         react_payload['message'] = msg
         react_payload['user']    = user
         react_payload['Channel'] = channel
-        react_payload['emoji'] = str(payload.emoji.name)
+        react_payload['emoji']   = str(payload.emoji.name)
         react_payload['name']    = user.name + '#' + user.discriminator
 
         await self.passToModule('on_reaction', react_payload)
 
-        if str(payload.emoji) == str('🔄') and react_payload['name'] in Admins: await self.on_message(msg)
+        if str(payload.emoji) == str('🔄') and react_payload['name'] in Admins: 
+            await self.on_message(msg)
+            await msg.remove_reaction(str('🔄'), user)
 
         self.saveData()
 

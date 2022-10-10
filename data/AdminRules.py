@@ -17,16 +17,13 @@ async def restart(Data, payload, *text):
 
 async def ping(Data, payload, *text):
     message = payload['raw']
-    await message.channel.send('!pog')
+    await message.channel.send('!pong')
 """
 Main Run Function
 """
 async def on_message(Data, payload):
     message = payload['raw']
     botCharacter = '!'
-
-    #if '❤' == payload['Content']:
-    #   await message.channel.send("I NEED MORE LOVE")
 
     if payload['Content'] in ['!help', '! help']:
         with open('PlayerREADME.md', 'r') as helpFile:
@@ -39,3 +36,9 @@ async def on_message(Data, payload):
                 msg = msg + line
             if msg != "":
                 await message.channel.send('```diff\n'+msg+'```')
+
+ def uploadData(Data, payload):
+    k = payload['Attachments'].keys[0]
+    newData = yaml.safe_load(payload['Attachments'][k])
+    self.Data = dict(newData)
+

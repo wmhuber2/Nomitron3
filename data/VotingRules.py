@@ -9,36 +9,6 @@ For a Custom Command !commandMe
 
 
 
-async def postStatus(Data, payload, *text):
-    now = datetime.datetime.now()
-    phasesdict = {
-                                     '06-20': '🌓', '06-24': '🌕',
-        '07-01': '🌗', '07-09': '🌑', '07-17': '🌓', '07-23': '🌕',
-        '07-31': '🌗', '08-08': '🌑', '08-15': '🌓', '08-22': '🌕',
-        '08-30': '🌗', '09-06': '🌑', '09-13': '🌓', '09-20': '🌕',
-        '09-28': '🌗', '10-06': '🌑', '10-12': '🌓', '10-20': '🌕',
-        '10-28': '🌗', '11-04': '🌑', '11-11': '🌓', '11-19': '🌕',
-        '11-27': '🌗', '12-04': '🌑', '12-10': '🌓', '12-18': '🌕',
-        '12-26': '🌗', '01-02': '🌑', '01-09': '🌓', '01-17': '🌕',
-        '01-25': '🌗', '01-31': '🌑', '02-08': '🌓', '02-16': '🌕',
-        '02-23': '🌗', '03-02': '🌑', '03-10': '🌓', '03-18': '🌕',
-        '03-25': '🌗', '04-01': '🌑', '04-09': '🌓', '04-16': '🌕',
-        '04-23': '🌗', '04-30': '🌑', '05-08': '🌓', '05-15': '🌕',
-        '05-22': '🌗', '05-30': '🌑', '06-07': '🌓', '06-14': '🌕',
-    }
-
-    datestr = str(now.strftime("%m-%d"))
-    while datestr not in phasesdict:
-        now -= datetime.timedelta(days=1)
-        datestr = str(now.strftime("%m-%d"))
-
-    weather = random.choice(['⛈️', '☁️', '☀️', '☀️', '☀️'])
-    status = "Today's Forecast: "+weather+' '+phasesdict[datestr]
-    print('Stats',status, datestr)
-    await payload['refs']['channels']['actions'].send(status)
-    return Data
-
-
 async def removeSupporter(Data, payload, *text):
     playerid, nth = payload['Content'].split(' ')[1:3]
     player = await getPlayer(playerid, payload)
@@ -89,7 +59,6 @@ async def tick12(Data, payload, *text):
     Data['VotePop'] = time.time()
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
-    await postStatus(Data,payload)
 
 
 async def setProp(Data, payload, *text):
