@@ -259,15 +259,15 @@ async def create_queue(Data, payload, ):
 
     # Sorted list of player IDs In order of Suporters, then Age
     sortedQ = list(sorted( dict(Data['PlayerData']).keys(), key=keySort))
-    messages = payload['refs']['channels']['queue'].history(limit=200)
+    messages = await payload['refs']['channels']['queue'].history(limit=200)
     Data['Queue'] = sortedQ[::-1]
 
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
-    if len(message) < len(sortedQ): 
+    if len(messages) < len(sortedQ): 
         for msg in messages: msg.delete()
         for pid in sortedQ:  payload['refs']['channels']['queue'].send("Generating Proposal View")
-    messages = payload['refs']['channels']['queue'].history(limit=200)
+    messages = await payload['refs']['channels']['queue'].history(limit=200)
 
 
     # Update Messages with Stats
