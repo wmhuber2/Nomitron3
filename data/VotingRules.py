@@ -271,7 +271,7 @@ async def create_queue(Data, payload, ):
 
 
     # Update Messages with Stats
-    i in range(len(sortedQ))
+    for i in range(len(sortedQ)):
         pid     = sortedQ[i]
         player  = Data['PlayerData'][pid]['Name']
         msg     = None
