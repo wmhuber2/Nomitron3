@@ -49,7 +49,7 @@ class DiscordNomicBot():
             self.modules.append(importlib.import_module(mod))
             self.moduleNames.append(mod)
 
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
         intents = discord.Intents.default()
         intents.members = True
         self.client = discord.Client(loop = self.loop, heartbeat_timeout=120, intents=intents)
