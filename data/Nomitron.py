@@ -114,6 +114,7 @@ class DiscordNomicBot():
 
         for file in message.attachments:
             payload['Attachments'][file.filename] = file
+        print(payload)
         return payload
 
 
