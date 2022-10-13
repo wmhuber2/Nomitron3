@@ -259,8 +259,7 @@ async def create_queue(Data, payload, ):
 
     # Sorted list of player IDs In order of Suporters, then Age
     sortedQ = list(sorted( dict(Data['PlayerData']).keys(), key=keySort))
-    messages = await 
-    payload['refs']['channels']['queue'].history(limit=200).flatten()
+    messages = await payload['refs']['channels']['queue'].history(limit=200).flatten()
     Data['Queue'] = sortedQ[::-1]
 
 
