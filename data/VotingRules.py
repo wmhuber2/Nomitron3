@@ -32,7 +32,7 @@ async def removeProposal(Data, payload, *text):
 
     try:
         msg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][pid]['Proposal']['MSGID'])
-        async msg.delete()
+        msg.delete()
     except: pass
     Data['PlayerData'][pid]['Proposal'] = {}
     Data['PlayerData'][pid]['Proposal']['File'] = ''
@@ -44,7 +44,7 @@ async def getPlayer(playerid, payload):
     else:
         player = payload['refs']['server'].get_member(int(re.search(r'\d+', playerid).group()))
         if player is not None: return player
-        else: async channel.send('Player with id, ' + playerid + ' cannot be found.')
+        else: channel.send('Player with id, ' + playerid + ' cannot be found.')
     return None
 
 async def tickTurn(Data, payload, *text):
@@ -91,11 +91,11 @@ def proposalText(Data):
     return topin
 
 async def updateProposal(Data, payload):
-    for msg in await payload['refs']['channels']['voting'].pins(): async msg.delete()
+    for msg in await payload['refs']['channels']['voting'].pins(): msg.delete()
     playerprop = Data['Queue'].pop(0)
     for line in proposalText(Data)
-        await payload['refs']['channels']['voting'].send(line)
-        async msg.pin()
+        msg = await payload['refs']['channels']['voting'].send(line)
+        msg.pin()
 
 async def enableVoting(Data, payload):
     Data['VotingEnabled'] = True
@@ -103,7 +103,7 @@ async def enableVoting(Data, payload):
 async def popProposal(Data, payload, *text):
     print('PopP')
 
-    for msg in await payload['refs']['channels']['voting'].pins(): async msg.unpin()
+    for msg in await payload['refs']['channels']['voting'].pins(): msg.unpin()
     if len(Data['Queue']) == 0: return Data
 
     Data['ProposingPlayer'] = Data['Queue'].pop(0)
@@ -189,20 +189,20 @@ async def on_message(Data, payload):
             if payload['Author ID'] not in Data['Votes']['Yay']:           Data['Votes']['Yay'].append(payload['Author ID'])
             if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( payload['Author ID']  )
-            async payload['raw'].add_reaction('✔️')
+            payload['raw'].add_reaction('✔️')
         elif vote in ['nay', 'no', 'n']:
             if payload['Author ID'] not in Data['Votes']['Nay']:           Data['Votes']['Nay'].append(payload['Author ID'])
             if payload['Author ID'] in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( payload['Author ID']  )
-            async payload['raw'].add_reaction('✔️')
+            payload['raw'].add_reaction('✔️')
         elif vote in ['abstain', 'withdraw']:
             if payload['Author ID'] not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append(payload['Author ID'])
             if payload['Author'] in Data['Votes']['Yay']:                  Data['Votes']['Yay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
-            async payload['raw'].add_reaction('✔️')
+            payload['raw'].add_reaction('✔️')
         else:
-            async payload['raw'].add_reaction('❌')
-            async payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
+            payload['raw'].add_reaction('❌')
+            payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
         
     if payload['Channel'] == 'proposals':
         print('Saving Proposal')
@@ -263,8 +263,8 @@ async def create_queue(Data, payload, ):
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
     if len(message) < len(sortedQ): 
-        for msg in messages: async msg.delete()
-        for pid in sortedQ:  async msg.send("Generating Proposal View")
+        for msg in messages: msg.delete()
+        for pid in sortedQ:  msg.send("Generating Proposal View")
     messages = payload['refs']['channels']['queue'].history(limit=200)
 
 
@@ -284,29 +284,29 @@ async def create_queue(Data, payload, ):
         # Update Message Content
         if len(messages) <= i and messages[i].content != cont: 
             msg = messages[i]
-            async msg.edit( content = cont )
+            msg.edit( content = cont )
             await msg.remove_attachments(msg.attachments)
-            async msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
+            msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
         else:
             msg = await payload['refs']['channels']['queue'].send( cont,
                 file=discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt") )
-            async msg.add_reaction('👍')
-            async msg.add_reaction('👎')
-            async msg.add_reaction('ℹ️')
+            await msg.add_reaction('👍')
+            await msg.add_reaction('👎')
+            await msg.add_reaction('ℹ️')
 
         # Add MSG Badge
         if  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:
-            async msg.add_reaction('🥇')
+            msg.add_reaction('🥇')
         elif    ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:
-            async msg.clear_reaction('🥇') #1st
+            msg.clear_reaction('🥇') #1st
         if  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:
-            async msg.add_reaction('🥈')
+            msg.add_reaction('🥈')
         elif    ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:
-            async msg.clear_reaction('🥈') #2st
+            msg.clear_reaction('🥈') #2st
         if  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:
-            async msg.add_reaction('🥉')
+            msg.add_reaction('🥉')
         elif    ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:
-            async msg.clear_reaction('🥉') #3st
+            msg.clear_reaction('🥉') #3st
 
     print('Queue',Data['Queue'][:3])
     return Data
