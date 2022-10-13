@@ -9,8 +9,8 @@ admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 
 async def restart(Data, payload, *text):
     message = payload['raw']
-    print('Restarting',payload['Author'])
-    if payload['Author'] in admins:
+    print('Restarting',payload.get('Author'))
+    if payload.get('Author') in admins:
         await message.channel.send('Going for Restart')
         print("Going For Restart...")
         sys.exit(0)

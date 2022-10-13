@@ -9,7 +9,11 @@ For a Custom Command !commandMe
 
 
 
+admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
+
 async def removeSupporter(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+
     playerid, nth = payload['Content'].split(' ')[1:3]
     player = await getPlayer(playerid, payload)
     pid = player.id
@@ -20,11 +24,15 @@ async def removeSupporter(Data, payload, *text):
     return Data
 
 async def extendTurn(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+
     Data['NextTurnStartTime'] += 24*60*60
     payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
 
 async def removeProposal(Data, payload, *text):
+    if payload.get('Author') not in admins: return 
+
     playerid = payload['Content'].split(' ')[1]
     player = await getPlayer(playerid, payload)
     pid = player.id
@@ -48,6 +56,7 @@ async def getPlayer(playerid, payload):
     return None
 
 async def tickTurn(Data, payload, *text):
+    if payload.get('Author') not in admins: return
 
     if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = time.time() +     24 * 60 * 60
     else:                               Data['NextTurnStartTime'] = time.time() + 2 * 24 * 60 * 60
@@ -57,11 +66,13 @@ async def tickTurn(Data, payload, *text):
     await popProposal(Data, payload)
 
 async def setProp(Data, payload, *text):
+    if payload.get('Author') not in admins: return
     try: Data['Proposal#'] = int(text[0][1])
     except Exception as e: print(e)
     await payload['raw'].channel.send(f"Set Proposal to {Data['Proposal#']}")
 
 async def bot_tally(Data, payload, *text):
+    if payload.get('Author') not in admins: return
     if len(Data['Votes']['Proposal']) != 1:
         await payload['refs']['channels']['actions'].send("**End Of Turn. No Proposal was on Deck**")
         return
@@ -94,6 +105,7 @@ def proposalText(Data):
     return topin
 
 async def updateProposal(Data, payload):
+    if payload.get('Author') not in admins: return
     for msg in await payload['refs']['channels']['voting'].pins(): msg.delete()
     playerprop = Data['Queue'].pop(0)
     for line in proposalText(Data):
@@ -105,6 +117,7 @@ async def enableVoting(Data, payload):
 
 async def popProposal(Data, payload, *text):
     print('PopP')
+    if payload.get('Author') not in admins: return
 
     for msg in await payload['refs']['channels']['voting'].pins(): msg.unpin()
     if len(Data['Queue']) == 0: return Data
@@ -200,7 +213,7 @@ async def on_message(Data, payload):
             payload['raw'].add_reaction('✔️')
         elif vote in ['abstain', 'withdraw']:
             if payload['Author ID'] not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append(payload['Author ID'])
-            if payload['Author'] in Data['Votes']['Yay']:                  Data['Votes']['Yay'].remove( payload['Author ID']  )
+            if payload.get('Author') in Data['Votes']['Yay']:                  Data['Votes']['Yay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
             payload['raw'].add_reaction('✔️')
         else:
