@@ -222,7 +222,9 @@ async def on_message(Data, payload):
 
     if payload['Channel'] == 'deck':
         print('Updating Proposal')
-        if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == False:
+        if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == False: 
+            payload['refs']['channels']['queue'].send("The deck cannot be updated at this time in the turn.")
+            return
 
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
             decoded = await list(payload['Attachments'].values())[0].read()
@@ -264,12 +266,12 @@ async def create_queue(Data, payload, ):
     # If Queue Structure not right size, regenerate to keep uniform spacing.
     if len(message) < len(sortedQ): 
         for msg in messages: msg.delete()
-        for pid in sortedQ:  msg.send("Generating Proposal View")
+        for pid in sortedQ:  payload['refs']['channels']['queue'].send("Generating Proposal View")
     messages = payload['refs']['channels']['queue'].history(limit=200)
 
 
     # Update Messages with Stats
-    async i in range(len(sortedQ))
+    i in range(len(sortedQ))
         pid     = sortedQ[i]
         player  = Data['PlayerData'][pid]['Name']
         msg     = None
