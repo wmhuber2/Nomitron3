@@ -21,7 +21,7 @@ async def removeSupporter(Data, payload, *text):
 
 async def extendTurn(Data, payload, *text):
     Data['NextTurnStartTime'] += 24*60*60
-    await payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
+    payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
 
 async def removeProposal(Data, payload, *text):
