@@ -1,7 +1,7 @@
 active: 'False'
 autostart: false
 id: nomitron
-path: /home/wolfgang/Ships/Nomitron3/ship_config
+path: /home/wolfgang/Universe/WTW-Station/ships/Nomitron3/ship_config
 service: docker
 startARG: ''
 stopARG: ''

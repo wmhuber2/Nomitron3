@@ -1,1 +1,1 @@
-docker build -t nomitron.pydi /home/wolfgang/Ships/Nomitron3/.
+docker build -t nomitron.pydi /home/wolfgang/Universe/WTW-Station/ships/Nomitron3/.
