@@ -37,7 +37,7 @@ async def on_message(Data, payload):
             if msg != "":
                 await message.channel.send('```diff\n'+msg+'```')
 
- def uploadData(Data, payload):
+def uploadData(Data, payload):
     k = payload['Attachments'].keys[0]
     newData = yaml.safe_load(payload['Attachments'][k])
     self.Data = dict(newData)
