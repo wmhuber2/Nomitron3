@@ -98,6 +98,7 @@ class DiscordNomicBot():
         payload['Nickname'] = message.author.name
 
         payload['Channel Type'] = message.channel.type
+        print(payload)
         
         if payload['Channel Type'] == 'DM':
             payload['Channel'] = "DM"
