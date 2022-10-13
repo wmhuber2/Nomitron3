@@ -2,7 +2,6 @@ import time, traceback, multiprocessing, re, yaml, socket
 import sys, asyncio, os, importlib, glob, datetime, random
 from shutil import copyfile
 from threading import Thread
-from datetime import datetime
 
 botCommandChar = '!'
 discord = None
