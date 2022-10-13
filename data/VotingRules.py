@@ -48,6 +48,7 @@ async def getPlayer(playerid, payload):
     return None
 
 async def tickTurn(Data, payload, *text):
+
     if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = time.time() +     24 * 60 * 60
     else:                               Data['NextTurnStartTime'] = time.time() + 2 * 24 * 60 * 60
     
@@ -61,16 +62,18 @@ async def setProp(Data, payload, *text):
     await payload['raw'].channel.send(f"Set Proposal to {Data['Proposal#']}")
 
 async def bot_tally(Data, payload, *text):
-    if len(Data['Votes']['Proposal']) != 1: return
+    if len(Data['Votes']['Proposal']) != 1:
+        await payload['refs']['channels']['actions'].send("**End Of Turn. No Proposal was on Deck**")
+        return
     player, rule = list(Data['Votes']['Proposal'].items())[0]
 
     if len(Data['Votes']['Yay']) > len(Data['Votes']['Nay']):
-        await payload['refs']['channels']['actions'].send(f"""{player}'s Proposal Passes
-        Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
+        await payload['refs']['channels']['actions'].send(f"""**End Of Turn. {player}'s Proposal Passes
+        Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.**
         """)
     else:
-        await payload['refs']['channels']['actions'].send(f"""{player}'s Proposal Failed
-        Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
+        await payload['refs']['channels']['actions'].send(f"""**{player}'s Proposal Failed
+        Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.**
         """)
 
 def proposalText(Data):
