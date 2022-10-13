@@ -42,7 +42,7 @@ async def find(Data, payload, *text):
     argv = text[0]
     query = ' '.join(argv[1:]).lower()
     message = payload['raw']
-    if message.channel.name in ['game']: return
+    if payload['Channel'] in ['game']: return
 
     if query[ 0] == '"': query = query[1:  ]
     if query[-1] == '"': query = query[ :-1]
