@@ -220,7 +220,7 @@ async def on_message(Data, payload):
         await create_queue(Data, payload, )
 
 
-    if payload['Channel'] == 'deck':
+    if payload['Channel'] == 'deck-edits':
         print('Updating Proposal')
         if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == False: 
             payload['refs']['channels']['queue'].send("The deck cannot be updated at this time in the turn.")
