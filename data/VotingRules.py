@@ -93,7 +93,7 @@ def proposalText(Data):
 async def updateProposal(Data, payload):
     for msg in await payload['refs']['channels']['voting'].pins(): msg.delete()
     playerprop = Data['Queue'].pop(0)
-    for line in proposalText(Data)
+    for line in proposalText(Data):
         msg = await payload['refs']['channels']['voting'].send(line)
         msg.pin()
 
