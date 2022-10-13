@@ -19,9 +19,6 @@ async def removeSupporter(Data, payload, *text):
     Data['PlayerData'][pid]['Proposal']['Supporters'].pop(nth)
     return Data
 
-async def tally(Data, payload, *text):
-    async payload['raw'].channel.send(f"Current Vote Tally: {len(Data['Votes']['Yay'])} for, {len(Data['Votes']['Nay'])} against.")
-
 async def extendTurn(Data, payload, *text):
     Data['NextTurnStartTime'] += 24*60*60
     async payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
