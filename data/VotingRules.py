@@ -314,7 +314,9 @@ async def create_queue(Data, payload, ):
         
 
         # Update Message Content
-        if msg.content != cont or time.time() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3: 
+        if msg.content != cont:  await msg.edit( content = cont)
+        
+        if time.time() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3:
             await msg.edit( content = cont, attachments = files)
        
         # Add MSG Badge
