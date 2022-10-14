@@ -159,6 +159,7 @@ async def on_reaction(Data, payload):
         pass
 
     if payload['Channel'].name == 'queue' and payload['mode'] == 'add':
+        if len(payload['Attachments']) > 0: return Data
         author   = int(list(payload['Attachments'].keys())[0].split(".")[0])
         await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
         
@@ -173,7 +174,7 @@ async def on_reaction(Data, payload):
             await create_queue(Data, payload)
 
         if payload['emoji'] == 'ℹ️':
-            msg =   f"------\n **{author}'s Proposal Info:**\n```Supporters:"
+            msg =   f"------\n **{author.nick}'s Proposal Info:**\n```Supporters:"
             for p in Data['PlayerData'][author]['Proposal']['Supporters']: msg += '\n - ' + Data['PlayerData'][p]['Name']
             msg += "```"
             await payload['user'].send(msg)
