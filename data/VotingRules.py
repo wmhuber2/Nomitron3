@@ -229,6 +229,7 @@ async def on_message(Data, payload):
     if payload['Channel'] == 'proposals':
         print('Saving Proposal', payload['Content'])
         pid = payload['Author ID']
+        
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
             decoded = await list(payload['Attachments'].values())[0].read()
             decoded = decoded.decode(encoding="utf-8", errors="strict")
@@ -236,6 +237,7 @@ async def on_message(Data, payload):
 
         if len(payload['Attachments']) == 0:
             Data['PlayerData'][pid]['Proposal']['File'] = payload['Content']
+
         print("Prop:", Data['PlayerData'][pid]['Proposal']['File'])
         Data['PlayerData'][pid]['Proposal']['DOB'] = time.time()
         Data['PlayerData'][pid]['Proposal']['Supporters'] = []
