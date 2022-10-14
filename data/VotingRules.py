@@ -240,7 +240,7 @@ async def on_message(Data, payload):
 
         print("Prop:", Data['PlayerData'][pid]['Proposal']['File'])
         Data['PlayerData'][pid]['Proposal']['DOB'] = time.time()
-        Data['PlayerData'][pid]['Proposal']['Supporters'] = []
+        Data['PlayerData'][pid]['Proposal']['Supporters'] = [pid, ]
         await create_queue(Data, payload, )
 
 
