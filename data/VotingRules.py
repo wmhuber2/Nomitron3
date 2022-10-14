@@ -27,7 +27,7 @@ async def extendTurn(Data, payload, *text):
     if payload.get('Author') not in admins: return
 
     Data['NextTurnStartTime'] += 24*60*60
-    payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
+    await payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
 
 async def removeProposal(Data, payload, *text):
@@ -40,7 +40,7 @@ async def removeProposal(Data, payload, *text):
 
     try:
         msg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][pid]['Proposal']['MSGID'])
-        msg.delete()
+        await msg.delete()
     except: pass
     Data['PlayerData'][pid]['Proposal'] = {}
     Data['PlayerData'][pid]['Proposal']['File'] = ''
@@ -52,7 +52,7 @@ async def getPlayer(playerid, payload):
     else:
         player = payload['refs']['server'].get_member(int(re.search(r'\d+', playerid).group()))
         if player is not None: return player
-        else: channel.send('Player with id, ' + playerid + ' cannot be found.')
+        else: await channel.send('Player with id, ' + playerid + ' cannot be found.')
     return None
 
 async def tickTurn(Data, payload, *text):
@@ -211,20 +211,20 @@ async def on_message(Data, payload):
             if payload['Author ID'] not in Data['Votes']['Yay']:           Data['Votes']['Yay'].append(payload['Author ID'])
             if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( payload['Author ID']  )
-            payload['raw'].add_reaction('✔️')
+            await payload['raw'].add_reaction('✔️')
         elif vote in ['nay', 'no', 'n']:
             if payload['Author ID'] not in Data['Votes']['Nay']:           Data['Votes']['Nay'].append(payload['Author ID'])
             if payload['Author ID'] in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( payload['Author ID']  )
-            payload['raw'].add_reaction('✔️')
+            await payload['raw'].add_reaction('✔️')
         elif vote in ['abstain', 'withdraw']:
             if payload['Author ID'] not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append(payload['Author ID'])
             if payload.get('Author') in Data['Votes']['Yay']:                  Data['Votes']['Yay'].remove( payload['Author ID']  )
             if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
-            payload['raw'].add_reaction('✔️')
+            await payload['raw'].add_reaction('✔️')
         else:
-            payload['raw'].add_reaction('❌')
-            payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
+            await payload['raw'].add_reaction('❌')
+            await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
         
     if payload['Channel'] == 'proposals':
         print('Saving Proposal')
@@ -245,7 +245,7 @@ async def on_message(Data, payload):
     if payload['Channel'] == 'deck-edits':
         print('Updating Proposal')
         if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == False: 
-            payload['refs']['channels']['queue'].send("The deck cannot be updated at this time in the turn.")
+            await payload['refs']['channels']['queue'].send("The deck cannot be updated at this time in the turn.")
             return
 
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
@@ -306,22 +306,22 @@ async def create_queue(Data, payload, ):
         # Update Message Content
         if messages[i].content != cont: 
             msg = messages[i]
-            msg.edit( content = cont )
+            await msg.edit( content = cont )
             await msg.remove_attachments(msg.attachments)
-            msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
+            await msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
        
         # Add MSG Badge
         if len(Data['Queue']) <= 0: pass
-        elif  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:   msg.add_reaction('🥇')
-        elif      ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:   msg.clear_reaction('🥇') #1st
+        elif  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:   await msg.add_reaction('🥇')
+        elif      ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:   await msg.clear_reaction('🥇') #1st
         
         if len(Data['Queue']) <= 1: pass
-        elif  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:   msg.add_reaction('🥈')
-        elif      ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:   msg.clear_reaction('🥈') #2st
+        elif  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:   await msg.add_reaction('🥈')
+        elif      ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:   await msg.clear_reaction('🥈') #2st
         
         if len(Data['Queue']) <= 2: pass
-        elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   msg.add_reaction('🥉')
-        elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   msg.clear_reaction('🥉') #3st
+        elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   await msg.add_reaction('🥉')
+        elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
 
     return Data
 
