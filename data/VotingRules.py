@@ -161,7 +161,7 @@ async def on_reaction(Data, payload):
     if payload['Channel'].name == 'queue' and payload['mode'] == 'add':
 
         await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
-        if len(payload['Attachments']) > 0: return Data
+        if len(payload['Attachments']) == 0: return Data
         author   = int(list(payload['Attachments'].keys())[0].split(".")[0])
         
         if payload['emoji'] == '👍':
