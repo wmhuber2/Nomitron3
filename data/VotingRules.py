@@ -401,5 +401,5 @@ async def setup(Data,payload):
 
 
     print('Players In Game:',len(Data['PlayerData']))
-
+    await create_queue(Data, payload)
     return await create_queue(Data, payload)
