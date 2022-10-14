@@ -281,7 +281,7 @@ async def create_queue(Data, payload, ):
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
     if len(messages) != len(sortedQ): 
-        for msg in messages: msg.delete()
+        for msg in messages: await msg.delete()
         for pid in sortedQ:  await payload['refs']['channels']['queue'].send("Generating Proposal View")
     messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)]
 
