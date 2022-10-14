@@ -291,7 +291,7 @@ async def create_queue(Data, payload, ):
     if len(messages) != len(sortedQ): 
         for msg in messages: await msg.delete()
         for pid in sortedQ:  
-            await payload['refs']['channels']['queue'].send("Generating Proposal View")
+            msg = await payload['refs']['channels']['queue'].send("Generating Proposal View")
             for r in ['👍', '👎', 'ℹ️']: await msg.add_reaction(r)
     messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)][::-1]
 
