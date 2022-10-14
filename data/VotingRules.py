@@ -304,30 +304,24 @@ async def create_queue(Data, payload, ):
         else: cont = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"
 
         # Update Message Content
-        if len(messages) <= i and messages[i].content != cont: 
+        if messages[i].content != cont: 
             msg = messages[i]
             msg.edit( content = cont )
             await msg.remove_attachments(msg.attachments)
-            await msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
-        else:
-            msg = await payload['refs']['channels']['queue'].send( cont,
-                file=discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt") )
-            await msg.add_reaction('👍')
-            await msg.add_reaction('👎')
-            await msg.add_reaction('ℹ️')
-
+            msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
+       
         # Add MSG Badge
         if len(Data['Queue']) <= 0: pass
-        elif  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:   await msg.add_reaction('🥇')
-        elif      ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:   await msg.clear_reaction('🥇') #1st
+        elif  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:   msg.add_reaction('🥇')
+        elif      ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:   msg.clear_reaction('🥇') #1st
         
         if len(Data['Queue']) <= 1: pass
-        elif  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:   await msg.add_reaction('🥈')
-        elif      ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:   await msg.clear_reaction('🥈') #2st
+        elif  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:   msg.add_reaction('🥈')
+        elif      ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:   msg.clear_reaction('🥈') #2st
         
         if len(Data['Queue']) <= 2: pass
-        elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   await msg.add_reaction('🥉')
-        elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
+        elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   msg.add_reaction('🥉')
+        elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   msg.clear_reaction('🥉') #3st
 
     return Data
 
