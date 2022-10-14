@@ -89,6 +89,7 @@ async def bot_tally(Data, payload, *text):
 
 def proposalText(Data):
     playerprop = Data['ProposingPlayer']
+    if playerprop is None: return []
 
     msg = f"Proposal #{Data['Proposal#']}: "
     if Data['VotingEnabled']: msg += "**Status: Accepting Votes!** \n\n "
@@ -119,11 +120,17 @@ async def popProposal(Data, payload, *text):
     print('PopP')
     if payload.get('Author') not in admins: return
 
+    Data['ProposingPlayer'] = None
+    Data['ProposingText']   = ""
+
     for msg in await payload['refs']['channels']['voting'].pins(): msg.unpin()
     if len(Data['Queue']) == 0: return Data
+    playerprop == Data['Queue'].pop(0)
 
-    Data['ProposingPlayer'] = Data['Queue'].pop(0)
-    Data['ProposingText']   = Data['ProposingText'][playerprop]['Proposal']['File']
+    if len(Data['PlayerData'][playerprop]['Proposal']['File']) <= 1:
+
+    Data['ProposingPlayer'] = playerprop
+    Data['ProposingText']   = str(Data['PlayerData'][playerprop]['Proposal']['File'])
     
     updateProposal(Data, payload, proposal)
 
