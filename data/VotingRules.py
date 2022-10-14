@@ -131,8 +131,8 @@ async def popProposal(Data, payload, *text):
     Data['ProposingPlayer'] = playerprop
     Data['ProposingText']   = str(Data['PlayerData'][playerprop]['Proposal']['File'])
     
-    for p in payload['refs']['players'].items(): await p.remove_rolls([payload['refs']['roles']['On Deck'],])
-    await payload['refs']['players'][playerprop].add_roles([payload['refs']['roles']['On Deck'],])
+    for p in payload['refs']['players'].items(): await p.remove_rolls(payload['refs']['roles']['On Deck'])
+    await payload['refs']['players'][playerprop].add_roles(payload['refs']['roles']['On Deck'])
     updateProposal(Data, payload, proposal)
 
     Data['Votes'] = {
