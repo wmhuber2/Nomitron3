@@ -126,8 +126,7 @@ async def popProposal(Data, payload, *text):
     for msg in await payload['refs']['channels']['voting'].pins(): msg.unpin()
     if len(Data['Queue']) == 0: return Data
     playerprop == Data['Queue'].pop(0)
-
-    if len(Data['PlayerData'][playerprop]['Proposal']['File']) <= 1:
+    if len(Data['PlayerData'][playerprop]['Proposal']['File']) <= 1: return Data
 
     Data['ProposingPlayer'] = playerprop
     Data['ProposingText']   = str(Data['PlayerData'][playerprop]['Proposal']['File'])
