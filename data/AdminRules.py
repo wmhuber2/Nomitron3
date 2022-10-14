@@ -7,6 +7,11 @@ from shutil import copyfile
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
+async def sudo(Data, payload, *text):
+    if payload.get('Author') in admins: await payload['refs']['players'][playerprop].add_roles([payload['refs']['roles']['Moderator'],])
+async def sudont(Data, payload, *text):
+    if payload.get('Author') in admins: await payload['refs']['players'][playerprop].remove_roles([payload['refs']['roles']['Moderator'],])
+    
 async def restart(Data, payload, *text):
     message = payload['raw']
     print('Restarting',payload.get('Author'))
