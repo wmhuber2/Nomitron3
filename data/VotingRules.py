@@ -306,9 +306,7 @@ async def create_queue(Data, payload, ):
         else: cont = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"
 
         # Update Message Content
-        decoded = await msg.attachments[0].read()
-        decoded = decoded.decode(encoding="utf-8", errors="strict")
-        if msg.content != cont or decoded != Data['PlayerData'][pid]['Proposal']['File']: 
+        if msg.content != cont or time.time() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3: 
             await msg.edit( content = cont, attachments = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"),])
        
         # Add MSG Badge
