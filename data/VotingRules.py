@@ -284,7 +284,7 @@ async def create_queue(Data, payload, ):
     # Sorted list of player IDs In order of Suporters, then Age
     sortedQ = list(sorted( dict(Data['PlayerData']).keys(), key=keySort))
     messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)]
-    Data['Queue'] = sortedQ #[::-1]
+    Data['Queue'] = sortedQ[::-1]
 
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
@@ -295,7 +295,7 @@ async def create_queue(Data, payload, ):
 
 
     # Update Messages with Stats
-    for i in range(len(sortedQ)):
+    for i in range(0,len(sortedQ), -1):
         pid     = sortedQ[i]
         player  = Data['PlayerData'][pid]['Name']
         msg     = messages[i]
@@ -303,11 +303,14 @@ async def create_queue(Data, payload, ):
         # Generate Message Content
         if Data['PlayerData'][pid]['Proposal']['File'] is None or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: 
             cont   = f"{player} Has No Proposal."
-        else: cont = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"
+            files  = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"),]
+        else: 
+            cont   = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"files  = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"),]
+            files  = []
 
         # Update Message Content
         if msg.content != cont or time.time() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3: 
-            await msg.edit( content = cont, attachments = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"),])
+            await msg.edit( content = cont, attachments = [files])
        
         # Add MSG Badge
         if len(Data['Queue']) <= 0: pass
