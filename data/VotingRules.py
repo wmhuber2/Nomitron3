@@ -236,7 +236,7 @@ async def on_message(Data, payload):
 
         if len(payload['Attachments']) == 0:
             Data['PlayerData'][pid]['Proposal']['File'] = payload['Content']
-
+        print("Prop:", Data['PlayerData'][pid]['Proposal']['File'])
         Data['PlayerData'][pid]['Proposal']['DOB'] = time.time()
         Data['PlayerData'][pid]['Proposal']['Supporters'] = []
         await create_queue(Data, payload, )
@@ -322,7 +322,7 @@ async def create_queue(Data, payload, ):
         if len(Data['Queue']) <= 2: pass
         elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   await msg.add_reaction('🥉')
         elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
-
+        print('Queue', pid)
     return Data
 
 """
