@@ -302,7 +302,7 @@ async def create_queue(Data, payload, ):
             msg = messages[i]
             msg.edit( content = cont )
             await msg.remove_attachments(msg.attachments)
-            msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
+            await msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")])
         else:
             msg = await payload['refs']['channels']['queue'].send( cont,
                 file=discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt") )
@@ -312,17 +312,17 @@ async def create_queue(Data, payload, ):
 
         # Add MSG Badge
         if  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:
-            msg.add_reaction('🥇')
+            await msg.add_reaction('🥇')
         elif    ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:
-            msg.clear_reaction('🥇') #1st
+            await msg.clear_reaction('🥇') #1st
         if  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:
-            msg.add_reaction('🥈')
+            await msg.add_reaction('🥈')
         elif    ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:
-            msg.clear_reaction('🥈') #2st
+            await msg.clear_reaction('🥈') #2st
         if  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:
-            msg.add_reaction('🥉')
+            await msg.add_reaction('🥉')
         elif    ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:
-            msg.clear_reaction('🥉') #3st
+            await msg.clear_reaction('🥉') #3st
 
     print('Queue',Data['Queue'][:3])
     return Data
