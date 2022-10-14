@@ -164,7 +164,7 @@ class DiscordNomicBot():
 
         for role in await self.refs['server'].fetch_roles():
             self.refs['roles'][role.name]= role
-        for member in self.refs['server'].members():
+        for member in self.refs['server'].members:
             self.refs['players'][member.id]= member
         for channel in await self.refs['server'].fetch_channels():
             self.Data['channels'][channel.name]= channel.id
