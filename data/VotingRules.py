@@ -308,7 +308,7 @@ async def create_queue(Data, payload, ):
             msg = messages[i]
             await msg.edit( content = cont )
             await msg.remove_attachments(msg.attachments)
-            await msg.add_files({'Proposal.txt':discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{id}.txt")})
+            await msg.add_files(discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"))
        
         # Add MSG Badge
         if len(Data['Queue']) <= 0: pass
