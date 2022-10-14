@@ -50,8 +50,7 @@ class DiscordNomicBot():
             self.moduleNames.append(mod)
 
         self.loop = asyncio.new_event_loop()
-        intents = discord.Intents.default()
-        intents.members = True
+        intents = discord.Intents.all()
         self.client = discord.Client(loop = self.loop, heartbeat_timeout=120, intents=intents)
         self.token = open(path+'token.secret','r').readlines()[0].strip()
         print("Using Token: ..." + self.token[-6:])
