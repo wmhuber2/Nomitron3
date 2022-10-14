@@ -317,11 +317,11 @@ async def create_queue(Data, payload, ):
         
         if len(Data['Queue']) <= 1: pass
         elif  (not '🥈' in list(map(str,msg.reactions))) and pid == Data['Queue'][1]:   await msg.add_reaction('🥈')
-        elif    ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:     await msg.clear_reaction('🥈') #2st
+        elif      ('🥈' in list(map(str,msg.reactions))) and pid != Data['Queue'][1]:   await msg.clear_reaction('🥈') #2st
         
         if len(Data['Queue']) <= 2: pass
-        elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:     await msg.add_reaction('🥉')
-        elif    ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:     await msg.clear_reaction('🥉') #3st
+        elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   await msg.add_reaction('🥉')
+        elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
 
     return Data
 
