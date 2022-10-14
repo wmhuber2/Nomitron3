@@ -175,7 +175,7 @@ async def on_reaction(Data, payload):
             await create_queue(Data, payload)
 
         if payload['emoji'] == 'ℹ️':
-            msg =   f"------\n **{Data['PlayerData'][author]['Nickname']}'s Proposal Info:**\n```Supporters:"
+            msg =   f"------\n **{Data['PlayerData'][author]['Name']}'s Proposal Info:**\n```Supporters:"
             for p in Data['PlayerData'][author]['Proposal']['Supporters']: msg += '\n - ' + Data['PlayerData'][p]['Name']
             msg += "```"
             await payload['user'].send(msg)
