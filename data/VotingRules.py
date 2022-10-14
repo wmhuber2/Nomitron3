@@ -355,7 +355,7 @@ async def setup(Data,payload):
     if 'CurrTurnStartTime' not in Data:
          Data['CurrTurnStartTime'] = 0
 
-    if 'CurrTurnStartTime' not in Data:
+    if 'NextTurnStartTime' not in Data:
          Data['NextTurnStartTime'] = 0
 
     if 'Hour' not in Data:
