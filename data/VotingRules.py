@@ -227,7 +227,7 @@ async def on_message(Data, payload):
             await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
         
     if payload['Channel'] == 'proposals':
-        print('Saving Proposal')
+        print('Saving Proposal', payload['Content'])
         pid = payload['Author ID']
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
             decoded = await list(payload['Attachments'].values())[0].read()
@@ -282,7 +282,7 @@ async def create_queue(Data, payload, ):
     # Sorted list of player IDs In order of Suporters, then Age
     sortedQ = list(sorted( dict(Data['PlayerData']).keys(), key=keySort))
     messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)]
-    Data['Queue'] = sortedQ[::-1]
+    Data['Queue'] = sortedQ #[::-1]
 
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
@@ -308,7 +308,7 @@ async def create_queue(Data, payload, ):
             msg = messages[i]
             await msg.edit( content = cont )
             await msg.remove_attachments(msg.attachments)
-            await msg.add_files(discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"))
+            await msg.add_files([discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"),])
        
         # Add MSG Badge
         if len(Data['Queue']) <= 0: pass
