@@ -280,7 +280,7 @@ async def create_queue(Data, payload, ):
 
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
-    if len(messages) < len(sortedQ): 
+    if len(messages) != len(sortedQ): 
         for msg in messages: msg.delete()
         for pid in sortedQ:  payload['refs']['channels']['queue'].send("Generating Proposal View")
     messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)]
@@ -290,9 +290,7 @@ async def create_queue(Data, payload, ):
     for i in range(len(sortedQ)):
         pid     = sortedQ[i]
         player  = Data['PlayerData'][pid]['Name']
-        msg     = None
-        if len(messages) <  i: msg     = messages[i]
-        if len(messages) >= i: msg     = messages[i]
+        msg     = messages[i]
 
         # Generate Message Content
         if Data['PlayerData'][pid]['Proposal']['File'] is None or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: 
