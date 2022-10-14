@@ -160,7 +160,7 @@ async def on_reaction(Data, payload):
 
     if payload['Channel'].name == 'queue' and payload['mode'] == 'add':
         author   = int(list(payload['Attachments'].keys())[0].split(".")[0])
-        payload['message'].remove_reaction(payload['emoji'] , payload['user'])
+        await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
         
         if payload['emoji'] == '👍':
             if payload['user'].id not in Data['PlayerData'][author]['Proposal']['Supporters']:
