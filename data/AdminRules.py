@@ -5,7 +5,7 @@ import sys, os,datetime
 from shutil import copyfile
 
 
-admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
+admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 async def restart(Data, payload, *text):
     message = payload['raw']

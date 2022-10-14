@@ -9,7 +9,7 @@ For a Custom Command !commandMe
 
 
 
-admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
+admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 async def removeSupporter(Data, payload, *text):
     if payload.get('Author') not in admins: return
