@@ -304,7 +304,7 @@ async def create_queue(Data, payload, ):
         if Data['PlayerData'][pid]['Proposal']['File'] is None or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: 
             cont   = f"{player} Has No Proposal."
             files  = []
-            else: 
+        else: 
             cont   = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"
             files  = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=f"{pid}.txt"),]
         
