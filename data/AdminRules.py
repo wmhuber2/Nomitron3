@@ -9,10 +9,11 @@ admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 async def sudo(Data, payload, *text):
     if payload.get('Author') in admins: 
-        await payload['raw'].author.add_roles(payload['refs']['roles']['Moderator'])
+        await payload['refs']['players'][payload['raw'].author.id].add_roles(payload['refs']['roles']['Moderator'])
 async def sudont(Data, payload, *text):
-    if payload.get('Author') in admins: 
-        await payload['raw'].author.remove_roles(payload['refs']['roles']['Moderator'])
+    if payload.get('Author') in admins:         
+        await payload['refs']['players'][payload['raw'].author.id].remove_roles(payload['refs']['roles']['Moderator'])
+
     
 async def restart(Data, payload, *text):
     message = payload['raw']
