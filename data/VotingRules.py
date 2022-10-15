@@ -16,6 +16,18 @@ day  = 24 * 60 * 60
 def now(): return time.time() - zeroday
 
 
+async def turnStats(Data, payload, *text):
+    msg = f'''**Turn Stats:**
+    Proposal#            :   {Data['Proposal#']}
+    Voting Enables       :   {Data['VotingEnabled']}
+    Proposing Player     :   {Data['ProposingPlayer']}
+    Curr Turn Start Time :   {Data['CurrTurnStartTime']}
+    Next Turn Start Time :   {Data['NextTurnStartTime']}
+    Time Now             :   {now()} (Raw:{time.time})
+    Votes                :   {Data['Votes']}
+    '''
+    payload['raw'].channel.send(msg)
+
 async def removeSupporter(Data, payload, *text):
     if payload.get('Author') not in admins: return
 
@@ -119,11 +131,10 @@ async def updateProposal(Data, payload):
         msg = await payload['refs']['channels']['voting'].send(line)
         msg.pin()
 
-async def enableVoting(Data, payload):
+async def enableVoting(Data, payload, *text):
     print('..Enabling Voting')
     Data['VotingEnabled'] = True
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
-
 
 async def popProposal(Data, payload, *text):
     print('..PopProposal To Deck')
