@@ -92,7 +92,7 @@ async def bot_tally(Data, payload, *text):
     if len(Data['ProposingText']) > 1:
         await payload['refs']['channels']['actions'].send("**End Of Turn. No Proposal was on Deck**")
         return
-    player, rule = list(Data['Votes']['Proposal'].items())[0]
+    player = Data['ProposingPlayer']
 
     if len(Data['Votes']['Yay']) > len(Data['Votes']['Nay']):
         await payload['refs']['channels']['actions'].send(f"""**End Of Turn. {player}'s Proposal Passes
