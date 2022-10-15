@@ -26,7 +26,7 @@ async def turnStats(Data, payload, *text):
     Time Now             :   {now()} (Raw:{time.time})
     Votes                :   {Data['Votes']}
     '''
-    payload['raw'].channel.send(msg)
+    await payload['raw'].channel.send(msg)
 
 async def removeSupporter(Data, payload, *text):
     if payload.get('Author') not in admins: return
