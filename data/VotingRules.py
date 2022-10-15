@@ -13,7 +13,7 @@ admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 zeroday = 1641016800 # Jan 1 2022
 day  = 24 * 60 * 60
-def now(): return now() - zeroday
+def now(): return time.time() - zeroday
 
 
 async def removeSupporter(Data, payload, *text):
