@@ -17,7 +17,7 @@ def now(): return time.time() - zeroday
 
 
 async def turnStats(Data, payload, *text):
-    msg = f'''**Turn Stats:**
+    msg = f'''**Turn Stats:**```
     Proposal#            :   {Data['Proposal#']}
     Voting Enables       :   {Data['VotingEnabled']}
     Proposing Player     :   {Data['ProposingPlayer']}
@@ -25,7 +25,7 @@ async def turnStats(Data, payload, *text):
     Next Turn Start Time :   {Data['NextTurnStartTime']}
     Time Now             :   {now()} (Raw:{time.time})
     Votes                :   {Data['Votes']}
-    '''
+    ```'''
     await payload['raw'].channel.send(msg)
 
 async def removeSupporter(Data, payload, *text):
