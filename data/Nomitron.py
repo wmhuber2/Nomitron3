@@ -112,7 +112,7 @@ class DiscordNomicBot():
         payload['refs'] = self.refs
 
         for file in message.attachments:  payload['Attachments'][file.filename] = file
-        print('MC',message.system_content)
+        print('Command in {payload['Channel']}:',message.system_content)
         return payload
 
 
