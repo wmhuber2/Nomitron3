@@ -89,7 +89,7 @@ async def setProp(Data, payload, *text):
 
 async def bot_tally(Data, payload, *text):
     if payload.get('Author') not in admins: return
-    if len(Data['ProposingText']) > 1:
+    if len(Data['ProposingText']) < 1:
         await payload['refs']['channels']['actions'].send("**End Of Turn. No Proposal was on Deck**")
         return
     player = Data['ProposingPlayer']
