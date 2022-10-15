@@ -155,7 +155,7 @@ async def popProposal(Data, payload, *text):
     
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
     await payload['refs']['players'][playerprop].add_roles(payload['refs']['roles']['On Deck'])
-    updateProposal(Data, payload, proposal)
+    updateProposal(Data, payload)
 
     Data['Votes'] = {
     'Yay':[],
@@ -338,10 +338,11 @@ async def create_queue(Data, payload, ):
         
 
         # Update Message Content
-        if msg.content != cont:  await msg.edit( content = cont)
-        
         if now() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3:
             await msg.edit( content = cont, attachments = files)
+        elif msg.content != cont:  await msg.edit( content = cont)
+        
+        
        
         # Add MSG Badge
         if len(Data['Queue']) <= 0: pass
