@@ -99,7 +99,7 @@ async def bot_tally(Data, payload, *text):
         **Start Of Turn #{Data['Turn']+1}. **
         """)
         return
-    player =  Data['PlayerData'][ DataData['ProposingPlayer'] ]['Name']
+    player =  Data['PlayerData'][ Data['ProposingPlayer'] ]['Name']
 
     if len(Data['Votes']['Yay']) > len(Data['Votes']['Nay']):
         await payload['refs']['channels']['actions'].send(f"""**End of Turn #{Data['Turn']}.** {player}'s Proposal Passes
