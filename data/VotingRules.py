@@ -393,7 +393,7 @@ async def setup(Data,payload):
         Data['ProposingText'] = None
 
     if 'ProposingMSGs' not in Data:
-        Data['ProposingMSGs'] = None
+        Data['ProposingMSGs'] = []
 
     if 'CurrTurnStartTime' not in Data:
          Data['CurrTurnStartTime'] = 0
