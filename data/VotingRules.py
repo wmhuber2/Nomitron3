@@ -28,6 +28,8 @@ async def turnStats(Data, payload, *text):
     Curr Turn Start Time :   {Data['CurrTurnStartTime']}
     Next Turn Start Time :   {Data['NextTurnStartTime']}
     Time Now             :   {now()} (Raw:{time.time()})
+    Time Elapsed         :   {now() - Data['CurrTurnStartTime']}
+    Time Remaining       :   {Data['NextTurnStartTime'] - now()}
     Votes                :   {Data['Votes']}
     ```'''
     await payload['raw'].channel.send(msg)
