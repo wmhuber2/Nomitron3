@@ -19,11 +19,11 @@ def now(): return time.time() - zeroday
 async def turnStats(Data, payload, *text):
     msg = f'''**Turn Stats:**```
     Proposal#            :   {Data['Proposal#']}
-    Voting Enables       :   {Data['VotingEnabled']}
+    Voting Enabled       :   {Data['VotingEnabled']}
     Proposing Player     :   {Data['ProposingPlayer']}
     Curr Turn Start Time :   {Data['CurrTurnStartTime']}
     Next Turn Start Time :   {Data['NextTurnStartTime']}
-    Time Now             :   {now()} (Raw:{time.time})
+    Time Now             :   {now()} (Raw:{time.time()})
     Votes                :   {Data['Votes']}
     ```'''
     await payload['raw'].channel.send(msg)
@@ -289,7 +289,7 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    if   (now() - Data['NextTurnStartTime'] > 0):
+    if   (now() - Data['NextTurnStartTime'] < 0):
         await tickTurn(Data, payload)
     elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
         await enableVoting(Data, payload)
