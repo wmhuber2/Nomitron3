@@ -273,8 +273,8 @@ async def on_message(Data, payload):
 
     if payload['Channel'] == 'deck-edits':
         print('Updating Proposal')
-        if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == False: 
-            await payload['refs']['channels']['queue'].send("The deck cannot be updated at this time in the turn.")
+        if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == True: 
+            await payload['refs']['channels']['deck-edits'].send("The deck cannot be updated at this time in the turn.")
             return
 
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
