@@ -11,10 +11,6 @@ For a Custom Command !commandMe
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
-reactVoting = True
-yayEmoji = '👍'
-nayEmoji = '👎'
-
 zeroday = 1641016800 # Jan 1 2022
 day  = 60*2 # 24 * 60 * 60
 def now(): return time.time() - zeroday
@@ -151,12 +147,8 @@ async def updateProposal(Data, payload):
 async def enableVoting(Data, payload, *text):
     print('..Enabling Voting')
     Data['VotingEnabled'] = True
-    if reactVoting:
-            mid  = Data['ProposingMSGs'][-1] 
-            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
-            await msg.add_reaction(yayEmoji)
-            await msg.add_reaction(nayEmoji)
 
+    await payload['refs']['channels']['voting'].channel.set_permissions(payload['refs']['roles']['Player'], send_messages=True)
 
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
 
@@ -183,7 +175,8 @@ async def popProposal(Data, payload, *text):
     Data['PlayerData'][pid]['Proposal']['Supporters'] = []
     Data['PlayerData'][pid]['Proposal']['DOB'] = now()
 
-    
+    await payload['refs']['channels']['voting'].channel.set_permissions(payload['refs']['roles']['Player'], send_messages=False)
+
     await updateProposal(Data, payload)
     await create_queue(Data, payload, )
 
