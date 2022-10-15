@@ -137,15 +137,17 @@ async def enableVoting(Data, payload, *text):
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
 
 async def popProposal(Data, payload, *text):
-    print('..PopProposal To Deck')
     if payload.get('Author') not in admins: return
 
     Data['ProposingPlayer'] = None
     Data['ProposingText']   = ""
 
     for msg in await payload['refs']['channels']['voting'].pins(): msg.unpin()
+
     if len(Data['Queue']) == 0: return Data
     playerprop = Data['Queue'].pop(0)
+    print('..PopProposal To Deck:',playerprop, Data['PlayerData'][playerprop]['Name'])
+
     if len(Data['PlayerData'][playerprop]['Proposal']['File']) <= 1: return Data
 
     Data['ProposingPlayer'] = playerprop
