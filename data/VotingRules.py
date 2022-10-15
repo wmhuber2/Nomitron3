@@ -126,11 +126,11 @@ def proposalText(Data):
 async def updateProposal(Data, payload):
     print('..Updating Prop')
     if payload.get('Author') not in admins: return
-    for msg in await payload['refs']['channels']['voting'].pins(): msg.delete()
+    for msg in await payload['refs']['channels']['voting'].pins(): await msg.delete()
     playerprop = Data['ProposingPlayer']
     for line in proposalText(Data):
         msg = await payload['refs']['channels']['voting'].send(line)
-        msg.pin()
+        await msg.pin()
 
 async def enableVoting(Data, payload, *text):
     print('..Enabling Voting')
@@ -143,7 +143,7 @@ async def popProposal(Data, payload, *text):
     Data['ProposingPlayer'] = None
     Data['ProposingText']   = ""
 
-    for msg in await payload['refs']['channels']['voting'].pins(): msg.unpin()
+    for msg in await payload['refs']['channels']['voting'].pins(): await msg.unpin()
 
     if len(Data['Queue']) == 0: return Data
     playerprop = Data['Queue'].pop(0)
