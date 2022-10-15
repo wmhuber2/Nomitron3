@@ -155,11 +155,14 @@ async def enableVoting(Data, payload, *text):
 async def popProposal(Data, payload, *text):
     if payload.get('Author') not in admins: return
  
-    pid = Data['Queue'].pop(0)
-    print('..PopProposal To Deck:',pid, Data['PlayerData'][pid]['Name'])
-
     Data['ProposingPlayer'] = None
     Data['ProposingText']   = ""
+
+    print('..PopProposal To Deck:')
+    if len(Data['Queue']) == 0: return Data
+    pid = Data['Queue'].pop(0)
+    print('...',pid, Data['PlayerData'][pid]['Name'])
+
 
     if len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: return Data
 
