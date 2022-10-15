@@ -384,7 +384,7 @@ async def setup(Data,payload):
         Data['ProposingPlayer'] = None
 
     if 'ProposingText' not in Data:
-        Data['ProposingText'] = None
+        Data['ProposingText'] = ""
 
     if 'ProposingMSGs' not in Data:
         Data['ProposingMSGs'] = []
