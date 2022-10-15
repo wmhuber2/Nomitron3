@@ -179,7 +179,7 @@ async def popProposal(Data, payload, *text):
     Data['PlayerData'][pid]['Proposal']['Supporters'] = []
     Data['PlayerData'][pid]['Proposal']['DOB'] = now()
 
-    await payload['refs']['channels']['voting'].channel.set_permissions(payload['refs']['roles']['Player'], send_messages=False)
+    await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=False)
 
     await updateProposal(Data, payload)
     await create_queue(Data, payload, )
