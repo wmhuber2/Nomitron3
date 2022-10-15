@@ -122,7 +122,7 @@ async def updateProposal(Data, payload):
 async def enableVoting(Data, payload):
     print('..Enabling Voting')
     Data['VotingEnabled'] = True
-    for p in payload['refs']['players'].values(): await p.remove_rolls(payload['refs']['roles']['On Deck'])
+    for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
 
 
 async def popProposal(Data, payload, *text):
@@ -140,7 +140,7 @@ async def popProposal(Data, payload, *text):
     Data['ProposingPlayer'] = playerprop
     Data['ProposingText']   = str(Data['PlayerData'][playerprop]['Proposal']['File'])
     
-    for p in payload['refs']['players'].values(): await p.remove_rolls(payload['refs']['roles']['On Deck'])
+    for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
     await payload['refs']['players'][playerprop].add_roles(payload['refs']['roles']['On Deck'])
     updateProposal(Data, payload, proposal)
 
