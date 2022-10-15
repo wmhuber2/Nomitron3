@@ -126,11 +126,14 @@ def proposalText(Data):
 async def updateProposal(Data, payload):
     print('..Updating Prop')
     if payload.get('Author') not in admins: return
-    for msg in await payload['refs']['channels']['voting'].pins(): await msg.delete()
+    for mid in Data['ProposingMSGs']: 
+        msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
+        await msg.delete()
     playerprop = Data['ProposingPlayer']
+    Data['ProposingMSGs'] = []
     for line in proposalText(Data):
         msg = await payload['refs']['channels']['voting'].send(line)
-        await msg.pin()
+        Data['ProposingMSGs'].append(msg.id)
 
 async def enableVoting(Data, payload, *text):
     print('..Enabling Voting')
@@ -139,39 +142,33 @@ async def enableVoting(Data, payload, *text):
 
 async def popProposal(Data, payload, *text):
     if payload.get('Author') not in admins: return
+ 
+    pid = Data['Queue'].pop(0)
+    print('..PopProposal To Deck:',pid, Data['PlayerData'][pid]['Name'])
 
     Data['ProposingPlayer'] = None
     Data['ProposingText']   = ""
 
-    for msg in await payload['refs']['channels']['voting'].pins(): await msg.unpin()
+    if len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: return Data
 
-    if len(Data['Queue']) == 0: return Data
-    playerprop = Data['Queue'].pop(0)
-    print('..PopProposal To Deck:',playerprop, Data['PlayerData'][playerprop]['Name'])
-
-    if len(Data['PlayerData'][playerprop]['Proposal']['File']) <= 1: return Data
-
-    Data['ProposingPlayer'] = playerprop
-    Data['ProposingText']   = str(Data['PlayerData'][playerprop]['Proposal']['File'])
-    
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
-    await payload['refs']['players'][playerprop].add_roles(payload['refs']['roles']['On Deck'])
-    await updateProposal(Data, payload)
-
-    Data['Votes'] = {
-    'Yay':[],
-    'Nay':[],
-    'Abstain':[],
-    'Proposal': {
-        Data['PlayerData'][playerprop]['Name'] : Data['PlayerData'][playerprop]['Proposal']['File']
+    await payload['refs']['players'][pid].add_roles(payload['refs']['roles']['On Deck'])
+    
+    Data['Votes'] = { 'Yay':[], 'Nay':[], 'Abstain':[], 'Proposal': {
+        Data['PlayerData'][pid]['Name'] : Data['PlayerData'][pid]['Proposal']['File']
     }}
 
-    Data['PlayerData'][playerprop]['Proposal']['File'] = ''
-    Data['PlayerData'][playerprop]['Proposal']['Supporters'] = []
-    Data['PlayerData'][playerprop]['Proposal']['DOB'] = now()
-    Data['PlayerData'][playerprop]['Proposal']['MSGID'] = None
+    Data['Proposal#']       += 1
+    Data['ProposingPlayer']  = pid
+    Data['ProposingText']    = str(Data['PlayerData'][pid]['Proposal']['File'])
 
-    Data['Proposal#'] += 1
+    Data['PlayerData'][pid]['Proposal']['File'] = ''
+    Data['PlayerData'][pid]['Proposal']['Supporters'] = []
+    Data['PlayerData'][pid]['Proposal']['DOB'] = now()
+    Data['PlayerData'][pid]['Proposal']['MSGID'] = None
+
+    
+    await updateProposal(Data, payload)
     await create_queue(Data, payload, )
 
 
@@ -301,6 +298,9 @@ async def update(Data, payload):
     return Data
 
 
+"""
+Update the QUEUE
+"""
 async def create_queue(Data, payload, ):
     def keySort(key):
         stri = (int(len(Data['PlayerData'][key]['Proposal']['Supporters']) + int(len(Data['PlayerData'][key]['Proposal']['File']) > 1)) << 32 ) | ((1 << 32) - int(Data['PlayerData'][key]['Proposal']['DOB']))
@@ -349,6 +349,8 @@ async def create_queue(Data, payload, ):
         
        
         # Add MSG Badge
+        if or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: return
+
         if len(Data['Queue']) <= 0: pass
         elif  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:   await msg.add_reaction('🥇')
         elif      ('🥇' in list(map(str,msg.reactions))) and pid != Data['Queue'][0]:   await msg.clear_reaction('🥇') #1st
@@ -385,6 +387,9 @@ async def setup(Data,payload):
 
     if 'ProposingText' not in Data:
         Data['ProposingText'] = None
+
+    if 'ProposingMSGs' not in Data:
+        Data['ProposingMSGs'] = None
 
     if 'CurrTurnStartTime' not in Data:
          Data['CurrTurnStartTime'] = 0
