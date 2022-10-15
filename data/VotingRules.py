@@ -158,6 +158,7 @@ async def popProposal(Data, payload, *text):
  
     Data['ProposingPlayer'] = None
     Data['ProposingText']   = ""
+    await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=False)
 
     print('..PopProposal To Deck:')
     if len(Data['Queue']) == 0: return Data
@@ -178,8 +179,6 @@ async def popProposal(Data, payload, *text):
     Data['PlayerData'][pid]['Proposal']['File'] = ''
     Data['PlayerData'][pid]['Proposal']['Supporters'] = []
     Data['PlayerData'][pid]['Proposal']['DOB'] = now()
-
-    await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=False)
 
     await updateProposal(Data, payload)
     await create_queue(Data, payload, )
