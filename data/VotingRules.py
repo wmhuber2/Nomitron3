@@ -16,7 +16,7 @@ yayEmoji = '👍'
 nayEmoji = '👎'
 
 zeroday = 1641016800 # Jan 1 2022
-day  = 24 * 60 * 60
+day  = 60*2 # 24 * 60 * 60
 def now(): return time.time() - zeroday
 
 
