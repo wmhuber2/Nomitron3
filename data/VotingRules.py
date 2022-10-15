@@ -60,7 +60,7 @@ async def tickTurn(Data, payload, *text):
 
     if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = time.time() +     24 * 60 * 60
     else:                               Data['NextTurnStartTime'] = time.time() + 2 * 24 * 60 * 60
-    
+    Data['NextTurnStartTime'] = time.time()
     Data['VotingEnabled'] = False
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
@@ -276,6 +276,7 @@ async def update(Data, payload):
     
     if (datetime.datetime.now(tz).hour != Data['Hour']):
         Data['Hour'] = datetime.datetime.now(tz).hour  - 5
+        print(Data['Hour'])
     return Data
 
 
