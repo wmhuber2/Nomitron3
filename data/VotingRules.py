@@ -8,7 +8,6 @@ For a Custom Command !commandMe
 """
 
 
-clearOnStart = True
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 zeroday = 1641016800 # Jan 1 2022
@@ -134,8 +133,8 @@ async def updateProposal(Data, payload):
         lines = proposalText(Data)
         for i in range(len(Data['ProposingMSGs'])): 
             mid  = Data['ProposingMSGs'][i] 
-            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
             line = lines[i]
+            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
             await payload['refs']['channels']['voting'].edit(line)
     else:
         for mid in Data['ProposingMSGs']: 
@@ -485,18 +484,6 @@ async def setup(Data,payload):
 
     print('Players In Game:',len(Data['PlayerData']))
 
-    if clearOnStart:
-        messages = [m async for m in payload['refs']['channels']['actions'].history(limit=200)]
-        for msg in messages: await msg.delete()
-
-        messages = [m async for m in payload['refs']['channels']['voting'].history(limit=200)]
-        for msg in messages: await msg.delete()
-
-        messages = [m async for m in payload['refs']['channels']['deck-edits'].history(limit=200)]
-        for msg in messages: await msg.delete()
-
-        messages = [m async for m in payload['refs']['channels']['proposals'].history(limit=200)]
-        for msg in messages: await msg.delete()
-
+   
     await create_queue(Data, payload)
     return await create_queue(Data, payload)
