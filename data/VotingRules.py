@@ -418,7 +418,7 @@ async def setup(Data,payload):
         Data['Proposal#'] = 300
 
     if 'Turn' not in Data:
-        Data['Turn'] = 1
+        Data['Turn'] = 0
 
     if 'Queue' not in Data:
         Data['Queue'] = {}
