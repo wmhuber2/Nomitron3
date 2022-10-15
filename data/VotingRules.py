@@ -280,7 +280,7 @@ Update Function Called Every 10 Seconds
 async def update(Data, payload):
     if   (now() - Data['NextTurnStartTime'] > 0):
         await tickTurn(Data, payload)
-    elif (now() - Data['CurrTurnStartTime'] > day):
+    elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
         await enableVoting(Data, payload)
     
     return Data
@@ -301,10 +301,12 @@ async def create_queue(Data, payload, ):
     # If Queue Structure not right size, regenerate to keep uniform spacing.
     if len(messages) != len(sortedQ): 
         for msg in messages: await msg.delete()
+        messages == []
         for pid in sortedQ:  
             msg = await payload['refs']['channels']['queue'].send("Generating Proposal View")
+            messages.append(msg)
             for r in ['👍', '👎', 'ℹ️']: await msg.add_reaction(r)
-    messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)][::-1]
+    messages = messages[::-1]
 
 
     # Update Messages with Stats
