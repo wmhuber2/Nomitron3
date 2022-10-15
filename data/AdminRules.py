@@ -3,7 +3,8 @@
 ################################
 import sys, os,datetime
 from shutil import copyfile
-
+path = "/usr/src/app/"
+savefile = 'DiscordBot_Data.yml'
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
@@ -11,6 +12,9 @@ async def clearAll(Data, payload, *text):
     for chan in ['actions', 'voting', 'queue', 'deck-edits','proposals']:
         messages = [m async for m in payload['refs']['channels'][chan].history(limit=200)]
         for msg in messages: await msg.delete()
+    os.remove(path + savefile)
+    sys.exit(0)
+
 async def clear(Data, payload, *text):
     if payload.get('Author') in admins: 
         messages = [m async for m in payload['raw'].channel.history(limit=20)]
