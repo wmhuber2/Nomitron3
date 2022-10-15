@@ -126,7 +126,7 @@ async def updateProposal(Data, payload):
     if payload.get('Author') not in admins: return
     for mid in Data['ProposingMSGs']: 
         msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
-        await msg.delete()]
+        await msg.delete()
 
     Data['ProposingMSGs'] = []
     for line in proposalText(Data):
