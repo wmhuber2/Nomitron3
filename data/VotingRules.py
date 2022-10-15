@@ -287,7 +287,7 @@ async def on_message(Data, payload):
             await payload['raw'].add_reaction('❌')
             await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
 
-        updateProposal(Data, payload)
+        await updateProposal(Data, payload)
 
     if payload['Channel'] == 'proposals':
         print('Saving Proposal', payload['Content'])
