@@ -155,7 +155,7 @@ async def popProposal(Data, payload, *text):
     
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
     await payload['refs']['players'][playerprop].add_roles(payload['refs']['roles']['On Deck'])
-    updateProposal(Data, payload)
+    await updateProposal(Data, payload)
 
     Data['Votes'] = {
     'Yay':[],
