@@ -80,6 +80,7 @@ async def tickTurn(Data, payload, *text):
     else:                               Data['NextTurnStartTime'] = (now()//day  + 2) * day
     Data['CurrTurnStartTime'] = (now()//day) * day
     Data['VotingEnabled'] = False
+    Data['Turn'] += 1
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
 
@@ -92,16 +93,16 @@ async def setProp(Data, payload, *text):
 async def bot_tally(Data, payload, *text):
     if payload.get('Author') not in admins: return
     if len(Data['ProposingText']) < 1:
-        await payload['refs']['channels']['actions'].send("**End Of Turn. No Proposal was on Deck**")
+        await payload['refs']['channels']['actions'].send(f"**Start Of New Turn #{Data['Turn']}. No Proposal was on Deck**")
         return
     player = Data['ProposingPlayer']
 
     if len(Data['Votes']['Yay']) > len(Data['Votes']['Nay']):
-        await payload['refs']['channels']['actions'].send(f"""**End Of Turn. {player}'s Proposal Passes
+        await payload['refs']['channels']['actions'].send(f"""**Start Of New Turn #{Data['Turn']}. {player}'s Proposal Passes
         Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.**
         """)
     else:
-        await payload['refs']['channels']['actions'].send(f"""**{player}'s Proposal Failed
+        await payload['refs']['channels']['actions'].send(f"""**Start Of New Turn #{Data['Turn']}. {player}'s Proposal Failed
         Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.**
         """)
 
@@ -149,7 +150,7 @@ async def enableVoting(Data, payload, *text):
     Data['VotingEnabled'] = True
 
     await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=True)
-
+    await payload['refs']['channels']['actions'].send("Players May Now Vote in #voting.")
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
 
 async def popProposal(Data, payload, *text):
@@ -415,6 +416,9 @@ async def setup(Data,payload):
 
     if 'Proposal#' not in Data:
         Data['Proposal#'] = 300
+
+    if 'Turn' not in Data:
+        Data['Turn'] = 1
 
     if 'Queue' not in Data:
         Data['Queue'] = {}
