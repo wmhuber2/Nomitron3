@@ -95,24 +95,24 @@ async def bot_tally(Data, payload, *text):
     if payload.get('Author') not in admins: return 
     if len(Data['ProposingText']) < 1:
         await payload['refs']['channels']['actions'].send(f"""**End of Turn #{Data['Turn']}.** No Proposal was on Deck
-        
-        **Start Of Turn #{Data['Turn']+1}. **
-        """)
+    
+    **Start Of Turn #{Data['Turn']+1}. **
+    """)
         return
     player =  Data['PlayerData'][ Data['ProposingPlayer'] ]['Name']
 
     if len(Data['Votes']['Yay']) > len(Data['Votes']['Nay']):
         await payload['refs']['channels']['actions'].send(f"""**End of Turn #{Data['Turn']}.** {player}'s Proposal Passes
-        Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
-        
-        **Start Of Turn #{Data['Turn']+1}. **
-        """)
+    - Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
+    
+    **Start Of Turn #{Data['Turn']+1}. **
+    """)
     else:
         await payload['refs']['channels']['actions'].send(f"""**End of Turn #{Data['Turn']}.** {player}'s Proposal Failed
-        Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
+    - Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.
 
-        **Start Of Turn #{Data['Turn']+1}. **
-        """)
+    **Start Of Turn #{Data['Turn']+1}. **
+    """)
 
 def proposalText(Data):
     playerprop = Data['ProposingPlayer']
