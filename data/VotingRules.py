@@ -10,7 +10,12 @@ For a Custom Command !commandMe
 
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
+
+zeroday = 1641016800 # Jan 1 2022
 day  = 24 * 60 * 60
+def now(): return now() - zeroday
+
+
 async def removeSupporter(Data, payload, *text):
     if payload.get('Author') not in admins: return
 
@@ -45,7 +50,7 @@ async def removeProposal(Data, payload, *text):
     Data['PlayerData'][pid]['Proposal'] = {}
     Data['PlayerData'][pid]['Proposal']['File'] = ''
     Data['PlayerData'][pid]['Proposal']['Supporters'] = []
-    Data['PlayerData'][pid]['Proposal']['DOB'] = time.time()
+    Data['PlayerData'][pid]['Proposal']['DOB'] = now()
 
 async def getPlayer(playerid, payload):
     if len(playerid) == 0: return None
@@ -59,9 +64,9 @@ async def tickTurn(Data, payload, *text):
     print('..Turn Ticking')
     if payload.get('Author') not in admins: return
 
-    if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = time.time() +     day
-    else:                               Data['NextTurnStartTime'] = time.time() + 2 * day
-    Data['NextTurnStartTime'] = time.time()
+    if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = (now()//day  + 1) * day
+    else:                               Data['NextTurnStartTime'] = (now()//day  + 2) * day
+    Data['NextTurnStartTime'] = (now()//day) * day
     Data['VotingEnabled'] = False
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
@@ -149,7 +154,7 @@ async def popProposal(Data, payload, *text):
 
     Data['PlayerData'][playerprop]['Proposal']['File'] = ''
     Data['PlayerData'][playerprop]['Proposal']['Supporters'] = []
-    Data['PlayerData'][playerprop]['Proposal']['DOB'] = time.time()
+    Data['PlayerData'][playerprop]['Proposal']['DOB'] = now()
     Data['PlayerData'][playerprop]['Proposal']['MSGID'] = None
 
     Data['Proposal#'] += 1
@@ -247,7 +252,7 @@ async def on_message(Data, payload):
             Data['PlayerData'][pid]['Proposal']['File'] = payload['Content']
 
         print("Prop:", Data['PlayerData'][pid]['Proposal']['File'])
-        Data['PlayerData'][pid]['Proposal']['DOB'] = time.time()
+        Data['PlayerData'][pid]['Proposal']['DOB'] = now()
         Data['PlayerData'][pid]['Proposal']['Supporters'] = [pid, ]
         await create_queue(Data, payload, )
 
@@ -273,14 +278,14 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    if   (datetime.datetime.now(tz).hour == 0) and (time.time() - Data['NextTurnStartTime'] > 0):
+    if   (now() - Data['NextTurnStartTime'] > 0):
         await tickTurn(Data, payload)
-    elif (datetime.datetime.now(tz).hour == 0) and (time.time() - Data['CurrTurnStartTime'] > day):
+    elif (now() - Data['CurrTurnStartTime'] > day):
         await enableVoting(Data, payload)
     
     if (datetime.datetime.now(tz).hour != Data['Hour']):
         Data['Hour'] = datetime.datetime.now(tz).hour  - 5
-        print(Data['Hour'])
+        print('Hour',Data['Hour'])
     return Data
 
 
@@ -323,7 +328,7 @@ async def create_queue(Data, payload, ):
         # Update Message Content
         if msg.content != cont:  await msg.edit( content = cont)
         
-        if time.time() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3:
+        if now() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3:
             await msg.edit( content = cont, attachments = files)
        
         # Add MSG Badge
@@ -338,7 +343,7 @@ async def create_queue(Data, payload, ):
         if len(Data['Queue']) <= 2: pass
         elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   await msg.add_reaction('🥉')
         elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
-        print('Queue', pid)
+    print('..Queue Updated')
     return Data
 
 """
@@ -404,7 +409,7 @@ async def setup(Data,payload):
             Data['PlayerData'][pid]['Proposal']['Supporters'] = []
 
         if 'DOB'   not in Data['PlayerData'][pid]['Proposal']:
-            Data['PlayerData'][pid]['Proposal']['DOB'] = time.time()
+            Data['PlayerData'][pid]['Proposal']['DOB'] = now()
 
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:
