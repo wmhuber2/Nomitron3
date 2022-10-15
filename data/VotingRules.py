@@ -187,7 +187,7 @@ async def on_reaction(Data, payload):
 
         await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
         if len(payload['Attachments']) == 0: return Data
-        author   = int(list(payload['Attachments'].keys())[0].split(".")[0])
+        author   = int(list(payload['Attachments'].keys())[0].split("-")[0])
         
         if payload['emoji'] == '👍':
             if payload['user'].id not in Data['PlayerData'][author]['Proposal']['Supporters']:
@@ -330,6 +330,8 @@ async def create_queue(Data, payload, ):
         player  = Data['PlayerData'][pid]['Name']
         msg     = messages[i]
 
+        filename = f"{pid}-{Data['PlayerData'][pid]['Proposal']['DOB']}.txt")
+
         # Generate Message Content
         if Data['PlayerData'][pid]['Proposal']['File'] is None or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: 
             cont   = f"{player} Has No Proposal."
@@ -340,7 +342,7 @@ async def create_queue(Data, payload, ):
         
 
         # Update Message Content
-        if now() - Data['PlayerData'][pid]['Proposal']['DOB'] < 3:
+        if list(payload['Attachments'].keys())[0] != filename:
             await msg.edit( content = cont, attachments = files)
         elif msg.content != cont:  await msg.edit( content = cont)
         
