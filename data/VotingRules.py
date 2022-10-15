@@ -11,6 +11,10 @@ For a Custom Command !commandMe
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
+reactVoting = True
+yayEmoji = '👍'
+nayEmoji = '👎'
+
 zeroday = 1641016800 # Jan 1 2022
 day  = 24 * 60 * 60
 def now(): return time.time() - zeroday
@@ -108,7 +112,7 @@ def proposalText(Data):
     if playerprop is None: return []
 
     msg = f"Proposal #{Data['Proposal#']}: "
-    if Data['VotingEnabled']: msg += "**Status: Accepting Votes!** \n\n "
+    if Data['VotingEnabled']: msg += f"**Status: ({len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.)** \n\n "
     else                    : msg += "**Status: ON DECK (No Voting)** \n\n "
     topin = []
 
@@ -124,18 +128,34 @@ def proposalText(Data):
 async def updateProposal(Data, payload):
     print('..Updating Prop')
     if payload.get('Author') not in admins: return
-    for mid in Data['ProposingMSGs']: 
-        msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
-        await msg.delete()
 
-    Data['ProposingMSGs'] = []
-    for line in proposalText(Data):
-        msg = await payload['refs']['channels']['voting'].send(line)
-        Data['ProposingMSGs'].append(msg.id)
+    if Data['VotingEnabled']:
+        lines = proposalText(Data)
+        for i in range(len(Data['ProposingMSGs'])): 
+            mid  = Data['ProposingMSGs'][i] 
+            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
+            line = lines[i]:
+            await payload['refs']['channels']['voting'].edit(line)
+    else:
+        for mid in Data['ProposingMSGs']: 
+            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
+            await msg.delete()
+
+        Data['ProposingMSGs'] = []
+        for line in proposalText(Data):
+            msg = await payload['refs']['channels']['voting'].send(line)
+            Data['ProposingMSGs'].append(msg.id)
 
 async def enableVoting(Data, payload, *text):
     print('..Enabling Voting')
     Data['VotingEnabled'] = True
+    if reactVoting:
+            mid  = Data['ProposingMSGs'][-1] 
+            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
+            await msg.add_reaction(yayEmoji)
+            await msg.add_reaction(nayEmoji)
+
+
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
 
 async def popProposal(Data, payload, *text):
@@ -165,14 +185,43 @@ async def popProposal(Data, payload, *text):
     await updateProposal(Data, payload)
     await create_queue(Data, payload, )
 
+async def yay(Data, payload):
+    author = payload['Author ID']
+    if author not in Data['Votes']['Yay']:           Data['Votes']['Yay'].append( author )
+    if author in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( author )
+    if author in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( author )
+    #await payload['message'].remove_reaction(nayEmoji , payload['user'])
 
+async def nay(Data, payload):
+    author = payload['Author ID']
+    if author not in Data['Votes']['Nay']:           Data['Votes']['Nay'].append( author )
+    if author in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( author )
+    if author in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( author )
+    #await payload['message'].remove_reaction(yayEmoji , payload['user'])
+
+async def abstain(Data, payload):
+    author = payload['Author ID']
+    if author not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append( author )
+    if author in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( author )
+    if author in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( author )
+    #await payload['message'].remove_reaction(yayEmoji , payload['user'])
+    #await payload['message'].remove_reaction(nayEmoji , payload['user'])
 
 """
 Function Called on Reaction
 """
 async def on_reaction(Data, payload):
-    if payload['Channel'].name == 'voting':
-        pass
+    if payload['Channel'].name == 'voting' and False:
+       
+        if payload['emoji'] == yayEmoji:
+            await yay(Data, payload)
+            await payload['raw'].add_reaction('✔️')
+        if payload['emoji'] == nayEmoji:            
+            await nay(Data, payload)
+            await payload['raw'].add_reaction('✔️')
+        elif vote in ['abstain', 'withdraw']:
+            await abstain(Data, payload)
+            await payload['raw'].add_reaction('✔️')
 
     if payload['Channel'].name == 'queue' and payload['mode'] == 'add':
 
@@ -226,24 +275,20 @@ async def on_message(Data, payload):
         # Register Vote
         vote = payload['Content'].lower().strip()
         if vote in ['y', 'yay', 'aye', 'yes']:
-            if payload['Author ID'] not in Data['Votes']['Yay']:           Data['Votes']['Yay'].append(payload['Author ID'])
-            if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
-            if payload['Author ID'] in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( payload['Author ID']  )
+            await yay(Data, payload)
             await payload['raw'].add_reaction('✔️')
         elif vote in ['nay', 'no', 'n']:
-            if payload['Author ID'] not in Data['Votes']['Nay']:           Data['Votes']['Nay'].append(payload['Author ID'])
-            if payload['Author ID'] in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( payload['Author ID']  )
-            if payload['Author ID'] in Data['Votes']['Abstain']:           Data['Votes']['Abstain'].remove( payload['Author ID']  )
+            await nay(Data, payload)
             await payload['raw'].add_reaction('✔️')
         elif vote in ['abstain', 'withdraw']:
-            if payload['Author ID'] not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append(payload['Author ID'])
-            if payload.get('Author') in Data['Votes']['Yay']:                  Data['Votes']['Yay'].remove( payload['Author ID']  )
-            if payload['Author ID'] in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( payload['Author ID']  )
+            await abstain(Data, payload)
             await payload['raw'].add_reaction('✔️')
         else:
             await payload['raw'].add_reaction('❌')
             await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
-        
+
+        updateProposal(Data, payload)
+
     if payload['Channel'] == 'proposals':
         print('Saving Proposal', payload['Content'])
         pid = payload['Author ID']
@@ -260,7 +305,6 @@ async def on_message(Data, payload):
         Data['PlayerData'][pid]['Proposal']['DOB'] = now()
         Data['PlayerData'][pid]['Proposal']['Supporters'] = [pid, ]
         await create_queue(Data, payload, )
-
 
     if payload['Channel'] == 'deck-edits':
         print('Updating Proposal')
