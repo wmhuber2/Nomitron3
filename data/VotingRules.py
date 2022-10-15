@@ -148,7 +148,7 @@ async def enableVoting(Data, payload, *text):
     print('..Enabling Voting')
     Data['VotingEnabled'] = True
 
-    await payload['refs']['channels']['voting'].channel.set_permissions(payload['refs']['roles']['Player'], send_messages=True)
+    await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=True)
 
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
 
