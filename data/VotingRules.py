@@ -124,9 +124,10 @@ def proposalText(Data):
     return topin
 
 async def updateProposal(Data, payload):
+    print('..Updating Prop')
     if payload.get('Author') not in admins: return
     for msg in await payload['refs']['channels']['voting'].pins(): msg.delete()
-    playerprop = Data['Queue'].pop(0)
+    playerprop = Data['ProposingPlayer']
     for line in proposalText(Data):
         msg = await payload['refs']['channels']['voting'].send(line)
         msg.pin()
@@ -291,7 +292,8 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    if   (now() - Data['NextTurnStartTime'] < 0):
+    if   (now() - Data['NextTurnStartTime'] < 10):
+        print('..Updating TickTurn')
         await tickTurn(Data, payload)
     elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
         await enableVoting(Data, payload)
