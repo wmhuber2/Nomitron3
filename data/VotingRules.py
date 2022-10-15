@@ -292,7 +292,7 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    if   (now() - Data['NextTurnStartTime'] < 10):
+    if   (now() - Data['NextTurnStartTime'] > 0):
         print('..Updating TickTurn')
         await tickTurn(Data, payload)
     elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
