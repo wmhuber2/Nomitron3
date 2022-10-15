@@ -342,7 +342,7 @@ async def create_queue(Data, payload, ):
         
 
         # Update Message Content
-        if list(payload['Attachments'].keys())[0] != filename:
+        if msg.attachments[0].filename != filename:
             await msg.edit( content = cont, attachments = files)
         elif msg.content != cont:  await msg.edit( content = cont)
         
