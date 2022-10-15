@@ -10,7 +10,7 @@ For a Custom Command !commandMe
 
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
-
+day  = 24 * 60 * 60
 async def removeSupporter(Data, payload, *text):
     if payload.get('Author') not in admins: return
 
@@ -26,7 +26,7 @@ async def removeSupporter(Data, payload, *text):
 async def extendTurn(Data, payload, *text):
     if payload.get('Author') not in admins: return
 
-    Data['NextTurnStartTime'] += 24*60*60
+    Data['NextTurnStartTime'] += day
     await payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
 
@@ -56,10 +56,11 @@ async def getPlayer(playerid, payload):
     return None
 
 async def tickTurn(Data, payload, *text):
+    print('..Turn Ticking')
     if payload.get('Author') not in admins: return
 
-    if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = time.time() +     24 * 60 * 60
-    else:                               Data['NextTurnStartTime'] = time.time() + 2 * 24 * 60 * 60
+    if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = time.time() +     day
+    else:                               Data['NextTurnStartTime'] = time.time() + 2 * day
     Data['NextTurnStartTime'] = time.time()
     Data['VotingEnabled'] = False
     await bot_tally(Data, payload)
@@ -114,10 +115,13 @@ async def updateProposal(Data, payload):
         msg.pin()
 
 async def enableVoting(Data, payload):
+    print('..Enabling Voting')
     Data['VotingEnabled'] = True
+    for p in payload['refs']['players'].items(): await p.remove_rolls(payload['refs']['roles']['On Deck'])
+
 
 async def popProposal(Data, payload, *text):
-    print('PopP')
+    print('..PopProposal To Deck')
     if payload.get('Author') not in admins: return
 
     Data['ProposingPlayer'] = None
@@ -271,7 +275,7 @@ Update Function Called Every 10 Seconds
 async def update(Data, payload):
     if   (datetime.datetime.now(tz).hour == 0) and (time.time() - Data['NextTurnStartTime'] > 0):
         await tickTurn(Data, payload)
-    elif (datetime.datetime.now(tz).hour == 0) and (time.time() - Data['CurrTurnStartTime'] > 24 * 60 * 60):
+    elif (datetime.datetime.now(tz).hour == 0) and (time.time() - Data['CurrTurnStartTime'] > day):
         await enableVoting(Data, payload)
     
     if (datetime.datetime.now(tz).hour != Data['Hour']):

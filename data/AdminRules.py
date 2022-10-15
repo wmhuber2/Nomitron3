@@ -49,4 +49,3 @@ def uploadData(Data, payload):
     k = payload['Attachments'].keys[0]
     newData = yaml.safe_load(payload['Attachments'][k])
     self.Data = dict(newData)
-
