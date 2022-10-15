@@ -78,7 +78,7 @@ async def tickTurn(Data, payload, *text):
 
     if len(Data['Queue']) == 0:         Data['NextTurnStartTime'] = (now()//day  + 1) * day
     else:                               Data['NextTurnStartTime'] = (now()//day  + 2) * day
-    Data['NextTurnStartTime'] = (now()//day) * day
+    Data['CurrTurnStartTime'] = (now()//day) * day
     Data['VotingEnabled'] = False
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
