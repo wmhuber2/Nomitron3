@@ -349,7 +349,7 @@ async def create_queue(Data, payload, ):
         
        
         # Add MSG Badge
-        if or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: return
+        if len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: continue
 
         if len(Data['Queue']) <= 0: pass
         elif  (not '🥇' in list(map(str,msg.reactions))) and pid == Data['Queue'][0]:   await msg.add_reaction('🥇')
