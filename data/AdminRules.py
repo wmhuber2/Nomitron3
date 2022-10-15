@@ -7,6 +7,11 @@ from shutil import copyfile
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
+
+async def clearAll(Data, payload, *text):
+    if payload.get('Author') in admins: 
+        messages = [m async for m in payload['raw'].channel.history(limit=200)]
+        for msg in messages: await msg.delete()
 async def sudo(Data, payload, *text):
     if payload.get('Author') in admins: 
         await payload['refs']['players'][payload['raw'].author.id].add_roles(payload['refs']['roles']['Moderator'])
