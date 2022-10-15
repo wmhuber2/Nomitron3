@@ -330,7 +330,7 @@ async def create_queue(Data, payload, ):
         player  = Data['PlayerData'][pid]['Name']
         msg     = messages[i]
 
-        filename = f"{pid}-{Data['PlayerData'][pid]['Proposal']['DOB']}.txt")
+        filename = f"{pid}-{Data['PlayerData'][pid]['Proposal']['DOB']}.txt"
 
         # Generate Message Content
         if Data['PlayerData'][pid]['Proposal']['File'] is None or len(Data['PlayerData'][pid]['Proposal']['File']) <= 1: 
