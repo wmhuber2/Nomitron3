@@ -55,14 +55,12 @@ async def removeProposal(Data, payload, *text):
     pid = player.id
     print('Purging proposals for ',player.name)
 
-    try:
-        msg = await payload['refs']['channels']['queue'].fetch_message(Data['PlayerData'][pid]['Proposal']['MSGID'])
-        await msg.delete()
-    except: pass
     Data['PlayerData'][pid]['Proposal'] = {}
     Data['PlayerData'][pid]['Proposal']['File'] = ''
     Data['PlayerData'][pid]['Proposal']['Supporters'] = []
     Data['PlayerData'][pid]['Proposal']['DOB'] = now()
+
+    await create_queue(Data, payload)
 
 async def getPlayer(playerid, payload):
     if len(playerid) == 0: return None
@@ -91,7 +89,7 @@ async def setProp(Data, payload, *text):
 
 async def bot_tally(Data, payload, *text):
     if payload.get('Author') not in admins: return
-    if len(Data['Votes']['Proposal']) != 1:
+    if len(Data['ProposingText']) > 1:
         await payload['refs']['channels']['actions'].send("**End Of Turn. No Proposal was on Deck**")
         return
     player, rule = list(Data['Votes']['Proposal'].items())[0]
@@ -128,8 +126,8 @@ async def updateProposal(Data, payload):
     if payload.get('Author') not in admins: return
     for mid in Data['ProposingMSGs']: 
         msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
-        await msg.delete()
-    playerprop = Data['ProposingPlayer']
+        await msg.delete()]
+
     Data['ProposingMSGs'] = []
     for line in proposalText(Data):
         msg = await payload['refs']['channels']['voting'].send(line)
@@ -154,10 +152,7 @@ async def popProposal(Data, payload, *text):
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
     await payload['refs']['players'][pid].add_roles(payload['refs']['roles']['On Deck'])
     
-    Data['Votes'] = { 'Yay':[], 'Nay':[], 'Abstain':[], 'Proposal': {
-        Data['PlayerData'][pid]['Name'] : Data['PlayerData'][pid]['Proposal']['File']
-    }}
-
+    Data['Votes'] = { 'Yay':[], 'Nay':[], 'Abstain':[] }
     Data['Proposal#']       += 1
     Data['ProposingPlayer']  = pid
     Data['ProposingText']    = str(Data['PlayerData'][pid]['Proposal']['File'])
@@ -165,7 +160,6 @@ async def popProposal(Data, payload, *text):
     Data['PlayerData'][pid]['Proposal']['File'] = ''
     Data['PlayerData'][pid]['Proposal']['Supporters'] = []
     Data['PlayerData'][pid]['Proposal']['DOB'] = now()
-    Data['PlayerData'][pid]['Proposal']['MSGID'] = None
 
     
     await updateProposal(Data, payload)
