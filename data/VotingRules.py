@@ -283,9 +283,6 @@ async def update(Data, payload):
     elif (now() - Data['CurrTurnStartTime'] > day):
         await enableVoting(Data, payload)
     
-    if (datetime.datetime.now(tz).hour != Data['Hour']):
-        Data['Hour'] = datetime.datetime.now(tz).hour  - 5
-        print('Hour',Data['Hour'])
     return Data
 
 
@@ -374,9 +371,6 @@ async def setup(Data,payload):
 
     if 'NextTurnStartTime' not in Data:
          Data['NextTurnStartTime'] = 0
-
-    if 'Hour' not in Data:
-         Data['Hour'] = -1
 
     if 'Votes' not in Data:
          Data['Votes'] = {'Yay':[], 'Nay':[], 'Abstain':[], 'Proposal': {}}
