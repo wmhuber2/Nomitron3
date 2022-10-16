@@ -142,7 +142,7 @@ async def updateProposal(Data, payload):
             mid  = Data['ProposingMSGs'][i] 
             line = lines[i]
             msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
-            await msg.edit(line)
+            await msg.edit(content = line)
     else:
         for mid in Data['ProposingMSGs']: 
             msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
