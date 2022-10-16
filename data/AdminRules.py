@@ -1,12 +1,40 @@
 #
 # Admin Module For Discord Bot
 ################################
-import sys, os,datetime
+import sys, os,datetime, discord
+from pytube import YouTube 
+
 from shutil import copyfile
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
+
+async def play(Data, payload, *text):
+    # Gets voice channel of message author
+        voice_channel = payload['Author'].channel
+        channel = None
+        if voice_channel != None:
+            channel = voice_channel.name
+            vc = await voice_channel.connect()
+            print(text[1:]) 
+            try:      yt = YouTube(text[1:]) 
+            except:   print("Connection Error") #to handle exception 
+            
+            mp4files = yt.filter('mp4') 
+
+            filename = f"{time.time}"
+            yt.set_filename(f"{path}ytmp/"+filename)  
+            
+            d_video = yt.get(mp4files[-1].extension,mp4files[-1].resolution) 
+            try:  d_video.download(f"{path}ytmp/") 
+            except:  print("Some Error!") 
+            print('Task Completed!') 
+            
+            vc.play(discord.FFmpegPCMAudio(source=f"{path}ytmp/"+filename))
+            while vc.is_playing(): sleep(.1)
+            await vc.disconnect()
+        
 
 async def clearAll(Data, payload, *text):
     for chan in ['actions', 'voting', 'queue', 'deck-edits','proposals']:
