@@ -160,6 +160,7 @@ async def enableVoting(Data, payload, *text):
     await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=True)
     await payload['refs']['channels']['actions'].send("Players May Now Vote in #voting.")
     for p in payload['refs']['players'].values(): await p.remove_roles(payload['refs']['roles']['On Deck'])
+    await updateProposal(Data, payload)
 
 async def popProposal(Data, payload, *text):
     if payload.get('Author') not in admins: return
