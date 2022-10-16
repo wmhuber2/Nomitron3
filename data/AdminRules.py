@@ -12,7 +12,7 @@ admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 async def play(Data, payload, *text):
     # Gets voice channel of message author
-        voice_channel = payload['Author'].channel
+        voice_channel = payload['raw'].author.channel
         channel = None
         if voice_channel != None:
             channel = voice_channel.name
