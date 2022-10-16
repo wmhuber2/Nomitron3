@@ -166,6 +166,7 @@ async def popProposal(Data, payload, *text):
  
     Data['ProposingPlayer'] = None
     Data['ProposingText']   = ""
+    Data['ProposingMSGs']   = []
     await payload['refs']['channels']['voting'].set_permissions(payload['refs']['roles']['Player'], send_messages=False)
 
     print('..PopProposal To Deck:')
