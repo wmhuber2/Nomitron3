@@ -4,7 +4,7 @@ COPY . .
 
 RUN apt update
 RUN apt install -y ffmpeg
-RUN pip install --no-cache-dir --upgrade pip && \
+RUN pip install --no-cache-dir --upgrade pip pynacl && \
     pip install --no-cache-dir matplotlib numpy discord pyyaml && \
     pip install --no-cache-dir asyncio importlib pytube
 
