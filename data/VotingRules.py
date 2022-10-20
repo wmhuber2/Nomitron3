@@ -341,6 +341,8 @@ async def update(Data, payload):
     elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
         await enableVoting(Data, payload)
     
+
+    messages = [m async for m in payload['refs']['channels']['queue'].history(limit=1)]
     return Data
 
 
