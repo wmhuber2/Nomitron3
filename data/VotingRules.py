@@ -73,6 +73,9 @@ async def getPlayer(playerid, payload):
 
 async def tickTurn(Data, payload, *text):
     print('..Turn Ticking')
+    Data['CurrTurnStartTime'] = (now()//day) * day
+    Data['VotingEnabled'] = False
+    Data['Turn'] += 1
 
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
@@ -81,9 +84,7 @@ async def tickTurn(Data, payload, *text):
 
     if len(Data['ProposingText']) < 1:  Data['NextTurnStartTime'] = (now()//day  + 1) * day
     else:                               Data['NextTurnStartTime'] = (now()//day  + 2) * day
-    Data['CurrTurnStartTime'] = (now()//day) * day
-    Data['VotingEnabled'] = False
-    Data['Turn'] += 1
+   
 
 async def setProp(Data, payload, *text):
     if payload.get('Author') not in admins: return
@@ -429,7 +430,7 @@ async def setup(Data,payload):
         Data['Proposal#'] = 300
 
     if 'Turn' not in Data:
-        Data['Turn'] = 0
+        Data['Turn'] = -1
 
     if 'Queue' not in Data:
         Data['Queue'] = {}
