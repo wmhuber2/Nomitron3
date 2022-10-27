@@ -126,9 +126,9 @@ def proposalText(Data):
 
     for line in Data['ProposingText'].split('\n'):
         line += '\n'
-        if len(msg + line) > 1950:
+        if len(msg + line) > 1920:
             topin.append(msg)
-            msg = ""
+            msg = str(line)
         else: msg += line
     if len(msg) > 1: topin.append(msg)
     return topin
