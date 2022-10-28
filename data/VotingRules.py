@@ -128,7 +128,14 @@ def proposalText(Data):
         line += '\n'
         if len(msg + line) > 1920:
             topin.append(msg)
-            msg = str(line)
+            msg = ""
+
+            for word in line.split(' '):
+                if len(msg + word) > 1920:
+                    topin.append(msg)
+                    msg = str(word)
+                else: msg += word
+                msg += " "
         else: msg += line
     if len(msg) > 1: topin.append(msg)
     return topin
