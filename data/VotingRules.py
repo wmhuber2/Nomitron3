@@ -10,6 +10,8 @@ For a Custom Command !commandMe
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
+last_update_prop_time = 0
+hold_for_update_prop = False
 zeroday = 1641016800 # Jan 1 2022
 day  = 24 * 60 * 60
 def now(): return time.time() - zeroday
@@ -141,6 +143,18 @@ def proposalText(Data):
     return topin
 
 async def updateProposal(Data, payload):
+    if last_update_prop_time +5 < time.time():
+        actuallyUpdateProposal(Data, payload)
+    else:
+        hold_for_update_prop = True
+
+
+async def actuallyUpdateProposal(Data, payload):
+    def is_proposalMSG(m): return m.id in Data['ProposingMSGs']
+
+    last_update_prop_time = time.time()
+    hold_for_update_prop = False
+
     print('..Updating Prop')
     if payload.get('Author') not in admins: return
 
@@ -152,10 +166,7 @@ async def updateProposal(Data, payload):
             msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
             await msg.edit(content = line)
     else:
-        for mid in Data['ProposingMSGs']: 
-            msg = await payload['refs']['channels']['voting'].fetch_message(mid) 
-            await msg.delete()
-
+        await payload['refs']['channels']['voting'].purge(limit=100, check=is_proposalMSG)
         Data['ProposingMSGs'] = []
         for line in proposalText(Data):
             msg = await payload['refs']['channels']['voting'].send(line)
@@ -353,8 +364,10 @@ async def update(Data, payload):
         await enableVoting(Data, payload)
     
 
-    #messages = [m async for m in payload['refs']['channels']['queue'].history(limit=1)]
+    if hold_for_update_prop and last_update_prop_time +5 < time.time():
+        actuallyUpdateProposal(Data, payload)
     return Data
+
 
 
 """
@@ -368,13 +381,13 @@ async def create_queue(Data, payload, ):
 
     # Sorted list of player IDs In order of Suporters, then Age
     sortedQ = list(sorted( dict(Data['PlayerData']).keys(), key=keySort))
-    messages = [m async for m in payload['refs']['channels']['queue'].history(limit=200)]
+    messages = [m async for m in payload['refs']['channels']['queue'].history(limit=100)]
     Data['Queue'] = sortedQ[::-1]
 
 
     # If Queue Structure not right size, regenerate to keep uniform spacing.
     if len(messages) != len(sortedQ): 
-        for msg in messages: await msg.delete()
+        payload['refs']['channels']['queue'].purge()
         messages == []
         for pid in sortedQ:  
             msg = await payload['refs']['channels']['queue'].send("Generating Proposal View")

@@ -110,6 +110,7 @@ class DiscordNomicBot():
         payload['Attachments'] = {}
         payload['ctx']  = self.client
         payload['refs'] = self.refs
+        payload['discord'] = discord
 
         for file in message.attachments:  payload['Attachments'][file.filename] = file
         print(f"Event in {payload['Channel']}:",message.system_content)
