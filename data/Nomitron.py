@@ -104,7 +104,7 @@ class DiscordNomicBot():
         else:
             payload['Nickname'] = message.author.nick
             payload['Channel'] = message.channel.name
-            payload['Category'] = message.guild.get_channel(message.channel.category_id)
+            #payload['Category'] = message.guild.get_channel(message.channel.category_id)
 
         payload['Content'] = message.system_content.strip()
         payload['Attachments'] = {}

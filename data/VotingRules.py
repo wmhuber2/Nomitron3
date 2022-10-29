@@ -324,8 +324,11 @@ async def on_message(Data, payload):
 
     if payload['Channel'] == 'deck-edits':
         print('Updating Proposal')
-        if payload['Author ID'] != Data['ProposingPlayer'] or Data['VotingEnabled'] == True: 
+        if Data['VotingEnabled'] == True: 
             await payload['refs']['channels']['deck-edits'].send("The deck cannot be updated at this time in the turn.")
+            return
+        if payload['Author ID'] != Data['ProposingPlayer']: 
+            await payload['refs']['channels']['deck-edits'].send("You are not the proposer. This message will be ignored.")
             return
 
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
@@ -350,7 +353,7 @@ async def update(Data, payload):
         await enableVoting(Data, payload)
     
 
-    messages = [m async for m in payload['refs']['channels']['queue'].history(limit=1)]
+    #messages = [m async for m in payload['refs']['channels']['queue'].history(limit=1)]
     return Data
 
 
