@@ -144,7 +144,7 @@ def proposalText(Data):
 
 async def updateProposal(Data, payload):
     if last_update_prop_time +5 < time.time():
-        actuallyUpdateProposal(Data, payload)
+        await actuallyUpdateProposal(Data, payload)
     else:
         hold_for_update_prop = True
 
@@ -365,7 +365,7 @@ async def update(Data, payload):
     
 
     if hold_for_update_prop and last_update_prop_time +5 < time.time():
-        actuallyUpdateProposal(Data, payload)
+        await actuallyUpdateProposal(Data, payload)
     return Data
 
 
