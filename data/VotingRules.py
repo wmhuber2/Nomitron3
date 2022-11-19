@@ -74,6 +74,8 @@ async def getPlayer(playerid, payload):
     return None
 
 async def tickTurn(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+
     print('..Turn Ticking')
     Data['CurrTurnStartTime'] = (now()//day) * day
     Data['VotingEnabled'] = False
@@ -82,12 +84,9 @@ async def tickTurn(Data, payload, *text):
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
 
-    if payload.get('Author') not in admins: return
-
     if len(Data['ProposingText']) < 1:  Data['NextTurnStartTime'] = (now()//day  + 1) * day
     else:                               Data['NextTurnStartTime'] = (now()//day  + 2) * day
    
-
 async def setProp(Data, payload, *text):
     if payload.get('Author') not in admins: return
     try: Data['Proposal#'] = int(text[0][1])
@@ -143,6 +142,8 @@ def proposalText(Data):
     return topin
 
 async def updateProposal(Data, payload):
+    if payload.get('Author') not in admins: return
+
     if last_update_prop_time +5 < time.time():
         await actuallyUpdateProposal(Data, payload)
     else:
@@ -152,11 +153,12 @@ async def updateProposal(Data, payload):
 async def actuallyUpdateProposal(Data, payload):
     def is_proposalMSG(m): return m.id in Data['ProposingMSGs']
 
-    last_update_prop_time = time.time()
-    hold_for_update_prop = False
+    if payload.get('Author') not in admins: return
 
     print('..Updating Prop')
-    if payload.get('Author') not in admins: return
+
+    last_update_prop_time = time.time()
+    hold_for_update_prop = False
 
     if Data['VotingEnabled']:
         lines = proposalText(Data)
@@ -173,6 +175,7 @@ async def actuallyUpdateProposal(Data, payload):
             Data['ProposingMSGs'].append(msg.id)
 
 async def enableVoting(Data, payload, *text):
+    if payload.get('Author') not in admins: return
     print('..Enabling Voting')
     Data['VotingEnabled'] = True
 
@@ -213,6 +216,7 @@ async def popProposal(Data, payload, *text):
     await create_queue(Data, payload, )
 
 async def yay(Data, payload):
+    if payload.get('Author') not in admins: return
     author = payload['Author ID']
     if author not in Data['Votes']['Yay']:           Data['Votes']['Yay'].append( author )
     if author in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( author )
@@ -220,6 +224,7 @@ async def yay(Data, payload):
     #await payload['message'].remove_reaction(nayEmoji , payload['user'])
 
 async def nay(Data, payload):
+    if payload.get('Author') not in admins: return
     author = payload['Author ID']
     if author not in Data['Votes']['Nay']:           Data['Votes']['Nay'].append( author )
     if author in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( author )
@@ -227,6 +232,7 @@ async def nay(Data, payload):
     #await payload['message'].remove_reaction(yayEmoji , payload['user'])
 
 async def abstain(Data, payload):
+    if payload.get('Author') not in admins: return
     author = payload['Author ID']
     if author not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append( author )
     if author in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( author )

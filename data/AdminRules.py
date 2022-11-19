@@ -34,14 +34,14 @@ async def play(Data, payload, *text):
             vc.play(discord.FFmpegPCMAudio(source=f"{path}ytmp/"+filename))
             while vc.is_playing(): sleep(.1)
             await vc.disconnect()
-        
-
+      
 async def clearAll(Data, payload, *text):
-    for chan in ['actions', 'voting', 'queue', 'deck-edits','proposals']:
-        messages = [m async for m in payload['refs']['channels'][chan].history(limit=200)]
-        for msg in messages: await msg.delete()
-    os.remove(path + savefile)
-    sys.exit(0)
+    if payload.get('Author') in admins:
+        for chan in ['actions', 'voting', 'queue', 'deck-edits','proposals']:
+            messages = [m async for m in payload['refs']['channels'][chan].history(limit=200)]
+            for msg in messages: await msg.delete()
+        os.remove(path + savefile)
+        sys.exit(0)
 
 async def clear(Data, payload, *text):
     if payload.get('Author') in admins: 
@@ -51,15 +51,15 @@ async def clear(Data, payload, *text):
 async def sudo(Data, payload, *text):
     if payload.get('Author') in admins: 
         await payload['refs']['players'][payload['raw'].author.id].add_roles(payload['refs']['roles']['Moderator'])
+
 async def sudont(Data, payload, *text):
     if payload.get('Author') in admins:         
         await payload['refs']['players'][payload['raw'].author.id].remove_roles(payload['refs']['roles']['Moderator'])
-
     
 async def restart(Data, payload, *text):
-    message = payload['raw']
-    print('Restarting',payload.get('Author'))
     if payload.get('Author') in admins:
+        message = payload['raw']
+        print('Restarting',payload.get('Author'))
         await message.channel.send('Going for Restart')
         print("Going For Restart...")
         sys.exit(0)
@@ -67,6 +67,7 @@ async def restart(Data, payload, *text):
 async def ping(Data, payload, *text):
     message = payload['raw']
     await message.channel.send('!pong')
+
 """
 Main Run Function
 """
@@ -87,6 +88,7 @@ async def on_message(Data, payload):
                 await message.channel.send('```diff\n'+msg+'```')
 
 def uploadData(Data, payload):
-    k = payload['Attachments'].keys[0]
-    newData = yaml.safe_load(payload['Attachments'][k])
-    self.Data = dict(newData)
+    if payload.get('Author') in admins:
+        k = payload['Attachments'].keys[0]
+        newData = yaml.safe_load(payload['Attachments'][k])
+        return dict(newData)
