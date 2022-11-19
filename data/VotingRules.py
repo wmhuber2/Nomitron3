@@ -31,18 +31,6 @@ async def turnStats(Data, payload, *text):
     ```'''
     await payload['raw'].channel.send(msg)
 
-async def removeSupporter(Data, payload, *text):
-    if payload.get('Author') not in admins: return
-
-    playerid, nth = payload['Content'].split(' ')[1:3]
-    player = await getPlayer(playerid, payload)
-    pid = player.id
-    nth = int(nth)
-    print(f"Purging {nth} {Data['PlayerData'][pid]['Proposal']['Supporters'][nth]} supporter for {player.name}")
-
-    Data['PlayerData'][pid]['Proposal']['Supporters'].pop(nth)
-    return Data
-
 async def extendTurn(Data, payload, *text):
     if payload.get('Author') not in admins: return
 

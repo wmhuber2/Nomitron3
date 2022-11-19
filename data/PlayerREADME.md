@@ -29,8 +29,6 @@ Mod Commands:
     !popProposal      :  Put top proposal on Queue in Voting
     !setProp $num     :  Set proposal Number to $num
     !enableVoting     :  Enable voting 
-    !removeSupporter $proposer $player
-                      :  Remove $player from $proposer's supporters
     !removeProposal $player
                       :  Remove $player's propsal from Queue
 
