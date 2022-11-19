@@ -147,7 +147,7 @@ class DiscordNomicBot():
                  path + 'BackupDataFiles/'+ savefile + '-' + str(datetime.datetime.now()))
 
 
-        if 'server' not in self.Data:   self.Data['server'] = serverid
+        self.Data['server'] = serverid
 
         for s in self.client.guilds:
             print( 'Found Server:',s.name, s.id, serverid)
