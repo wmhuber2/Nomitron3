@@ -34,14 +34,13 @@ async def play(Data, payload, *text):
             vc.play(discord.FFmpegPCMAudio(source=f"{path}ytmp/"+filename))
             while vc.is_playing(): sleep(.1)
             await vc.disconnect()
-      
+
+
 async def clearAll(Data, payload, *text):
-    if payload.get('Author') in admins:
-        for chan in ['actions', 'voting', 'queue', 'deck-edits','proposals']:
-            messages = [m async for m in payload['refs']['channels'][chan].history(limit=200)]
-            for msg in messages: await msg.delete()
+    if payload.get('Author') in ['Fenris#6136', 'Crorem#6962']:
         os.remove(path + savefile)
         sys.exit(0)
+
 
 async def clear(Data, payload, *text):
     if payload.get('Author') in admins: 
