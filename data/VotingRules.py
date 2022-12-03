@@ -204,7 +204,6 @@ async def popProposal(Data, payload, *text):
     await create_queue(Data, payload, )
 
 async def yay(Data, payload):
-    if payload.get('Author') not in admins: return
     author = payload['Author ID']
     if author not in Data['Votes']['Yay']:           Data['Votes']['Yay'].append( author )
     if author in Data['Votes']['Nay']:               Data['Votes']['Nay'].remove( author )
@@ -212,7 +211,6 @@ async def yay(Data, payload):
     #await payload['message'].remove_reaction(nayEmoji , payload['user'])
 
 async def nay(Data, payload):
-    if payload.get('Author') not in admins: return
     author = payload['Author ID']
     if author not in Data['Votes']['Nay']:           Data['Votes']['Nay'].append( author )
     if author in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( author )
@@ -220,7 +218,6 @@ async def nay(Data, payload):
     #await payload['message'].remove_reaction(yayEmoji , payload['user'])
 
 async def abstain(Data, payload):
-    if payload.get('Author') not in admins: return
     author = payload['Author ID']
     if author not in Data['Votes']['Abstain']:       Data['Votes']['Abstain'].append( author )
     if author in Data['Votes']['Yay']:               Data['Votes']['Yay'].remove( author )
