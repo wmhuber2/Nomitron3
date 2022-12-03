@@ -130,8 +130,6 @@ def proposalText(Data):
     return topin
 
 async def updateProposal(Data, payload):
-    if payload.get('Author') not in admins: return
-
     if last_update_prop_time +5 < time.time():
         await actuallyUpdateProposal(Data, payload)
     else:
@@ -140,8 +138,6 @@ async def updateProposal(Data, payload):
 
 async def actuallyUpdateProposal(Data, payload):
     def is_proposalMSG(m): return m.id in Data['ProposingMSGs']
-
-    if payload.get('Author') not in admins: return
 
     print('..Updating Prop')
 
