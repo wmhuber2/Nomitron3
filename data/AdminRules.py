@@ -86,8 +86,8 @@ async def on_message(Data, payload):
             if msg != "":
                 await message.channel.send('```diff\n'+msg+'```')
 
-    if payload['Content'] in [':heart:']:
-        await message.channel.send(':heart:')
+    if payload['Content'] in [':heart:', '❤️']:
+        await message.channel.send('❤️')
     
     if '?' in payload['Content'] and '!' == payload['Content'][0]:
         options = [
