@@ -1,7 +1,7 @@
 #
 # Admin Module For Discord Bot
 ################################
-import sys, os,datetime, discord
+import sys, os,datetime, discord, random
 from pytube import YouTube 
 
 from shutil import copyfile
@@ -85,6 +85,34 @@ async def on_message(Data, payload):
                 msg = msg + line
             if msg != "":
                 await message.channel.send('```diff\n'+msg+'```')
+
+    if payload['Content'] in [':heart:']:
+        await message.channel.send(':heart:')
+    
+    if '?' in payload['Content'] and '!' == payload['Content'][0]:
+        options = [
+         "It is certain.",
+         "It is decidedly so.",
+         "Without a doubt.",
+         "Yes definitely.",
+         "You may rely on it.",
+         "As I see it, yes.",
+         "Most likely.",
+         "Outlook good.",
+         "Yes.",
+         "Signs point to yes.",
+         "Reply hazy, try again.",
+         "Ask again later.",
+         "Better not tell you now.",
+         "Cannot predict now.",
+         "Concentrate and ask again.",
+         "Don't count on it.",
+         "My reply is no.",
+         "My sources say no.",
+         "Outlook not so good.",
+         "Very doubtful."]
+        
+        await message.channel.send(random.choice(options))
 
 def uploadData(Data, payload):
     if payload.get('Author') in admins:
