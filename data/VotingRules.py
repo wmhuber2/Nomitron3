@@ -12,21 +12,33 @@ admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 last_update_prop_time = 0
 hold_for_update_prop = False
+
+last_update_deck_time = 0
+hold_for_update_deck = False
+
 zeroday = 1641016800 # Jan 1 2022
 day  = 24 * 60 * 60
 def now(): return time.time() - zeroday
 
+def getTime(t):
+    day =  t// (24*3600)
+
+    sc  = (t % (60  )    ) // (1      )
+    mn  = (t % (60*60)   ) // (60     )
+    hr  = (t % (24*60*60)) // (60*60  )
+    day = (t             ) // (24*3600)
+    return f"{day}-{hr}:{mn} {sc}s}"
 
 async def turnStats(Data, payload, *text):
     msg = f'''**Turn Stats:**```
     Proposal#            :   {Data['Proposal#']}
     Voting Enabled       :   {Data['VotingEnabled']}
-    Proposing Player     :   {Data['ProposingPlayer']}
-    Curr Turn Start Time :   {Data['CurrTurnStartTime']}
-    Next Turn Start Time :   {Data['NextTurnStartTime']}
-    Time Now             :   {now()} (Raw:{time.time()})
-    Time Elapsed         :   {now() - Data['CurrTurnStartTime']}
-    Time Remaining       :   {Data['NextTurnStartTime'] - now()}
+    Proposing Player     :   {Data['PlayerData'][Data['ProposingPlayer']]['Name']}
+    Curr Turn Start Time :   {getTime(Data['CurrTurnStartTime'])}
+    Next Turn Start Time :   {getTime(Data['NextTurnStartTime'])}
+    Time Now             :   {getTime(now())}
+    Time Elapsed         :   {getTime(now() - Data['CurrTurnStartTime'])}
+    Time Remaining       :   {getTime(Data['NextTurnStartTime'] - now())}
     Votes                :   {Data['Votes']}
     ```'''
     await payload['raw'].channel.send(msg)
@@ -129,14 +141,14 @@ def proposalText(Data):
     if len(msg) > 1: topin.append(msg)
     return topin
 
+
 async def updateProposal(Data, payload):
     if last_update_prop_time +5 < time.time():
-        await actuallyUpdateProposal(Data, payload)
+        await actuallyUpdateVotingProposal(Data, payload)
     else:
         hold_for_update_prop = True
 
-
-async def actuallyUpdateProposal(Data, payload):
+async def actuallyUpdateVotingProposal(Data, payload):
     def is_proposalMSG(m): return m.id in Data['ProposingMSGs']
 
     print('..Updating Prop')
@@ -157,6 +169,7 @@ async def actuallyUpdateProposal(Data, payload):
         for line in proposalText(Data):
             msg = await payload['refs']['channels']['voting'].send(line)
             Data['ProposingMSGs'].append(msg.id)
+
 
 async def enableVoting(Data, payload, *text):
     if payload.get('Author') not in admins: return
@@ -352,7 +365,8 @@ async def update(Data, payload):
     
 
     if hold_for_update_prop and last_update_prop_time +5 < time.time():
-        await actuallyUpdateProposal(Data, payload)
+        await actuallyUpdateVotingProposal(Data, payload)
+
     return Data
 
 
@@ -456,6 +470,9 @@ async def setup(Data,payload):
 
     if 'ProposingMSGs' not in Data:
         Data['ProposingMSGs'] = []
+    
+    if 'DeckMSGs' not in Data:
+        Data['DeckMSGs'] = []
 
     if 'CurrTurnStartTime' not in Data:
          Data['CurrTurnStartTime'] = 0

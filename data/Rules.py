@@ -107,7 +107,7 @@ async def setup(Data, payload):
     # Do Stuff Here
     Data['RuleList'] = {}
     with urllib.request.urlopen('https://gitlab.com/nomicgame/nomic-vi/-/raw/master/rules.md') as response:
-        rules = response.read().decode("windows-1254")
+        rules = response.read().decode("utf-8")
         ruletxt = rules.split("## ")[1:]
         print(f'Found {len(ruletxt)} Rules')
         for rule in ruletxt:
