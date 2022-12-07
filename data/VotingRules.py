@@ -27,7 +27,7 @@ def getTime(t):
     mn  = (t % (60*60)   ) // (60     )
     hr  = (t % (24*60*60)) // (60*60  )
     day = (t             ) // (24*3600)
-    return f"{day}-{hr}:{mn} {sc}s}"
+    return f"{day}-{hr}:{mn} {sc}s"
 
 async def turnStats(Data, payload, *text):
     msg = f'''**Turn Stats:**```
