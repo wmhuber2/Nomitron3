@@ -50,6 +50,13 @@ async def extendTurn(Data, payload, *text):
     await payload['raw'].channel.send('Turn extended 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
 
+async def reduceTurn(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+
+    Data['NextTurnStartTime'] -= day
+    await payload['raw'].channel.send('Turn reduced by 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
+    return Data
+
 async def removeProposal(Data, payload, *text):
     if payload.get('Author') not in admins: return 
 
