@@ -9,7 +9,7 @@ path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
 serverid = 1028425604879634442 # Nomic 6
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
-BotChannels = ['actions','voting','proposals', 'mod-lounge', 'bot-spam', 'deck-edits', 'queue', 'DM', 'game', 'combat']
+BotChannels = ['actions','off-topic', 'courtroom', 'voting','proposals', 'mod-lounge', 'bot-spam', 'deck-edits', 'queue', 'DM', 'game', 'combat']
 
 '''
 Implement Modules By Placing Module Python File In Same Directory
