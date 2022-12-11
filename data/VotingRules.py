@@ -122,6 +122,8 @@ async def bot_tally(Data, payload, *text):
 
 **Start Of Turn #{Data['Turn']+1}. **
 """)
+        for line in proposalText(Data):
+            await payload['refs']['channels']['failed-proposals'].send(line)
 
 def proposalText(Data):
     playerprop = Data['ProposingPlayer']
@@ -319,7 +321,7 @@ async def on_message(Data, payload):
             await payload['raw'].add_reaction('✔️')
         else:
             await payload['raw'].add_reaction('❌')
-            await payload['raw'].author.send( content = "Your vote is ambigious, Pleas use appropriate yay, nay, or withdraw text." )
+            await payload['raw'].author.send( content = "Your vote is ambigious, Please use appropriate yay, nay, or withdraw text." )
 
         await updateProposal(Data, payload)
 
