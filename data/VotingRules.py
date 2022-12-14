@@ -310,10 +310,10 @@ async def on_message(Data, payload):
             
         # Register Vote
         vote = payload['Content'].lower().strip()
-        if vote in ['y', 'yay', 'aye', 'yes']:
+        if vote in [ "aye", "yay", "yes", "y", "ye", "pog", "ya", "noice", "cash money", "yeah", "heck yeah", "hell yeah"]:
             await yay(Data, payload)
             await payload['raw'].add_reaction('✔️')
-        elif vote in ['nay', 'no', 'n']:
+        elif vote in ["nay", "no", "n", "nah", "nein", "sus", "cringe", "soggy"]:
             await nay(Data, payload)
             await payload['raw'].add_reaction('✔️')
         elif vote in ['abstain', 'withdraw']:
