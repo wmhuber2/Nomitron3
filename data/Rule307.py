@@ -15,11 +15,17 @@ async def green(Data, payload, *text):
         player = await getPlayer(playerid, payload)
         pid = player.id
         print('Setting Color For ',player.name)
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Purple'])
+        await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Green'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
 
     else time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 \
         and Data['PlayerData'][pid]['Color']['color'] != "Purple" \ 
         and payload['Channel'] == 'actions':
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Purple'])
+        await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Green'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
 
 
@@ -31,11 +37,18 @@ async def orange(Data, payload, *text):
         player = await getPlayer(playerid, payload)
         pid = player.id
         print('Setting Color For ',player.name)
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Purple'])
+        await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Orange'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
 
     if time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 \
         and Data['PlayerData'][pid]['Color']['color'] != "Green" \ 
         and payload['Channel'] == 'actions':
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Purple'])
+        await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Orange'])
+
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
     
 
@@ -47,11 +60,17 @@ async def purple(Data, payload, *text):
         player = await getPlayer(playerid, payload)
         pid = player.id
         print('Setting Color For ',player.name)
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
+        await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Purple'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
 
     if time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 \
         and Data['PlayerData'][pid]['Color']['color'] != "Orange" \ 
         and payload['Channel'] == 'actions':
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
+        await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
+        await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Purple'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
     
 
