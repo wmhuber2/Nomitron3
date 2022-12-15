@@ -20,7 +20,7 @@ async def green(Data, payload, *text):
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Green'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
 
-    else time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
+    elif time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
         Data['PlayerData'][pid]['Color']['color'] != "Purple" and \ 
         payload['Channel'] == 'actions':
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
@@ -42,7 +42,7 @@ async def orange(Data, payload, *text):
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Orange'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
 
-    else time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
+    elif time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
         Data['PlayerData'][pid]['Color']['color'] != "Green" and \ 
         payload['Channel'] == 'actions':
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
@@ -65,7 +65,7 @@ async def purple(Data, payload, *text):
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Purple'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
 
-    else time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
+    elif time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
         Data['PlayerData'][pid]['Color']['color'] != "Orange" and \
         payload['Channel'] == 'actions':
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
