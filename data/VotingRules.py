@@ -522,6 +522,9 @@ async def setup(Data,payload):
         if 'DOB'   not in Data['PlayerData'][pid]['Proposal']:
             Data['PlayerData'][pid]['Proposal']['DOB'] = now()
 
+        if 'Color' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['Color'] = {'Hue':"None", "time": 0}
+
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:
             del Data['PlayerData'][pid]
