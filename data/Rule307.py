@@ -9,6 +9,14 @@ For a Custom Command !commandMe
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
+async def getPlayer(playerid, payload):
+    if len(playerid) == 0: return None
+    else:
+        player = payload['refs']['server'].get_member(int(re.search(r'\d+', playerid).group()))
+        if player is not None: return player
+        else: await channel.send('Player with id, ' + playerid + ' cannot be found.')
+    return None
+
 async def green(Data, payload, *text):
     pid = payload['Author ID']
 
