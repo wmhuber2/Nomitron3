@@ -31,14 +31,14 @@ async def green(Data, payload, *text):
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
 
     elif time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
-        Data['PlayerData'][pid]['Color']['color'] != "Purple" and \
+        Data['PlayerData'][pid]['Color']['Hue'] != "Purple" and \
         payload['Channel'] == 'actions':
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Purple'])
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Green'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
     else:
-        channel.send('You cannot be set to this color at this time.')
+        await channel.send('You cannot be set to this color at this time.')
 
 async def orange(Data, payload, *text):
     pid = payload['Author ID']
@@ -54,7 +54,7 @@ async def orange(Data, payload, *text):
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
 
     elif time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
-        Data['PlayerData'][pid]['Color']['color'] != "Green" and \
+        Data['PlayerData'][pid]['Color']['Hue'] != "Green" and \
         payload['Channel'] == 'actions':
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Purple'])
@@ -62,7 +62,7 @@ async def orange(Data, payload, *text):
 
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
     else:
-        channel.send('You cannot be set to this color at this time.')
+        await channel.send('You cannot be set to this color at this time.')
     
 
 async def purple(Data, payload, *text):
@@ -79,14 +79,14 @@ async def purple(Data, payload, *text):
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
 
     elif time.time() -  Data['PlayerData'][pid]['Color']['time'] > 0 and \
-        Data['PlayerData'][pid]['Color']['color'] != "Orange" and \
+        Data['PlayerData'][pid]['Color']['Hue'] != "Orange" and \
         payload['Channel'] == 'actions':
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Orange'])
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Green'])
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Purple'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
     else:
-        channel.send('You cannot be set to this color at this time.')
+        await channel.send('You cannot be set to this color at this time.')
     
 
 
