@@ -1,7 +1,7 @@
 #
 # Blank Module For Discord Bot
 ################################
-import pickle, sys, time
+import pickle, sys, time, re
 
 """
 For a Custom Command !commandMe
