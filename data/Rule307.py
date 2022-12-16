@@ -38,7 +38,7 @@ async def green(Data, payload, *text):
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Green'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
     else:
-        await payload['raw'].channel..send('You cannot be set to this color at this time.')
+        await payload['raw'].channel.send('You cannot be set to this color at this time.')
 
 async def orange(Data, payload, *text):
     pid = payload['Author ID']
@@ -62,7 +62,7 @@ async def orange(Data, payload, *text):
 
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
     else:
-        await payload['raw'].channel..send('You cannot be set to this color at this time.')
+        await payload['raw'].channel.send('You cannot be set to this color at this time.')
     
 
 async def purple(Data, payload, *text):
