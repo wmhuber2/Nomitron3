@@ -14,7 +14,7 @@ async def getPlayer(playerid, payload):
     else:
         player = payload['refs']['server'].get_member(int(re.search(r'\d+', playerid).group()))
         if player is not None: return player
-        else: await channel.send('Player with id, ' + playerid + ' cannot be found.')
+        else: await payload['raw'].channel.send('Player with id, ' + playerid + ' cannot be found.')
     return None
 
 async def green(Data, payload, *text):
@@ -38,7 +38,7 @@ async def green(Data, payload, *text):
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Green'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Green", "time": time.time() + 24*60*60}
     else:
-        await channel.send('You cannot be set to this color at this time.')
+        await payload['raw'].channel..send('You cannot be set to this color at this time.')
 
 async def orange(Data, payload, *text):
     pid = payload['Author ID']
@@ -62,7 +62,7 @@ async def orange(Data, payload, *text):
 
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
     else:
-        await channel.send('You cannot be set to this color at this time.')
+        await payload['raw'].channel..send('You cannot be set to this color at this time.')
     
 
 async def purple(Data, payload, *text):
@@ -86,7 +86,7 @@ async def purple(Data, payload, *text):
         await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Purple'])
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
     else:
-        await channel.send('You cannot be set to this color at this time.')
+        await payload['raw'].channel.send('You cannot be set to this color at this time.')
     
 
 
