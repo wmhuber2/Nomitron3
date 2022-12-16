@@ -77,7 +77,7 @@ async def getPlayer(playerid, payload):
     else:
         player = payload['refs']['server'].get_member(int(re.search(r'\d+', playerid).group()))
         if player is not None: return player
-        else: await payload['raw'].channel..send('Player with id, ' + playerid + ' cannot be found.')
+        else: await payload['raw'].channel.send('Player with id, ' + playerid + ' cannot be found.')
     return None
 
 async def tickTurn(Data, payload, *text):
