@@ -22,8 +22,8 @@ whipEmojiMap = "1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 
 endorseEmojiMap = ['👍', '👎', 'ℹ️']
 
 zeroday = 1641016800 # Jan 1 2022
-day  = 2 * 60 #* 60 * 24
-# Set week suber
+day  = 60 * 60 * 24
+
 def now(): return time.time() - zeroday
 
 def getTime(t):
@@ -281,7 +281,7 @@ async def suberTick(Data, payload):
                 
 
         # Week Expiration Test
-        if (now() - Data['Subers'][suberKey]['Date']) > 70 * day:
+        if (now() - Data['Subers'][suberKey]['Date']) > 7 * day:
             cont = f"Proposal {suberKey}'s SUBER's Week Expiration Reached. Suber is Disbanded " 
             await payload['refs']['channels']['actions'].send(cont)
             del Data['Subers'][suberKey]
