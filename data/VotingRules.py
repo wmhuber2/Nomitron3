@@ -961,6 +961,9 @@ async def setup(Data,payload):
     if 'ProposingMSGs' in Data:
         Data['Votes']['ProposingMSGs'] = Data['ProposingMSGs']
         del Data['ProposingMSGs']
+
+    if 'Proposal#' not in Data['Votes']:
+        Data['Votes']['Proposal#'] = Data['Proposal#']
     
     if 'DeckMSGs' not in Data:
         Data['DeckMSGs'] = []
