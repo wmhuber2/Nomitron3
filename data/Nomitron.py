@@ -7,9 +7,10 @@ botCommandChar = '!'
 discord = None
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
-serverid = 1028425604879634442 # Nomic 6
+serverid = 1043621642938626171 #1028425604879634442 # Nomic 6
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
-BotChannels = ['actions','off-topic', 'courtroom', 'voting','proposals', 'mod-lounge', 'bot-spam', 'deck-edits', 'queue', 'DM', 'game', 'combat']
+BotChannels = ['actions','off-topic', 'courtroom', 'voting','voting-1','voting-2','voting-3','voting-4',
+               'proposals', 'suber-proposals','mod-lounge', 'bot-spam', 'deck-edits', 'queue', 'DM', 'game', 'combat']
 
 '''
 Implement Modules By Placing Module Python File In Same Directory
@@ -62,10 +63,10 @@ class DiscordNomicBot():
         async def on_message(message): await self.on_message(message)
 
         @self.client.event
-        async def on_raw_reaction_add(msg): await self.on_raw_reaction(msg, 'add')
+        async def on_raw_reaction_add(reaction): await self.on_raw_reaction(reaction, 'add')
 
         @self.client.event
-        async def on_raw_reaction_remove(msg): await self.on_raw_reaction(msg, 'remove')
+        async def on_raw_reaction_remove(reaction): await self.on_raw_reaction(reaction, 'remove')
 
 
     def start(self):
@@ -113,7 +114,7 @@ class DiscordNomicBot():
         payload['discord'] = discord
 
         for file in message.attachments:  payload['Attachments'][file.filename] = file
-        print(f"Event in {payload['Channel']}:",message.system_content)
+        if message.author != self.client.user: print(f"Event in {payload['Channel']}:",message.system_content)
         return payload
 
 
@@ -215,18 +216,22 @@ class DiscordNomicBot():
     Handle Reactions
     """
     async def on_raw_reaction(self, payload, mode):
-        user = self.client.get_user(payload.user_id)
-        if user == self.client.user: return
+        if self.client.get_user(payload.user_id) == self.client.user: return
 
+        user = self.refs['players'][payload.user_id]
+        msg = None
         channel = self.client.get_channel(payload.channel_id)
-        msg = await channel.fetch_message(payload.message_id)
+        if channel is None:
+            msg = await user.fetch_message(payload.message_id)
+        else:
+            msg = await channel.fetch_message(payload.message_id)
+
 
         react_payload = self.convertToPayload(msg)
         react_payload['raw']     = payload
         react_payload['mode']    = mode
         react_payload['message'] = msg
         react_payload['user']    = user
-        react_payload['Channel'] = channel
         react_payload['emoji']   = str(payload.emoji.name)
         react_payload['name']    = user.name + '#' + user.discriminator
 
