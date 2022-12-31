@@ -40,7 +40,7 @@ async def turnStats(Data, payload, *text):
     msg = f"**Turn Stats:**```\n"
     msg += f"Proposal#            :   {Data['Proposal#']}\n"
     msg += f"Voting Enabled       :   {Data['VotingEnabled']}\n"
-    msg += f"Proposing Player     :   {Data['PlayerData'][Data['Votes']['ProposingPlayer']]['Name'] if Data['Votes']['ProposingPlayer'] is not None else None}\n"
+    msg += f"Proposing Player     :   {Data['PlayerData'][Data['Votes']['ProposingPlayer']]['Name'] if Data['Votes']['ProposingPlayer'] not in ["DOOM", None] else Data['Votes']['ProposingPlayer']}\n"
     msg += f"Curr Turn Start Time :   {getTime(Data['CurrTurnStartTime'])}\n"
     msg += f"Next Turn Start Time :   {getTime(Data['NextTurnStartTime'])}\n"
     msg += f"Time Now             :   {getTime(now())}\n"
@@ -301,7 +301,12 @@ async def bot_tally(Data, payload, *text):
     if Data['Votes']['ProposingPlayer'] is None or len(Data['Votes']['ProposingText']) <= 1:
             await payload['refs']['channels']['actions'].send(f"**End of Turn #{Data['Turn']}.** No Proposal was on Deck")
     else:
-        player        = Data['PlayerData'][ Data['Votes']['ProposingPlayer'] ]['Name']
+        player = "Undefined"
+        if Data['Votes']['ProposingPlayer'] == "DOOM":
+            player = "Intentional Game Design"
+        else:
+            player = Data['PlayerData'][ Data['Votes']['ProposingPlayer'] ]['Name']
+
         votingPlayers  = len(Data['Votes']['Yay']) + len(Data['Votes']['Nay'])
         activePlayers = len(payload['refs']['roles']['Player'].members) - len(payload['refs']['roles']['Inactive'].members)
         losers        = None
@@ -459,6 +464,7 @@ async def popProposal(Data, payload, *text):
 
     # Voting Channel
     print('..PopProposal To Deck:')
+    gotProp = False
     if len(Data['Queue']) > 0: 
         pid = Data['Queue'].pop(0)
         print('...',pid, Data['PlayerData'][pid]['Name'])
@@ -473,6 +479,16 @@ async def popProposal(Data, payload, *text):
             Data['PlayerData'][pid]['Proposal']['File'] = ''
             Data['PlayerData'][pid]['Proposal']['Supporters'] = []
             Data['PlayerData'][pid]['Proposal']['DOB'] = now()
+            gotProp = True
+    if not gotProp:
+        Data['Votes'] = { 'Yay':[], 'Nay':[], 'Abstain':[], 'ProposingMSGs':[], 'ProposingPlayer':"DOOM",
+                            'ProposingText':str("A Doom Proposal Shall Be Determined By Mods"),
+                            'Proposal#':Data['Proposal#']}
+        Data['Proposal#']       += 1
+        Data['PlayerData'][pid]['Proposal']['File'] = ''
+        Data['PlayerData'][pid]['Proposal']['Supporters'] = []
+        Data['PlayerData'][pid]['Proposal']['DOB'] = now()
+
 
 
     # Suber Channels
