@@ -38,7 +38,8 @@ def getTime(t):
 
 async def turnStats(Data, payload, *text):
     propPlayer = Data['Votes']['ProposingPlayer']
-    if propPlayer not in ["DOOM", None]: propPlayer = Data['PlayerData'][Data['Votes']['ProposingPlayer']]['Name']
+    if propPlayer not in ["DOOM", None]: 
+        propPlayer = Data['PlayerData'][ Data['Votes']['ProposingPlayer'] ]['Name']
 
     msg = f"**Turn Stats:**```\n"
     msg += f"Proposal#            :   {Data['Proposal#']}\n"
