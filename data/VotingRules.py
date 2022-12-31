@@ -306,8 +306,10 @@ async def bot_tally(Data, payload, *text):
             await payload['refs']['channels']['actions'].send(f"**End of Turn #{Data['Turn']}.** No Proposal was on Deck")
     else:
         player = "Undefined"
+        isDoom = 0
         if Data['Votes']['ProposingPlayer'] == "DOOM":
             player = "Intentional Game Design"
+            isDoom = 1
         else:
             player = Data['PlayerData'][ Data['Votes']['ProposingPlayer'] ]['Name']
 
@@ -319,7 +321,7 @@ async def bot_tally(Data, payload, *text):
         # Tally Main Voting Queue
         if len(Data['Votes']['ProposingText']) <= 1:
             await payload['refs']['channels']['actions'].send(f"**End of Turn #{Data['Turn']}.** No Proposal was on Deck\n\n" )
-        elif len(Data['Votes']['Yay']) > len(Data['Votes']['Nay']):
+        elif len(Data['Votes']['Yay']) + isDoom > len(Data['Votes']['Nay']):
             losers = ['Dissenter','Nay']
             await payload['refs']['channels']['actions'].send(f"**End of Turn #{Data['Turn']}.** {player}'s Proposal Passes\n" \
                 f"- Tally: {len(Data['Votes']['Yay'])} For, {len(Data['Votes']['Nay'])} Against.")
