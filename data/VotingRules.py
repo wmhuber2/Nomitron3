@@ -589,7 +589,7 @@ async def abstain(Data, payload):
 Function Called on Reaction
 """
 async def on_reaction(Data, payload):
-    isInactive = payload['raw'].author.get_role(payload['refs']['roles']['Inactive'].id) is not None
+    isInactive = payload['user'].get_role(payload['refs']['roles']['Inactive'].id) is not None
 
     if payload['Channel'] == 'voting' and False:
        
@@ -640,12 +640,12 @@ async def on_reaction(Data, payload):
         else: return
 
         # If Inactive, Make Active
-        if isInactive and Data['PlayerData'][author]['Inactive'] is None:
-            await p.remove_roles(payload['refs']['roles']['Inactive'])
+        if isInactive and Data['PlayerData'][payload['user'].id]['Inactive'] is None:
+            await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
         
         if isInactive and Data['PlayerData'][author]['Inactive'] == "315":
-            Data['PlayerData']['Inactive'] = None            
-            await p.remove_roles(payload['refs']['roles']['Inactive'])
+            Data['PlayerData'][payload['user'].id]['Inactive'] = None            
+            await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
     
     if payload['Channel'] == 'array' and payload['mode'] == 'add':
 
