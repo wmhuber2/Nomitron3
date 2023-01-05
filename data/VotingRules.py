@@ -200,7 +200,7 @@ async def togglePermInactive(Data, payload, *text):
     player = await getPlayer(playerid, payload)
     pid = player.id
 
-    isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive']) is not None
+    isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive'].id) is not None
 
     if isInactive:
         await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Inactive'])
@@ -589,7 +589,7 @@ async def abstain(Data, payload):
 Function Called on Reaction
 """
 async def on_reaction(Data, payload):
-    isInactive = payload['raw'].author.get_role(payload['refs']['roles']['Inactive']) is not None
+    isInactive = payload['raw'].author.get_role(payload['refs']['roles']['Inactive'].id) is not None
 
     if payload['Channel'] == 'voting' and False:
        
@@ -742,7 +742,7 @@ async def on_reaction(Data, payload):
 Main Run Function On Messages
 """
 async def on_message(Data, payload):
-    isInactive = payload['raw'].author.get_role(payload['refs']['roles']['Inactive']) is not None
+    isInactive = payload['raw'].author.get_role(payload['refs']['roles']['Inactive'].id) is not None
 
     if payload['Channel'] in ['voting',]:
 
@@ -993,7 +993,7 @@ async def create_queue(Data, payload, ):
     
     for player in Data['PlayerData'].keys():
 
-        isInactive = payload['refs']['players'][player].get_role(payload['refs']['roles']['Inactive']) is not None
+        isInactive = payload['refs']['players'][player].get_role(payload['refs']['roles']['Inactive'].id) is not None
 
         if player not in endorsingPlayers and not isInactive:
             print(player)
