@@ -35,7 +35,6 @@ def getTime(t):
     day = int((t             ) // (24*3600))
     return f"{day} @ {hr}:{mn} {sc}s"
 
-
 async def turnStats(Data, payload, *text):
     propPlayer = Data['Votes']['ProposingPlayer']
     if propPlayer not in ["DOOM", None]: 
@@ -193,6 +192,23 @@ async def reduceTurn(Data, payload, *text):
     Data['NextTurnStartTime'] -= day
     await payload['raw'].channel.send('Turn reduced by 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
+
+async def togglePermInactive(Data, payload, *text):
+    if payload.get('Author') not in admins: return 
+
+    playerid = payload['Content'].split(' ')[1]
+    player = await getPlayer(playerid, payload)
+    pid = player.id
+
+    isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive']) is not None
+
+    if isInactive:
+        await payload['refs']['players'][player].remove_roles(payload['refs']['roles']['Inactive'])
+        Data['PlayerData'][pid]['Inactive'] = None
+
+    else:
+        await payload['refs']['players'][player].add_roles(payload['refs']['roles']['Inactive'])
+        Data['PlayerData'][pid]['Inactive'] = "Perm"
 
 async def removeProposal(Data, payload, *text):
     if payload.get('Author') not in admins: return 
@@ -573,6 +589,8 @@ async def abstain(Data, payload):
 Function Called on Reaction
 """
 async def on_reaction(Data, payload):
+    isInactive = payload['Author ID'].get_role(payload['refs']['roles']['Inactive']) is not None
+
     if payload['Channel'] == 'voting' and False:
        
         if payload['emoji'] == yayEmoji:
@@ -596,12 +614,12 @@ async def on_reaction(Data, payload):
                 Data['PlayerData'][author]['Proposal']['Supporters'].append(payload['user'].id)
             await create_queue(Data, payload)
 
-        if payload['emoji'] == '👎':
+        elif payload['emoji'] == '👎':
             if payload['user'].id in Data['PlayerData'][author]['Proposal']['Supporters']:
                 Data['PlayerData'][author]['Proposal']['Supporters'].remove(payload['user'].id)
             await create_queue(Data, payload)
 
-        if payload['emoji'] == 'ℹ️':
+        elif payload['emoji'] == 'ℹ️':
             msg =   f"------\n **{Data['PlayerData'][author]['Name']}'s Proposal Info:**\n```Supporters:"
             for p in Data['PlayerData'][author]['Proposal']['Supporters']: msg += '\n - ' + Data['PlayerData'][p]['Name']
             msg += "```"
@@ -619,6 +637,15 @@ async def on_reaction(Data, payload):
                     msg = line
                 else: msg += line
             if len(msg) > 0: await payload['user'].send(msg)
+        else: return
+
+        # If Inactive, Make Active
+        if isInactive and Data['PlayerData']['Inactive'] is None:
+            await p.remove_roles(payload['refs']['roles']['Inactive'])
+        
+        if isInactive and Data['PlayerData']['Inactive'] is "315":
+            Data['PlayerData']['Inactive'] = None            
+            await p.remove_roles(payload['refs']['roles']['Inactive'])
     
     if payload['Channel'] == 'array' and payload['mode'] == 'add':
 
@@ -715,12 +742,22 @@ async def on_reaction(Data, payload):
 Main Run Function On Messages
 """
 async def on_message(Data, payload):
+    isInactive = payload['Author ID'].get_role(payload['refs']['roles']['Inactive']) is not None
+
     if payload['Channel'] in ['voting',]:
 
         # Remove MSG if from a non Player (Bot, Illegal, Etc)
         if payload['Author ID'] not in Data['PlayerData'] or not Data['VotingEnabled']:
             print('Removing', payload['Content'])
             await payload['raw'].delete()
+            return
+        
+        # Handle Incactivity
+        if isInactive and Data['PlayerData']['Inactive'] is None:
+            await p.remove_roles(payload['refs']['roles']['Inactive'])
+        
+        if isInactive and Data['PlayerData']['Inactive'] is "315":
+            await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
             return
             
         # Register Vote
@@ -746,6 +783,14 @@ async def on_message(Data, payload):
         if payload['Author ID'] not in Data['PlayerData'] or day < (now() - Data['CurrTurnStartTime']):
             print('Removing', payload['Content'])
             await payload['raw'].delete()
+            return
+        
+        # Handle Incactivity
+        if isInactive and Data['PlayerData']['Inactive'] is None:
+            await p.remove_roles(payload['refs']['roles']['Inactive'])
+        
+        if isInactive and Data['PlayerData']['Inactive'] is "315":
+            await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
             return
             
         # Register Vote
@@ -900,6 +945,7 @@ async def create_queue(Data, payload, ):
             for r in ['👍', '👎', 'ℹ️']: await msg.add_reaction(r)
     messages = messages[::-1]
 
+    endorsingPlayers = set()
 
     # Update Messages with Stats
     for i in list(range(len(sortedQ))):
@@ -916,6 +962,7 @@ async def create_queue(Data, payload, ):
         else: 
             cont   = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"
             files  = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=filename),]
+            endorsingPlayers.update(Data['PlayerData'][pid]['Proposal']['Supporters'])
         
 
         # Update Message Content
@@ -943,6 +990,14 @@ async def create_queue(Data, payload, ):
         if len(Data['Queue']) <= 2: pass
         elif  (not '🥉' in list(map(str,msg.reactions))) and pid == Data['Queue'][2]:   await msg.add_reaction('🥉')
         elif      ('🥉' in list(map(str,msg.reactions))) and pid != Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
+    
+    for player in Data['PlayerData'].keys():
+        if player not in endorsingPlayers:
+            await payload['refs']['players'][player].add_roles(payload['refs']['roles']['Inactive'])
+            Data['PlayerData'][player]['Inactive'] = "315"
+            await payload['refs']['players'][player].send("You are now Inactive because you are not endorsing any proposals. Endorse a proposal or create one to become active again. (Rule 315)")
+
+    
     print('..Queue Updated')
     return Data
 
@@ -1051,6 +1106,9 @@ async def setup(Data,payload):
 
         if 'Query' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Query'] = None
+
+        if 'Inactive' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['Inactive'] = None
 
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:
