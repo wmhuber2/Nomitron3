@@ -643,7 +643,7 @@ async def on_reaction(Data, payload):
         if isInactive and Data['PlayerData'][author]['Inactive'] is None:
             await p.remove_roles(payload['refs']['roles']['Inactive'])
         
-        if isInactive and Data['PlayerData'][author]['Inactive'] is "315":
+        if isInactive and Data['PlayerData'][author]['Inactive'] == "315":
             Data['PlayerData']['Inactive'] = None            
             await p.remove_roles(payload['refs']['roles']['Inactive'])
     
@@ -756,7 +756,7 @@ async def on_message(Data, payload):
         if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] is None:
             await p.remove_roles(payload['refs']['roles']['Inactive'])
         
-        if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] is "315":
+        if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] == "315":
             await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
             return
             
@@ -789,7 +789,7 @@ async def on_message(Data, payload):
         if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] is None:
             await p.remove_roles(payload['refs']['roles']['Inactive'])
         
-        if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] is "315":
+        if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] == "315":
             await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
             return
             
