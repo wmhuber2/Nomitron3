@@ -608,16 +608,17 @@ async def on_reaction(Data, payload):
         await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
         if len(payload['Attachments']) == 0: return Data
         author   = int(list(payload['Attachments'].keys())[0].split("-")[0])
+        updateQueue = False
         
         if payload['emoji'] == '👍':
             if payload['user'].id not in Data['PlayerData'][author]['Proposal']['Supporters']:
                 Data['PlayerData'][author]['Proposal']['Supporters'].append(payload['user'].id)
-            await create_queue(Data, payload)
+            updateQueue = True
 
         elif payload['emoji'] == '👎':
             if payload['user'].id in Data['PlayerData'][author]['Proposal']['Supporters']:
                 Data['PlayerData'][author]['Proposal']['Supporters'].remove(payload['user'].id)
-            await create_queue(Data, payload)
+            updateQueue = True
 
         elif payload['emoji'] == 'ℹ️':
             msg =   f"------\n **{Data['PlayerData'][author]['Name']}'s Proposal Info:**\n```Supporters:"
@@ -646,6 +647,9 @@ async def on_reaction(Data, payload):
         if isInactive and Data['PlayerData'][payload['user'].id]['Inactive'] == "315":
             Data['PlayerData'][payload['user'].id]['Inactive'] = None            
             await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
+
+        if updateQueue:
+            await create_queue(Data, payload)
     
     if payload['Channel'] == 'array' and payload['mode'] == 'add':
 
