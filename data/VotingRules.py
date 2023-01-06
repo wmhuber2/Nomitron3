@@ -643,7 +643,7 @@ async def on_reaction(Data, payload):
         if isInactive and Data['PlayerData'][payload['user'].id]['Inactive'] is None:
             await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
         
-        if isInactive and Data['PlayerData'][author]['Inactive'] == "315":
+        if isInactive and Data['PlayerData'][payload['user'].id]['Inactive'] == "315":
             Data['PlayerData'][payload['user'].id]['Inactive'] = None            
             await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
     
