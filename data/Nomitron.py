@@ -237,7 +237,7 @@ class DiscordNomicBot():
 
         await self.passToModule('on_reaction', react_payload)
 
-        if str(payload.emoji) == str('🔄') and react_payload['name'] in Admins: 
+        if mode == 'add' and str(payload.emoji) == str('🔄') and react_payload['name'] in Admins: 
             await self.on_message(msg)
             await msg.remove_reaction(str('🔄'), user)
 

@@ -69,7 +69,7 @@ async def ping(Data, payload, *text):
 
 async def echo(Data, payload, *text):  
     message = payload['raw']  
-    if payload.get('Author') in admins: await message.channel.send(payload['Content'][1:])
+    if payload.get('Author') in admins: await message.channel.send(payload['Content'][6:])
 """
 Main Run Function
 """
