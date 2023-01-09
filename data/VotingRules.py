@@ -1008,7 +1008,7 @@ async def create_queue(Data, payload, ):
 
         if isInactive and Data['PlayerData'][player]['Inactive'] == "315" and player in endorsingPlayers:
             Data['PlayerData'][player]['Inactive'] = None            
-            await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
+            await payload['refs']['players'][player].remove_roles(payload['refs']['roles']['Inactive'])
 
 
     print('..Queue Updated')
