@@ -1007,7 +1007,7 @@ async def create_queue(Data, payload, ):
             await payload['refs']['players'][player].send("You are now Inactive because you are not endorsing any proposals. Endorse a proposal or create one to become active again. (Rule 315)")
 
         if isInactive and Data['PlayerData'][player]['Inactive'] == "315" and player in endorsingPlayers:
-            Data['PlayerData'][payload['user'].id]['Inactive'] = None            
+            Data['PlayerData'][player]['Inactive'] = None            
             await payload['user'].remove_roles(payload['refs']['roles']['Inactive'])
 
 
