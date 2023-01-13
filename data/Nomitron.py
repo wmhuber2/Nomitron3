@@ -7,6 +7,7 @@ botCommandChar = '!'
 discord = None
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
+admin = 250132828950364174 #'Crorem#6962'
 serverid = 1028425604879634442 # Nomic 6 1043621642938626171 #
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 BotChannels = ['actions','off-topic', 'courtroom', 'voting','voting-1','voting-2','voting-3','voting-4',
@@ -26,6 +27,7 @@ class DiscordNomicBot():
     Initialize The Bot Handling Class
     """
     def __init__(self, ):
+        global serverid
         try:
             global discord
             discord = importlib.import_module('discord')
@@ -55,6 +57,10 @@ class DiscordNomicBot():
         self.client = discord.Client(loop = self.loop, heartbeat_timeout=120, intents=intents)
         self.token = open(path+'token.secret','r').readlines()[0].strip()
         print("Using Token: ..." + self.token[-6:])
+
+        if self.token[-4:] == '_OL0':
+            serverid =  1043621642938626171
+            print('This is a Test Bot')
 
         @self.client.event
         async def on_ready(): await self.on_ready()
@@ -149,6 +155,7 @@ class DiscordNomicBot():
 
 
         self.Data['server'] = serverid
+        self.Data['admin'] = admin
 
         for s in self.client.guilds:
             print( 'Found Server:',s.name, s.id, serverid)
@@ -168,6 +175,8 @@ class DiscordNomicBot():
             self.refs['roles'][role.name]= role
         for member in self.refs['server'].members:
             self.refs['players'][member.id]= member
+            if member.nick is None and member.id != self.Data['admin']:
+                await member.edit(nick = member.name)
         for channel in await self.refs['server'].fetch_channels():
             self.Data['channels'][channel.name]= channel.id
             self.refs['channels'][channel.name]= channel
@@ -207,6 +216,7 @@ class DiscordNomicBot():
                         tmp = await self.passToModule(functionName, payload, payload['Content'][1:].split(' ') )
                         if tmp is not None:  self.Data = tmp
                     except Exception as e:
+                        raise e
                         print(e, 'Incorrectly Formatted Funtion for '+functionName+' in '+self.moduleNames[i])
 
         if not found: await self.passToModule('on_message', payload)

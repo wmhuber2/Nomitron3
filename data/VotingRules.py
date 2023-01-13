@@ -511,7 +511,7 @@ async def popProposal(Data, payload, *text):
         Data['PlayerData'][pid]['Proposal']['Supporters'] = []
         Data['PlayerData'][pid]['Proposal']['DOB'] = now()
     else:
-        payload['refs']['channels']['game'].send("<#250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
+        await payload['refs']['channels']['game'].send("<#250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
 
 
     # Suber Channels
@@ -1027,6 +1027,9 @@ async def setup(Data,payload):
 
     if 'Turn' not in Data:
         Data['Turn'] = -1
+    
+    if 'Gladiator' not in Data:
+        Data['Gladiator'] = {'Player': None, 'DOB':0}
 
     if 'Subers' not in Data:
         Data['Subers'] = dict()
@@ -1052,9 +1055,6 @@ async def setup(Data,payload):
         Data['Votes']['ProposingMSGs'] = Data['ProposingMSGs']
         del Data['ProposingMSGs']
 
-    if 'Proposal#' not in Data['Votes']:
-        Data['Votes']['Proposal#'] = Data['Proposal#']
-    
     if 'DeckMSGs' not in Data:
         Data['DeckMSGs'] = []
 
@@ -1063,11 +1063,16 @@ async def setup(Data,payload):
 
     if 'NextTurnStartTime' not in Data:
          Data['NextTurnStartTime'] = 0
+    
+    if 'Buddies' not in Data:
+        Data['Buddies'] = {'Time Created': 1673244000, 'Buddies' : []}
 
     if 'Votes' not in Data:
          Data['Votes']         = {'Yay':[], 'Nay':[], 'Abstain':[], 'Proposal': {}, 'ProposingMSGs':{},
                                   'ProposingPlayer':None, 'ProposingText':"", 'Proposal#':0 }
-
+    if 'Proposal#' not in Data['Votes']:
+        Data['Votes']['Proposal#'] = Data['Proposal#']
+    
     if 'Suber-Votes-1' not in Data:
          Data['Suber-Votes-1'] = {'Yay':[], 'Nay':[], 'Abstain':[], 'Proposal': {}, 'ProposingMSGs':{},
                                   'ProposingPlayer':None, 'ProposingText':"", 'Proposal#':0 , 'Suber':""}
@@ -1116,12 +1121,18 @@ async def setup(Data,payload):
 
         if 'Color' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Color'] = {'Hue':"None", "time": 0}
-
+        
+        if 'Friendship Tokens' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['Friendship Tokens'] = 0
+    
         if 'Query' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Query'] = None
 
         if 'Inactive' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Inactive'] = None
+        
+        if 'Challanged' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['Challanged'] = False
 
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:

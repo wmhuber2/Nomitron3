@@ -10,9 +10,18 @@ Bot Commands:
     !help             :  Display This Help Text
     !roll [[d]]#      :  Roll dice
 
+    !challenge        :  Challenge a gladiator
+
+    !give @player     : Give @player a Friendship Token
+
+    !green            :  Turn Green
+    !orange           :  Turn Orange
+    !purple           :  Turn Purple
+
     !ping             :  Pings Bot
     !turnStats        :  Get Turn Debug Info
 
+    !me               :  Get Your Player Info
 
 Mod Commands:
 
@@ -36,3 +45,13 @@ Mod Commands:
     !extendTurn       :  Extend current turn by 24 hrs
     !tickTurn         :  Start next turn
 
+
+    !green @player    :  Turn @player Green
+    !orange @player   :  Turn @player Orange
+    !purple @player   :  Turn @player Purple
+
+    !resetChallenges         :  Reset Tracker for "if player has challenged" for all players
+    !resetChallenges @player :  Reset Tracker for if player has challenged for @players
+    !setGladiator @player    :  Set the player as Gladiator
+
+    !setTokens @player NUM   : Set player's frinedship tokens to NUM

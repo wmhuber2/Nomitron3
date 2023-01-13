@@ -1,8 +1,8 @@
 #
 # Blank Module For Discord Bot
 ################################
-import pickle, sys, time, re
-
+import pickle, sys, time, re, random
+import numpy as np
 """
 For a Custom Command !commandMe
 """
@@ -63,7 +63,6 @@ async def orange(Data, payload, *text):
         Data['PlayerData'][pid]['Color'] = {'Hue':"Orange", "time": time.time() + 24*60*60}
     else:
         await payload['raw'].channel.send('You cannot be set to this color at this time.')
-    
 
 async def purple(Data, payload, *text):
     pid = payload['Author ID']
@@ -88,6 +87,165 @@ async def purple(Data, payload, *text):
     else:
         await payload['raw'].channel.send('You cannot be set to this color at this time.')
     
+async def buddify(Data, payload):
+
+    if Data['Buddies']['Time Created'] + 168 * 60 *60 > time.time(): return
+    else: Data['Buddies']['Time Created'] += 168 * 60 *60
+
+    for bud in Data['Buddies']['Buddies']:
+        basePID = bud[0]
+        baseIsGreen  = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Green'].id) 
+        baseIsOrange = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Orange'].id) 
+        baseIsPurple = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Purple'].id) 
+
+        allSame = True
+        for b in bud:
+            pid = bud[0]
+            isGreen  = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Green'].id) 
+            isOrange = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Orange'].id) 
+            isPurple = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Purple'].id) 
+
+            if isGreen == baseIsGreen and isOrange == baseIsOrange and isPurple == baseIsPurple: pass
+            else: allSame = False
+        if allSame:
+            for b in bud: Data['PlayerData'][b]['Friendship Tokens'] += 1
+
+    Data['Buddies']['Time Created'] = time.time()
+    Data['Buddies']['Buddies'] = []
+    validBuddies = []
+    for pid in Data['PlayerData'].keys():
+        isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive'].id) is not None
+        if not isInactive: validBuddies.append(pid)
+    
+    while len(validBuddies) > 1:
+        bud1 = random.choice(validBuddies)
+        validBuddies.remove(bud1)
+
+        bud2 = random.choice(validBuddies)
+        validBuddies.remove(bud2)
+
+        Data['Buddies']['Buddies'].append([bud1,bud2])
+
+    if len(validBuddies) == 1:
+        Data['Buddies']['Buddies'][-1].append(validBuddies[0])
+
+    cont = "This Week's Buddies Are:"
+    for bud in Data['Buddies']['Buddies']:
+        cont += "\n<@" + "> and <@".join(bud) + ">"
+    await payload['refs']['channels']['actions'].send(cont)
+
+async def resetChallenges(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+    
+    if len(payload['Content'].split(' ')) > 1 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await getPlayer(playerid, payload)
+        pid = player.id
+        Data['PlayerData'][pid]['Challanged'] = False
+
+        await payload['raw'].channel.send("Player Challenges Reset.")
+    else:
+        for pid in Data['PlayerData'].keys():
+            Data['PlayerData'][pid]['Challanged'] = False
+    
+        await payload['refs']['channels']['actions'].send("Gladitorial Challenges Reset.")
+
+async def challenge(Data, payload, *text):
+    
+    pid = payload['Author ID']
+    message = payload['raw']
+
+    if Data['PlayerData'][pid]['Challanged']: 
+        await message.channel.send(f"You must wait until next week to challange again")
+        return
+    
+    Data['PlayerData'][pid]['Challanged'] = True
+    gladiatorRoll = np.random.randint(1, 101, 1)
+    playerRoll    = np.random.randint(1, 25, 1)
+    if playerRoll > gladiatorRoll:
+        await message.channel.send(f"Gladiator: {gladiatorRoll}\nPlayer {playerRoll}\n{payload['Author']} Wins")
+        
+        player = payload['raw'].author
+        gldetr = payload['refs']['players'][Data['Gladiator']['Player']]
+
+        pid = player.id
+        gid = gldetr.id
+
+        print(player.nick, gldetr.nick)
+        if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
+            if Data['admin'] == gid:    await gldetr.send("As admin, you must remove ⚔️ from your nick")
+            else:                       await gldetr.edit(nick = player.nick[:-1])
+
+        if player.nick is     None or  '⚔' != player.nick[-1]:
+            if Data['admin'] == pid:    await player.send("As admin, you must add ⚔️ to you nick")
+            else:
+                if player.nick is None: await player.edit(nick = player.name+'⚔️' )
+                else:                   await player.edit(nick = player.nick+'⚔️' )
+
+        Data['Gladiator'] = {'Player': pid, 'DOB':Data['Turn']+1}
+    else: 
+        await message.channel.send(f"Gladiator: {gladiatorRoll}\nPlayer {playerRoll}\n{payload['Author']} Is Defeated")
+          
+async def setTokens(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+    
+    cont = payload['Content'].strip().split(' ')
+    if len(cont) > 2 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await getPlayer(playerid, payload)
+        pid = player.id
+
+        toset = 0
+        try: toset = int(cont[2])
+        except ValueError: return
+
+        Data['PlayerData'][pid]['Friendship Tokens'] = toset
+
+async def setGladiator(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+    
+    cont = payload['Content'].strip().split(' ')
+    if len(cont) > 1: 
+        playerid = payload['Content'].split(' ')[1]
+
+        player = await getPlayer(playerid, payload)
+        gldetr = payload['refs']['players'][Data['Gladiator']['Player']]
+
+        pid = player.id
+        gid = gldetr.id
+
+        print(player.nick, '--',gldetr.nick)
+        if gldetr.nick is not None: print(gldetr.nick[-1], gldetr.nick[-1] == '⚔' )
+
+        if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
+            print(gldetr.nick[-1], )
+            if Data['admin'] == gid:    await gldetr.send("As admin, you must remove ⚔️ from your nick")
+            else:                       await gldetr.edit(nick = gldetr.nick[:-1])
+
+        if player.nick is     None or  '⚔' != player.nick[-1]:
+            if Data['admin'] == pid:    await player.send("As admin, you must add ⚔️ to you nick")
+            else:
+                if player.nick is None: await player.edit(nick = player.name+'⚔️' )
+                else:                   await player.edit(nick = player.nick+'⚔️' )
+
+        Data['Gladiator'] = {'Player': pid, 'DOB':Data['Turn']+1}
+
+async def give(Data, payload, *text):
+    playerid = payload['Content'].split(' ')[1]
+    player = await getPlayer(playerid, payload)
+    pid = player.id
+
+
+    Data['PlayerData'][pid]['Friendship Tokens'] += 1
+    Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= 1
+
+async def me(Data, payload, *text):
+    pid = payload['Author ID']
+    cont =      "Your Info\n```" 
+    cont +=    f" Friendship Tokens: {Data['PlayerData'][pid]['Friendship Tokens']}\n" 
+    cont +=    f" Has Challanged: {Data['PlayerData'][pid]['Challanged']}\n" 
+    cont +=    "```"
+    await payload['raw'].author.send(cont )
 
 
 """
@@ -115,8 +273,10 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    pass
-
+    await buddify(Data, payload)
+    if Data['Gladiator']['DOB'] + 1 == Data['Turn']:
+        Data['Gladiator']['DOB'] += 1
+        Data['PlayerData'][Data['Gladiator']['Player']]['Friendship Tokens'] += 1
 
 """
 Setup Log Parameters and Channel List And Whatever You Need to Check on a Bot Reset.
