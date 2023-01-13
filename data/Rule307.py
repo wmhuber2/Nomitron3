@@ -213,8 +213,6 @@ async def setGladiator(Data, payload, *text):
         pid = player.id
         gid = Data['Gladiator']['Player']
 
-        print(player.nick, '--',gldetr.nick)
-
         if gid is not None:
             gldetr = payload['refs']['players'][Data['Gladiator']['Player']]
             if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
