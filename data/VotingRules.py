@@ -511,7 +511,7 @@ async def popProposal(Data, payload, *text):
         Data['PlayerData'][pid]['Proposal']['Supporters'] = []
         Data['PlayerData'][pid]['Proposal']['DOB'] = now()
     else:
-        await payload['refs']['channels']['game'].send("<#250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
+        await payload['refs']['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
 
 
     # Suber Channels
