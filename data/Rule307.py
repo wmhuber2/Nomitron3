@@ -209,18 +209,18 @@ async def setGladiator(Data, payload, *text):
         playerid = payload['Content'].split(' ')[1]
 
         player = await getPlayer(playerid, payload)
-        gldetr = payload['refs']['players'][Data['Gladiator']['Player']]
 
         pid = player.id
-        gid = gldetr.id
+        gid = Data['Gladiator']['Player']
 
         print(player.nick, '--',gldetr.nick)
-        if gldetr.nick is not None: print(gldetr.nick[-1], gldetr.nick[-1] == '⚔' )
 
-        if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
-            print(gldetr.nick[-1], )
-            if Data['admin'] == gid:    await gldetr.send("As admin, you must remove ⚔️ from your nick")
-            else:                       await gldetr.edit(nick = gldetr.nick[:-1])
+        if gid is not None:
+            gldetr = payload['refs']['players'][Data['Gladiator']['Player']]
+            if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
+                print(gldetr.nick[-1], )
+                if Data['admin'] == gid:    await gldetr.send("As admin, you must remove ⚔️ from your nick")
+                else:                       await gldetr.edit(nick = gldetr.nick[:-1])
 
         if player.nick is     None or  '⚔' != player.nick[-1]:
             if Data['admin'] == pid:    await player.send("As admin, you must add ⚔️ to you nick")
