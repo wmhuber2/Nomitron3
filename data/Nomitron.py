@@ -216,7 +216,7 @@ class DiscordNomicBot():
                         tmp = await self.passToModule(functionName, payload, payload['Content'][1:].split(' ') )
                         if tmp is not None:  self.Data = tmp
                     except Exception as e:
-                        raise e
+                        #raise e
                         print(e, 'Incorrectly Formatted Funtion for '+functionName+' in '+self.moduleNames[i])
 
         if not found: await self.passToModule('on_message', payload)
