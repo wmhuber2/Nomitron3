@@ -7,10 +7,10 @@ botCommandChar = '!'
 discord = None
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
-admin = 1057023272220373143 #'Crorem#6962'
+admin = 1057023272220373143 #'Crorem#6962 Sudo'
 serverid = 1028425604879634442 # Nomic 6 1043621642938626171 #
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
-BotChannels = ['actions','off-topic', 'courtroom', 'voting','voting-1','voting-2','voting-3','voting-4',
+BotChannels = ['market', 'actions','off-topic', 'courtroom', 'voting','voting-1','voting-2','voting-3','voting-4',
                'proposals', 'suber-proposals','mod-lounge', 'bot-spam', 'deck-edits', 'queue', 'DM', 'game', 'combat']
 
 '''
@@ -175,8 +175,6 @@ class DiscordNomicBot():
             self.refs['roles'][role.name]= role
         for member in self.refs['server'].members:
             self.refs['players'][member.id]= member
-            if member.nick is None and member.id != self.Data['admin']:
-                await member.edit(nick = member.name)
         for channel in await self.refs['server'].fetch_channels():
             self.Data['channels'][channel.name]= channel.id
             self.refs['channels'][channel.name]= channel

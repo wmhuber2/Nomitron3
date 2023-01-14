@@ -1,7 +1,7 @@
 #
 # Blank Module For Discord Bot
 ################################
-import pickle, sys, time, re, random
+import pickle, sys, time, re, random, discord, io
 import numpy as np
 """
 For a Custom Command !commandMe
@@ -237,11 +237,92 @@ async def give(Data, payload, *text):
     Data['PlayerData'][pid]['Friendship Tokens'] += 1
     Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= 1
 
+async def setOffer(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+    
+    cont = payload['Content'].strip().split(' ')
+    if len(cont) > 2 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await getPlayer(playerid, payload)
+        pid = player.id
+
+        toset = 0
+        try: toset = int(cont[2])
+        except ValueError: return
+
+        Data['PlayerData'][pid]['Offers'] = toset
+
+
+async def offer(Data, payload, *text):
+    if payload['Channel'] != "market": return
+    pid = payload['Author ID']
+    offerd = 0
+    text = text[0]
+
+
+    if len(text) <= 3: 
+        await payload['raw'].author.send("Your Offer Doesnt Have The Correct Format.")
+        await payload['raw'].add_reaction('❌')
+        return          
+
+    try: 
+        if '@' in text[1]:  offerd = int(text[2])
+        else:               offerd = int(text[1])
+    except ValueError: 
+        await payload['raw'].author.send("Your Offer Doesnt Have The Correct Format.")
+        await payload['raw'].add_reaction('❌')
+        return          
+
+
+    if offerd + Data['PlayerData'][pid]['Offers'] > Data['PlayerData'][pid]['Friendship Tokens']:
+        await payload['raw'].author.send("You do not have enough Friendship Tokens to make that offer")
+        await payload['raw'].add_reaction('❌')
+        return
+    
+        
+    await payload['raw'].add_reaction('✔️')
+    Data['PlayerData'][pid]['Offers'] += offerd
+
+async def acceptOffer(Data, payload):
+    offerd = 0
+    text   = payload['message'].content[1:].split(' ')
+
+    try:
+        if '@' in text[1]:  offerd = int(text[2])
+        else:               offerd = int(text[1])
+    except: return
+
+    if '@' in payload['message'].content[1:].split(' ')[1] and f"{payload['user'].id}" != payload['message'].content[1:].split(' ')[2:-1]:
+        await payload['raw'].author.send("You cannot accept that offer.")
+        return
+    
+    files  = [discord.File(fp=io.StringIO(payload['message'].content), filename="Terms_Of_Offer.txt"),]
+    await payload['refs']['channels']['actions'].send(f"<@{payload['message'].author.id}>'s Offer Has Been Accepted By <@{payload['user'].id}> for {offerd} Tokens", files = files)
+    await payload['message'].delete()
+
+async def payOffer(Data, payload):
+    print('Paying', payload['message'].content)
+    if "Offer Has Been Accepted By" in payload['message'].content:
+        payer = int(payload['message'].content.split('@')[1].split('>')[0])
+        payee = int(payload['message'].content.split('@')[2].split('>')[0])
+        amount = int(payload['message'].content.split(' ')[-2])
+
+
+        Data['PlayerData'][payee]['Friendship Tokens'] += amount
+        Data['PlayerData'][payer]['Friendship Tokens'] -= amount
+        Data['PlayerData'][payer]['Offers'] -= amount
+
+        await payload['message'].edit(content=f"<@{payer}>'s Offer Has Been Accepted and Completed By <@{payee}> for {amount} Tokens")
+        await payload['refs']['channels']['actions'].send(f"<@{payer}>'s Offer Has Been Completed By <@{payee}>")
+    
+
+
 async def me(Data, payload, *text):
     pid = payload['Author ID']
     cont =      "Your Info\n```" 
     cont +=    f" Friendship Tokens: {Data['PlayerData'][pid]['Friendship Tokens']}\n" 
-    cont +=    f" Has Challanged: {Data['PlayerData'][pid]['Challanged']}\n" 
+    cont +=    f" Has Challanged:    {Data['PlayerData'][pid]['Challanged']}\n" 
+    cont +=    f" Tokens Offered:    {Data['PlayerData'][pid]['Offers']}\n" 
     cont +=    "```"
     await payload['raw'].author.send(cont )
 
@@ -257,7 +338,10 @@ async def on_member_join(Data,payload):
 Function Called on Reaction
 """
 async def on_reaction(Data, payload):
-    pass
+    if payload['emoji'] == '✔️' and payload['Channel'] == 'market':
+        await acceptOffer(Data, payload)
+    if payload['emoji'] == '✔️' and payload['Channel'] == 'actions' and f"{payload['user'].name}#{payload['user'].discriminator}" in admins:
+        await payOffer(Data, payload)
 
 
 """

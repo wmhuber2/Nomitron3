@@ -12,7 +12,9 @@ Bot Commands:
 
     !challenge        :  Challenge a gladiator
 
-    !give @player     : Give @player a Friendship Token
+    !give @player               : Give @player a Friendship Token
+    !offer @player #NUM [TERMS] : Create an offer in #market
+    !offer #NUM [TERMS]         : Create an offer in #market
 
     !green            :  Turn Green
     !orange           :  Turn Orange
@@ -55,3 +57,4 @@ Mod Commands:
     !setGladiator @player    :  Set the player as Gladiator
 
     !setTokens @player NUM   : Set player's frinedship tokens to NUM
+    !setOffer @player NUM    : Set player's offered frinedship tokens to NUM

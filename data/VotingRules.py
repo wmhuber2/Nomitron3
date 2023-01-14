@@ -747,7 +747,7 @@ async def on_reaction(Data, payload):
 Main Run Function On Messages
 """
 async def on_message(Data, payload):
-    isInactive = payload['raw'].author.get_role(payload['refs']['roles']['Inactive'].id) is not None
+    isInactive = payload['refs']['players'][payload['raw'].author.id].get_role(payload['refs']['roles']['Inactive'].id) is not None
 
     if payload['Channel'] in ['voting',]:
 
@@ -1133,6 +1133,9 @@ async def setup(Data,payload):
         
         if 'Challanged' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Challanged'] = False
+
+        if 'Offers' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['Offers'] = 0
 
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:
