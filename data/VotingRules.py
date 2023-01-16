@@ -359,7 +359,7 @@ async def bot_tally(Data, payload, *text):
 
         # Form SUBERS if necassary
         print('SUBER', len(Data['Votes'][losers[1]]) , votingPlayers, activePlayers)
-        if len(Data['Votes'][losers[1]])  => 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
+        if len(Data['Votes'][losers[1]])  >= 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
             Data['Subers'][Data['Votes']['Proposal#']] = {
                 'Proposal#' : Data['Votes']['Proposal#'],
                 'Assenter': {
