@@ -131,7 +131,9 @@ async def buddify(Data, payload):
 
     cont = "This Week's Buddies Are:"
     for bud in Data['Buddies']['Buddies']:
-        cont += "\n<@" + "> and <@".join(bud) + ">"
+        cont += "\n<@" 
+        for b in bud: cont += "> and <@" + str(bud)
+        cont += ">"
     await payload['refs']['channels']['actions'].send(cont)
 
 async def resetChallenges(Data, payload, *text):
