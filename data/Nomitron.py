@@ -168,7 +168,7 @@ class DiscordNomicBot():
 
         self.Data['channels'] = {}
         self.refs['channels'] = {}
-        self.refs['players'] = {}
+        self.refs['players']  = {}
         self.refs['roles']    = {}
 
         for role in await self.refs['server'].fetch_roles():
@@ -199,8 +199,8 @@ class DiscordNomicBot():
 
     async def on_message(self, message):
         if message.author == self.client.user: return
-        if message.author.get_role(payload['refs']['roles']['Player'].id) is None: return
-        
+        if message.author.get_role(self.refs['roles']['Player'].id) is None: return
+
         payload = self.convertToPayload(message)
         if payload['Channel'] not in BotChannels: return
 
@@ -227,7 +227,7 @@ class DiscordNomicBot():
     """
     async def on_raw_reaction(self, payload, mode):
         if self.client.get_user(payload.user_id) == self.client.user: return
-        if self.refs['players'][payload.user_id].get_role(payload['refs']['roles']['Player'].id) is None: return
+        if self.refs['players'][payload.user_id].get_role(self.refs['roles']['Player'].id) is None: return
 
         user = self.refs['players'][payload.user_id]
         msg = None
