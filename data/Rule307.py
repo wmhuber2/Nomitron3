@@ -265,9 +265,7 @@ async def offer(Data, payload, *text):
         await payload['raw'].add_reaction('❌')
         return          
 
-    try: 
-        if '@' in text[1]:  offerd = int(text[2])
-        else:               offerd = int(text[1])
+    try:   offerd = int(text[2])
     except ValueError: 
         await payload['raw'].author.send("Your Offer Doesnt Have The Correct Format.")
         await payload['raw'].add_reaction('❌')
@@ -287,9 +285,7 @@ async def acceptOffer(Data, payload):
     offerd = 0
     text   = payload['message'].content[1:].split(' ')
 
-    try:
-        if '@' in text[1]:  offerd = int(text[2])
-        else:               offerd = int(text[1])
+    try:    offerd = int(text[1])
     except: return
 
     if '@' in payload['message'].content[1:].split(' ')[1] and f"{payload['user'].id}" != payload['message'].content[1:].split(' ')[2:-1]:
