@@ -45,6 +45,7 @@ Mod Commands:
 
 
     !extendTurn       :  Extend current turn by 24 hrs
+    !reduceTurn       :  Reduce current turn by 24 hrs
     !tickTurn         :  Start next turn
 
 

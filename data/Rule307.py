@@ -233,6 +233,9 @@ async def give(Data, payload, *text):
     player = await getPlayer(playerid, payload)
     pid = player.id
 
+    if Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] <= 0: 
+        await payload['raw'].add_reaction('❌')
+        return
 
     Data['PlayerData'][pid]['Friendship Tokens'] += 1
     Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= 1
