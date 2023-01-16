@@ -225,6 +225,7 @@ class DiscordNomicBot():
     """
     async def on_raw_reaction(self, payload, mode):
         if self.client.get_user(payload.user_id) == self.client.user: return
+        if self.refs['players'][payload.user_id].get_role(payload['refs']['roles']['Player'].id) is None: return
 
         user = self.refs['players'][payload.user_id]
         msg = None
