@@ -199,6 +199,8 @@ class DiscordNomicBot():
 
     async def on_message(self, message):
         if message.author == self.client.user: return
+        if message.author.get_role(payload['refs']['roles']['Player'].id) is None: return
+        
         payload = self.convertToPayload(message)
         if payload['Channel'] not in BotChannels: return
 
