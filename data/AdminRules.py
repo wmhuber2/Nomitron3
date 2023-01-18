@@ -10,16 +10,21 @@ savefile = 'DiscordBot_Data.yml'
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 player = None
 
+
 async def stop(Data, payload, *text):
     global player
-    if player is not None and not player.is_playing():
-        player.stop()
-        await vc.disconnect()
-        os.remove('music/tmp_music.mp3')
+    print("stop")
+    if player is not None:
+        tplayer = player
+        tplayer.stop()
         player = None
+        await tplayer.disconnect()
+        os.remove(path+'music/tmp_music.mp3')
+        os.remove(path+'music/tmp_music.mp4')
 
 async def play(Data, payload, *text):
     # grab the user who sent the command
+    global player
 
     user=payload['raw'].author
     voice_channel=user.voice.channel
@@ -133,7 +138,7 @@ def uploadData(Data, payload):
 async def update(Data, payload):
     global player
     if player is not None and not player.is_playing():
-        player.stop()
+        await player.stop()
         await vc.disconnect()
-        os.remove('music/tmp_music.mp3')
+        os.remove(path+'music/tmp_music.mp4')
         player = None
