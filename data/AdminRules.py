@@ -2,45 +2,52 @@
 # Admin Module For Discord Bot
 ################################
 import sys, os,datetime, discord, random
-from pytube import YouTube 
-
+from pytube import YouTube
 from shutil import copyfile
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
+player = None
+
+async def stop(Data, payload, *text):
+    global player
+    if player is not None and not player.is_playing():
+        player.stop()
+        await vc.disconnect()
+        os.remove('music/tmp_music.mp3')
+        player = None
 
 async def play(Data, payload, *text):
-    # Gets voice channel of message author
-        voice_channel = payload['refs']['channels']['general']
-        channel = None
-        if voice_channel != None:
-            channel = voice_channel.name
-            vc = await voice_channel.connect()
-            print(text[1:]) 
-            try:      yt = YouTube(text[1:]) 
-            except:   print("Connection Error") #to handle exception 
-            
-            mp4files = yt.filter('mp4') 
+    # grab the user who sent the command
 
-            filename = f"{time.time}"
-            yt.set_filename(f"{path}ytmp/"+filename)  
-            
-            d_video = yt.get(mp4files[-1].extension,mp4files[-1].resolution) 
-            try:  d_video.download(f"{path}ytmp/") 
-            except:  print("Some Error!") 
-            print('Task Completed!') 
-            
-            vc.play(discord.FFmpegPCMAudio(source=f"{path}ytmp/"+filename))
-            while vc.is_playing(): sleep(.1)
-            await vc.disconnect()
+    user=payload['raw'].author
+    voice_channel=user.voice.channel
+    channel=None
+
+    yt = YouTube(text[0][1])
+    video = yt.streams.filter(only_audio=True).first()    
+    out_file = video.download(output_path=path+'music')
+    
+    base, ext = os.path.splitext(out_file)
+    os.rename(out_file, path+'music/tmp_music'+ext)
+
+    # only play music if user is in a voice channel
+    if voice_channel != None:
+        # grab user's voice channel
+        channel=voice_channel.name
+        # create StreamPlayer
+        player = await voice_channel.connect()
+        player.play(discord.FFmpegPCMAudio(path+'music/tmp_music'+ext))
+        
+    else:
+        await print('User is not in a channel.')
 
 
 async def clearAll(Data, payload, *text):
     if payload.get('Author') in ['Fenris#6136', 'Crorem#6962']:
         os.remove(path + savefile)
         sys.exit(0)
-
 
 async def clear(Data, payload, *text):
     if payload.get('Author') in admins: 
@@ -122,3 +129,11 @@ def uploadData(Data, payload):
         k = payload['Attachments'].keys[0]
         newData = yaml.safe_load(payload['Attachments'][k])
         return dict(newData)
+
+async def update(Data, payload):
+    global player
+    if player is not None and not player.is_playing():
+        player.stop()
+        await vc.disconnect()
+        os.remove('music/tmp_music.mp3')
+        player = None
