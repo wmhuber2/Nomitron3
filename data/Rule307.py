@@ -117,7 +117,7 @@ async def buddify(Data, payload):
         isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive'].id) is not None
         if not isInactive: validBuddies.append(pid)
     
-    while len(validBuddies) > 1:
+    while len(validBuddies) > 2:
         bud1 = random.choice(validBuddies)
         validBuddies.remove(bud1)
 
@@ -126,14 +126,17 @@ async def buddify(Data, payload):
 
         Data['Buddies']['Buddies'].append([bud1,bud2])
 
-    if len(validBuddies) == 1:
+    if len(validBuddies) == 1 and len(Data['Buddies']['Buddies']) > 0:
         Data['Buddies']['Buddies'][-1].append(validBuddies[0])
 
-    cont = "This Week's Buddies Are:"
-    for bud in Data['Buddies']['Buddies']:
-        cont += "\n - " 
-        for b in bud: cont += f"<@{b}>, "
-    await payload['refs']['channels']['actions'].send(cont)
+    if len(Data['Buddies']['Buddies']) > 0:
+        cont = "This Week's Buddies Are:"
+        for bud in Data['Buddies']['Buddies']:
+            cont += "\n - " 
+            for b in bud: cont += f"<@{b}>, "
+        await payload['refs']['channels']['actions'].send(cont)
+    else: 
+        await payload['refs']['channels']['actions'].send('Not enough players for buddies')
 
 async def resetChallenges(Data, payload, *text):
     if payload.get('Author') not in admins: return
@@ -356,7 +359,7 @@ Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
     await buddify(Data, payload)
-    if Data['Gladiator']['DOB'] + 1 == Data['Turn']:
+    if  Data['Gladiator']['Player'] not in ['', None] and Data['Gladiator']['DOB'] + 1 == Data['Turn']:
         Data['Gladiator']['DOB'] += 1
         Data['PlayerData'][Data['Gladiator']['Player']]['Friendship Tokens'] += 1
 

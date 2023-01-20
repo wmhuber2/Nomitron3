@@ -276,7 +276,7 @@ class DiscordNomicBot():
     """
     def loadData(self):
         if not os.path.isfile(path + savefile):
-            input("File Doesnt Exist. Create One?")
+            #input("File Doesnt Exist. Create One?")
             self.saveData()
         with open(path + savefile, 'r') as handle:
             newData = yaml.safe_load(handle)

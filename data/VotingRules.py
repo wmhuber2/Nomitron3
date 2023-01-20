@@ -56,7 +56,7 @@ async def create_array(Data, payload, ):
     def keySort(key): return int(Data['Subers'][key]['Proposal#']) 
     
     def keySortSub(key):
-        return (int(len(Data['Subers'][suberKey]['Assenter']['Supporters'])) << 32 ) | ((1 << 32) - int(Data['Subers'][suberKey]['Assenter']['DOB'])) 
+        return float(f"-{len(Data['Subers'][key[0]][key[1]]['Supporters'])}{1e10 - Data['Subers'][key[0]][key[1]]['DOB']}")
 
     # Sorted list of player IDs In order of Proposal Parent
     sortedArrays = list(sorted( dict(Data['Subers']).keys(), key=keySort))
@@ -77,9 +77,9 @@ async def create_array(Data, payload, ):
     for i in list(range(len(sortedArrays))):
         suberKey  = sortedArrays[i]
 
-        arrayMajorMinors = list(sorted( ('Assenter', 'Dissenter'), key=keySortSub))
+        arrayMajorMinors = list(sorted( [(suberKey, 'Assenter'), (suberKey, 'Dissenter')], key=keySortSub))
         indexMajorMinors = 0
-        for MajorOrMinor in arrayMajorMinors:               
+        for suberKey, MajorOrMinor in arrayMajorMinors:               
             msg      = messages[i*2 + indexMajorMinors]
             indexMajorMinors += 1
             # Generate Message Content
@@ -87,6 +87,10 @@ async def create_array(Data, payload, ):
             # Whip Nominate Phase
             cont = ""
             files  = []
+
+            if  Data['Subers'][suberKey][MajorOrMinor]['Proposal'] in ['', None]:
+                Data['Subers'][suberKey][MajorOrMinor]['Supporters'] = []
+                Data['Subers'][suberKey][MajorOrMinor]['DOB']        = 0
 
             if Data['Subers'][suberKey][MajorOrMinor]['Is Official']:
 
@@ -461,11 +465,21 @@ async def actuallyUpdateVotingProposal(Data, payload):
                     return
                 await msg.edit(content = line)
         else:
-            await payload['refs']['channels'][disChan].purge(limit=100, check=is_proposalMSG)
-            Data[subChan]['ProposingMSGs'] = []
-            for line in proposalText(Data, subChan):
-                msg = await payload['refs']['channels'][disChan].send(line)
-                Data[subChan]['ProposingMSGs'].append(msg.id)
+            isDif = len(Data[subChan]['ProposingMSGs']) == 0
+            lines = proposalText(Data, subChan)
+
+            for i in range(len(Data[subChan]['ProposingMSGs'])): 
+                mid  = Data[subChan]['ProposingMSGs'][i] 
+                line = lines[i]
+                try: msg = await payload['refs']['channels'][disChan].fetch_message(mid) 
+                except: isDif = True
+                if msg.content != line: isDif = True
+            if isDif:
+                await payload['refs']['channels'][disChan].purge(limit=100, check=is_proposalMSG)
+                Data[subChan]['ProposingMSGs'] = []
+                for line in lines:
+                    msg = await payload['refs']['channels'][disChan].send(line)
+                    Data[subChan]['ProposingMSGs'].append(msg.id)
 
 async def enableVoting(Data, payload, *text):
     if payload.get('Author') not in admins: return
@@ -480,7 +494,7 @@ async def enableVoting(Data, payload, *text):
 async def popProposal(Data, payload, *text):
     if payload.get('Author') not in admins: return
     def keySortSub(key):
-        return (int(len(Data['Subers'][suberKey]['Assenter']['Supporters'])) << 32 ) | ((1 << 32) - int(Data['Subers'][suberKey]['Assenter']['DOB'])) 
+        return float(f"-{len(Data['Subers'][key[0]][key[1]]['Supporters'])}{1e10 - Data['Subers'][key[0]][key[1]]['DOB']}")
 
     # Reset Channels
     for subChan, disChan in list(zipChan): 
@@ -523,7 +537,8 @@ async def popProposal(Data, payload, *text):
 
     # Suber Channels
     for suberKey in Data['Subers'].keys(): 
-        MajorOrMinor = list(sorted( ['Assenter', 'Dissenter'], key=keySortSub))[0]
+        MajorOrMinor = list(sorted( [(suberKey, 'Assenter'), (suberKey, 'Dissenter')], key=keySortSub))[0][-1]
+        print('MM',MajorOrMinor)
         pid  = Data['Subers'][suberKey][MajorOrMinor]['Whip']
         if len(Data['Subers'][suberKey][MajorOrMinor]['Proposal']) > 1:
             for subChan, disChan in list(zipChan): 

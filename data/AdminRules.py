@@ -25,6 +25,7 @@ async def stop(Data, payload, *text):
 async def play(Data, payload, *text):
     # grab the user who sent the command
     global player
+    print('play')
 
     user=payload['raw'].author
     voice_channel=user.voice.channel
