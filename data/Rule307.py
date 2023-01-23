@@ -178,7 +178,7 @@ async def challenge(Data, payload, *text):
         print(player.nick, gldetr.nick)
         if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
             if Data['admin'] == gid:    await gldetr.send("As admin, you must remove ⚔️ from your nick")
-            else:                       await gldetr.edit(nick = player.nick[:-1])
+            else:                       await gldetr.edit(nick = gldetr.nick[:-1])
 
         if player.nick is     None or  '⚔' != player.nick[-1]:
             if Data['admin'] == pid:    await player.send("As admin, you must add ⚔️ to you nick")

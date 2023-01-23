@@ -324,7 +324,7 @@ async def setProp(Data, payload, *text):
     try: Data['Proposal#'] = int(text[0][1])
     except Exception as e: print(e)
     await payload['raw'].channel.send(f"Set Proposal to {Data['Proposal#']}")
-
+ 
 async def bot_tally(Data, payload, *text):
     if payload.get('Author') not in admins: return 
 
