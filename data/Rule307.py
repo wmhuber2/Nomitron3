@@ -93,7 +93,7 @@ async def removeBuds(Data, payload, *text):
     await buddify(Data, payload)
 
 
-async def buddify(Data, payload):
+async def tally_buds(Data, payload):
 
     print('Making Buds!')
     for bud in Data['Buddies']['Buddies']:
@@ -114,12 +114,14 @@ async def buddify(Data, payload):
         if allSame:
             for b in bud: Data['PlayerData'][b]['Friendship Tokens'] += 1
 
+async def buddify(Data, payload):
     Data['Buddies']['Time Created'] = ((time.time() - 1673244000)//168 * 60 *60) * 168 * 60 *60
     Data['Buddies']['Buddies'] = []
     validBuddies = []
     for pid in Data['PlayerData'].keys():
         isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive'].id) is not None
         if not isInactive: validBuddies.append(pid)
+        else: print(Data['PlayerData'][pid]['Name'], 'is inactive bud')
     
     while len(validBuddies) > 2:
         bud1 = random.choice(validBuddies)

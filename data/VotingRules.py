@@ -935,6 +935,7 @@ Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
     if Data['Buddies']['Time Created'] + 168 * 60 *60 <= time.time(): 
+        await Rule307.tally_buds(Data, payload) 
         await Rule307.buddify(Data, payload)
 
     if   (now() - Data['NextTurnStartTime'] > 0):
@@ -942,6 +943,7 @@ async def update(Data, payload):
         await tickTurn(Data, payload)
 
         if Data['Buddies']['Time Created'] + 167 * 60 *60 <= time.time(): 
+            await Rule307.tally_buds(Data, payload) 
             await Rule307.buddify(Data, payload)
     elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
         await enableVoting(Data, payload)
