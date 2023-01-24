@@ -86,11 +86,14 @@ async def purple(Data, payload, *text):
         Data['PlayerData'][pid]['Color'] = {'Hue':"Purple", "time": time.time() + 24*60*60}
     else:
         await payload['raw'].channel.send('You cannot be set to this color at this time.')
+
+async def removeBuds(Data, payload):
+    Data['Buddies'] = {'Time Created': 1673244000, 'Buddies' : []}
+    await buddify(Data, payload)
+
     
 async def buddify(Data, payload):
-
-    if Data['Buddies']['Time Created'] + 168 * 60 *60 > time.time(): return
-    else: Data['Buddies']['Time Created'] += 168 * 60 *60
+    Data['Buddies']['Time Created'] += 168 * 60 *60
 
     for bud in Data['Buddies']['Buddies']:
         basePID = bud[0]
@@ -358,7 +361,6 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    await buddify(Data, payload)
     if  Data['Gladiator']['Player'] not in ['', None] and Data['Gladiator']['DOB'] + 1 == Data['Turn']:
         Data['Gladiator']['DOB'] += 1
         Data['PlayerData'][Data['Gladiator']['Player']]['Friendship Tokens'] += 1

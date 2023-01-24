@@ -2,6 +2,7 @@
 # Voting System Module For Discord Bot
 ################################
 import pickle, sys, time, io, discord, datetime, urllib, re, random
+import Rule307 
 tz = datetime.timezone.utc
 """
 For a Custom Command !commandMe
@@ -933,9 +934,15 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
+    if Data['Buddies']['Time Created'] + 168 * 60 *60 <= time.time(): 
+        await Rule307.buddify(Data, payload)
+
     if   (now() - Data['NextTurnStartTime'] > 0):
         print('..Updating TickTurn')
         await tickTurn(Data, payload)
+
+        if Data['Buddies']['Time Created'] + 167 * 60 *60 <= time.time(): 
+            await Rule307.buddify(Data, payload)
     elif (now() - Data['CurrTurnStartTime'] > day) and (not Data['VotingEnabled']):
         await enableVoting(Data, payload)
     
