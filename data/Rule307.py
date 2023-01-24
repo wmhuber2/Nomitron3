@@ -87,14 +87,15 @@ async def purple(Data, payload, *text):
     else:
         await payload['raw'].channel.send('You cannot be set to this color at this time.')
 
-async def removeBuds(Data, payload):
+async def removeBuds(Data, payload, *text):
+    print('Removing Buds')
     Data['Buddies'] = {'Time Created': 1673244000, 'Buddies' : []}
     await buddify(Data, payload)
 
-    
+
 async def buddify(Data, payload):
     Data['Buddies']['Time Created'] += 168 * 60 *60
-
+    print('Making Buds!')
     for bud in Data['Buddies']['Buddies']:
         basePID = bud[0]
         baseIsGreen  = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Green'].id) 
