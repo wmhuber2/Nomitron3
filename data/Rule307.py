@@ -94,7 +94,7 @@ async def removeBuds(Data, payload, *text):
 
 
 async def buddify(Data, payload):
-    Data['Buddies']['Time Created'] += 168 * 60 *60
+
     print('Making Buds!')
     for bud in Data['Buddies']['Buddies']:
         basePID = bud[0]
@@ -114,7 +114,7 @@ async def buddify(Data, payload):
         if allSame:
             for b in bud: Data['PlayerData'][b]['Friendship Tokens'] += 1
 
-    Data['Buddies']['Time Created'] = time.time()
+    Data['Buddies']['Time Created'] = ((time.time() - 1673244000)//168 * 60 *60) * 168 * 60 *60
     Data['Buddies']['Buddies'] = []
     validBuddies = []
     for pid in Data['PlayerData'].keys():
