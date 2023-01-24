@@ -123,7 +123,8 @@ async def buddify(Data, payload):
         if not isInactive: validBuddies.append(pid)
         else: print(Data['PlayerData'][pid]['Name'], 'is inactive bud')
     
-    while len(validBuddies) > 2:
+    print('Bud Len:', len(validBuddies))
+    while len(validBuddies) >= 2:
         bud1 = random.choice(validBuddies)
         validBuddies.remove(bud1)
 
