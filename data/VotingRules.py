@@ -257,6 +257,9 @@ async def tickTurn(Data, payload, *text):
     await popProposal(Data, payload)
     await suberTick(Data, payload)
 
+    for pid in Data['PlayerData'].keys():
+        Data['PlayerData'][pid]['InactiveWarned'] = False
+
     if len(Data['Votes']['ProposingText']) < 1:  Data['NextTurnStartTime'] = (now()//day  + 1) * day
     else:                                        Data['NextTurnStartTime'] = (now()//day  + 2) * day
 
@@ -1043,8 +1046,9 @@ async def create_queue(Data, payload, ):
             Data['PlayerData'][player]['Inactive'] = None            
             await payload['refs']['players'][player].remove_roles(payload['refs']['roles']['Inactive'])
 
-        if player in endorsingPlayers and player not in willBeEndorsing and not isInactive:
-            print('warning', player)
+        if player in endorsingPlayers and player not in willBeEndorsing and not isInactive and not Data['PlayerData'][player]['InactiveWarned']:
+            print('warning', Data['PlayerData'][player]['Name'])
+            Data['PlayerData'][player]['InactiveWarned'] = True
             #await payload['refs']['players'][player].send("As the Queue stands, on the next turn you will be made inactive. Endorse a proposal or create one to stay active.")
 
             
@@ -1181,6 +1185,9 @@ async def setup(Data,payload):
 
         if 'Inactive' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Inactive'] = None
+
+        if 'InactiveWarned' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['InactiveWarned'] = False
         
         if 'Challanged' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Challanged'] = False
