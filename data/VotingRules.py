@@ -1045,7 +1045,7 @@ async def create_queue(Data, payload, ):
 
         if player in endorsingPlayers and player not in willBeEndorsing and not isInactive:
             print('warning', player)
-            await payload['refs']['players'][player].send("As the Queue stands, on the next turn you will be made inactive. Endorse a proposal or create one to stay active.")
+            #await payload['refs']['players'][player].send("As the Queue stands, on the next turn you will be made inactive. Endorse a proposal or create one to stay active.")
 
             
 
