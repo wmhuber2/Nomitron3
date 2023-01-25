@@ -1064,6 +1064,13 @@ async def setup(Data,payload):
 
     if 'Subers' not in Data:
         Data['Subers'] = dict()
+
+    if 'Critic' not in Data:
+        Data['Critic'] = {
+            'Banned': [],
+            'Opted In': [],
+            'Starred':[]
+        }
     
     if 'Array' not in Data:
         Data['Array'] = dict()
@@ -1135,6 +1142,11 @@ async def setup(Data,payload):
         if 'Name' not in  Data['PlayerData'][pid]:
             Data['PlayerData'][pid]['Name'] = name
 
+        if Data['PlayerData'][pid].get('Nick') is None:
+            Data['PlayerData'][pid]['Nick'] = payload['refs']['players'][pid].nick
+            if Data['PlayerData'][pid]['Nick'] is None:
+                Data['PlayerData'][pid]['Nick']= payload['refs']['players'][pid].name
+
         if 'Proposal' not in Data['PlayerData'][pid]:
             Data['PlayerData'][pid]['Proposal'] = {}
 
@@ -1167,6 +1179,9 @@ async def setup(Data,payload):
 
         if 'Offers' not in Data['PlayerData'][pid]:
              Data['PlayerData'][pid]['Offers'] = 0
+
+        if 'Emojis' not in Data['PlayerData'][pid]:
+             Data['PlayerData'][pid]['Emojis'] = ''
 
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:

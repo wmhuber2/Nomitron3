@@ -10,8 +10,10 @@ savefile = 'DiscordBot_Data.yml'
 admin = 1057023272220373143 #'Crorem#6962 Sudo'
 serverid = 1028425604879634442 # Nomic 6 1043621642938626171 #
 Admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
-BotChannels = ['market', 'actions','off-topic', 'courtroom', 'voting','voting-1','voting-2','voting-3','voting-4',
-               'proposals', 'suber-proposals','mod-lounge', 'bot-spam', 'deck-edits', 'queue', 'DM', 'game', 'combat']
+BotChannels = ['market', 'actions','off-topic', 'courtroom', 'critic-responses',
+               'voting','voting-1','voting-2','voting-3','voting-4',
+               'proposals', 'suber-proposals','mod-lounge', 'bot-spam',
+               'deck-edits', 'queue', 'DM', 'game', 'combat']
 
 '''
 Implement Modules By Placing Module Python File In Same Directory
@@ -27,7 +29,7 @@ class DiscordNomicBot():
     Initialize The Bot Handling Class
     """
     def __init__(self, ):
-        global serverid
+        global serverid, admin
         try:
             global discord
             discord = importlib.import_module('discord')
@@ -60,6 +62,8 @@ class DiscordNomicBot():
 
         if self.token[-4:] == '_OL0':
             serverid =  1043621642938626171
+            admin = 250132828950364174 #'Crorem#6962'
+            
             print('This is a Test Bot')
 
         @self.client.event

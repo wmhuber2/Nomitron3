@@ -9,6 +9,77 @@ For a Custom Command !commandMe
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
+async def nick(Data, payload, *text):
+    Data['PlayerData'][payload['Author ID']]['Nick'] = payload['Content'][6:]
+async def toggleEmoji(Data, payload, *text):
+    if payload.get('Author') in admins and len(payload['Content'].split(' ')) == 3: 
+        _, playerid, emoji = payload['Content'].split(' ')
+        player = await getPlayer(playerid, payload)
+        pid = player.id
+        print('Toggleing Emoji For',player.name, [hex(ord(i)) for i in emoji])
+
+        if emoji not in Data['PlayerData'][pid]['Emojis']:
+            Data['PlayerData'][pid]['Emojis'] += emoji
+        elif emoji in Data['PlayerData'][pid]['Emojis']:
+            Data['PlayerData'][pid]['Emojis'] = Data['PlayerData'][pid]['Emojis'].replace(emoji, '')
+        
+        await updateEmojis(Data, payload,)
+
+async def getNewCritic(Data, payload, *text):
+    if payload.get('Author') not in admins: return
+    optedPlayers = list(Data['Critic']['Opted In'])
+
+    for pid in Data['PlayerData'].keys():
+        isInactive = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Inactive'].id) is not None
+        if pid in optedPlayers and isInactive: optedPlayers.remove(pid)
+    
+    activePlayers = list(optedPlayers)
+
+    print('Valid Critics:')
+    for pid in Data['Critic']['Banned']:
+        if pid in activePlayers: activePlayers.remove(pid)
+        else: print('  ', Data['PlayerData'][pid]['Name'])
+    
+    if len(activePlayers) == 0: 
+        Data['Critic']['Banned'] = []
+        activePlayers = optedPlayers
+        await payload['refs']['channels']['actions'].send('The Critic Pool is Reset!')
+    if len(activePlayers) == 0: 
+        await payload['refs']['channels']['actions'].send('There are no valid Critic Candidates!')
+    else:
+        critic = random.choice(activePlayers)
+        Data['Critic']['Banned'].append(critic)
+        await payload['refs']['channels']['actions'].send(f'<@{critic}> Is The New Critic!')
+
+    for pid in  Data['PlayerData'].keys():
+        if pid in Data['Critic']['Starred']:
+            if '⭐' not in Data['PlayerData'][pid]['Emojis']:
+                Data['PlayerData'][pid]['Emojis'] += '⭐'
+        else:
+            if '⭐' in Data['PlayerData'][pid]['Emojis']:
+                Data['PlayerData'][pid]['Emojis'] = Data['PlayerData'][pid]['Emojis'].replace('⭐', '')
+    
+    Data['Critic']['Starred'] = []
+    await updateEmojis(Data, payload,)
+
+
+async def optIn(Data, payload, *text):
+    if payload['Channel'] != 'Actions':
+        if payload['Author ID'] in Data['Critic']['Opted In']:
+            await payload['raw'].channel.send('You already opted in, but I like your enthusiasm')
+        else:
+            Data['Critic']['Opted In'].append( payload['Author ID'] )
+            await payload['raw'].channel.send('You are opted in to the Critic Pool')
+
+async def optOut(Data, payload, *text):
+    if payload['Channel'] != 'Actions':
+        if payload['Author ID'] not in Data['Critic']['Opted In']:
+            await payload['raw'].channel.send('You already opted out.')
+        else:
+            Data['Critic']['Opted In'].remove( payload['Author ID'] )
+            await payload['raw'].channel.send('You are opted out of the Critic Pool')
+
+
 async def getPlayer(playerid, payload):
     if len(playerid) == 0: return None
     else:
@@ -182,21 +253,33 @@ async def challenge(Data, payload, *text):
         pid = player.id
         gid = gldetr.id
 
+        if '⚔️' not in Data['PlayerData'][pid]['Emojis']:
+            Data['PlayerData'][pid]['Emojis'] += '⚔️'
+        
+        if '⚔️' in Data['PlayerData'][gid]['Emojis']:
+            Data['PlayerData'][gid]['Emojis'] = Data['PlayerData'][gid]['Emojis'].replace('⚔️', '')
+
+
         print(player.nick, gldetr.nick)
-        if gldetr.nick is not None and '⚔' == gldetr.nick[-1]:
-            if Data['admin'] == gid:    await gldetr.send("As admin, you must remove ⚔️ from your nick")
-            else:                       await gldetr.edit(nick = gldetr.nick[:-1])
-
-        if player.nick is     None or  '⚔' != player.nick[-1]:
-            if Data['admin'] == pid:    await player.send("As admin, you must add ⚔️ to you nick")
-            else:
-                if player.nick is None: await player.edit(nick = player.name+'⚔️' )
-                else:                   await player.edit(nick = player.nick+'⚔️' )
-
         Data['Gladiator'] = {'Player': pid, 'DOB':Data['Turn']+1}
+        await updateEmojis(Data, payload,)
     else: 
         await message.channel.send(f"Gladiator: {gladiatorRoll}\nPlayer {playerRoll}\n{payload['Author']} Is Defeated")
-          
+
+async def updateEmojis(Data, payload):
+    for pid in Data['PlayerData'].keys():
+        player = payload['refs']['players'][pid]
+        emojis = ''.join(sorted(Data['PlayerData'][pid]['Emojis']))
+        
+        nickname = Data['PlayerData'][pid]['Nick'] + emojis
+        nickname = nickname.replace('\uFE0F','').replace('\uFE0E','')
+        old_nick = player.nick
+        if old_nick == None: old_nick = player.name
+        if nickname != old_nick:
+            print(nickname, old_nick, str.encode(nickname), str.encode(old_nick) )
+            if Data['admin'] == pid:    await player.send(f"As admin, you must set your nick to {nickname}")
+            else:                       await player.edit(nick = nickname)
+
 async def setTokens(Data, payload, *text):
     if payload.get('Author') not in admins: return
     
@@ -353,6 +436,8 @@ async def on_reaction(Data, payload):
     if payload['emoji'] == '✔️' and payload['Channel'] == 'actions' and f"{payload['user'].name}#{payload['user'].discriminator}" in admins:
         await payOffer(Data, payload)
 
+    if payload['emoji'] == '✔️' and payload['Channel'] == 'critic-responses':
+        Data['Critic']['Starred'].append(payload['message'].author.id)
 
 """
 Main Run Function On Messages
@@ -365,6 +450,8 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
+    await updateEmojis(Data, payload,)
+
     if  Data['Gladiator']['Player'] not in ['', None] and Data['Gladiator']['DOB'] + 1 == Data['Turn']:
         Data['Gladiator']['DOB'] += 1
         Data['PlayerData'][Data['Gladiator']['Player']]['Friendship Tokens'] += 1

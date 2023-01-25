@@ -23,6 +23,10 @@ Bot Commands:
     !ping             :  Pings Bot
     !turnStats        :  Get Turn Debug Info
 
+    !optIn            :  Opt In of Critic Pool
+    !optOut           :  Opt Out of Critic Pool
+
+    !nick             :  Set Nickname
     !me               :  Get Your Player Info
 
 Mod Commands:
@@ -48,11 +52,13 @@ Mod Commands:
     !reduceTurn       :  Reduce current turn by 24 hrs
     !tickTurn         :  Start next turn
 
-
     !green @player    :  Turn @player Green
     !orange @player   :  Turn @player Orange
     !purple @player   :  Turn @player Purple
 
+    !toggleEmoji @player EMOJI : Toggle Nickname Emoji For player name
+
+    !getNewCritic            :  Perform weekly update of Critics
     !resetChallenges         :  Reset Tracker for "if player has challenged" for all players
     !resetChallenges @player :  Reset Tracker for if player has challenged for @players
     !setGladiator @player    :  Set the player as Gladiator
