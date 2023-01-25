@@ -11,6 +11,7 @@ admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 
 async def nick(Data, payload, *text):
     Data['PlayerData'][payload['Author ID']]['Nick'] = payload['Content'][6:]
+
 async def toggleEmoji(Data, payload, *text):
     if payload.get('Author') in admins and len(payload['Content'].split(' ')) == 3: 
         _, playerid, emoji = payload['Content'].split(' ')
@@ -413,12 +414,22 @@ async def payOffer(Data, payload):
 async def me(Data, payload, *text):
     pid = payload['Author ID']
     cont =      "Your Info\n```" 
-    cont +=    f" Friendship Tokens: {Data['PlayerData'][pid]['Friendship Tokens']}\n" 
-    cont +=    f" Has Challanged:    {Data['PlayerData'][pid]['Challanged']}\n" 
-    cont +=    f" Tokens Offered:    {Data['PlayerData'][pid]['Offers']}\n" 
+    cont +=    f" Friendship Tokens:  {Data['PlayerData'][pid]['Friendship Tokens']}\n" 
+    cont +=    f" Has Challenged:     {Data['PlayerData'][pid]['Challanged']}\n" 
+    cont +=    f" Tokens Offered:     {Data['PlayerData'][pid]['Offers']}\n" 
+    cont +=    f" Opted In To Critic: {pid in Data['Critic']['Opted In']}\n" 
     cont +=    "```"
     await payload['raw'].author.send(cont )
 
+async def all(Data, payload, *text):
+    for pid in Data['PlayerData'].keys():
+        cont =     f"{Data['PlayerData'][pid]['Nick']}:\n```" 
+        cont +=    f" Friendship Tokens: {Data['PlayerData'][pid]['Friendship Tokens']}\n" 
+        cont +=    f" Has Challenged:    {Data['PlayerData'][pid]['Challanged']}\n" 
+        cont +=    f" Tokens Offered:    {Data['PlayerData'][pid]['Offers']}\n" 
+        cont +=    f" Opted In To Critic: {pid in Data['Critic']['Opted In']}\n" 
+        cont +=    "```"
+        await payload['raw'].author.send(cont )
 
 """
 Initiate New Player
