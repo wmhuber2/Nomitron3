@@ -429,7 +429,7 @@ async def all(Data, payload, *text):
         cont +=    f" Tokens Offered:    {Data['PlayerData'][pid]['Offers']}\n" 
         cont +=    f" Opted In To Critic: {pid in Data['Critic']['Opted In']}\n" 
         cont +=    "```"
-        await payload['raw'].author.send(cont )
+        await payload['raw'].channel.send(cont )
 
 """
 Initiate New Player
