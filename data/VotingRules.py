@@ -982,6 +982,7 @@ async def create_queue(Data, payload, ):
     messages = messages[::-1]
 
     endorsingPlayers = set()
+    willBeEndorsing = set()
 
     # Update Messages with Stats
     for i in list(range(len(sortedQ))):
@@ -999,6 +1000,7 @@ async def create_queue(Data, payload, ):
             cont   = f"{player}'s Proposal: (Supporters: {len(Data['PlayerData'][pid]['Proposal']['Supporters'])})"
             files  = [discord.File(fp=io.StringIO(Data['PlayerData'][pid]['Proposal']['File']), filename=filename),]
             endorsingPlayers.update(Data['PlayerData'][pid]['Proposal']['Supporters'])
+            if  pid != Data['Queue'][0]: willBeEndorsing.update(Data['PlayerData'][pid]['Proposal']['Supporters'])
         
 
         # Update Message Content
@@ -1040,6 +1042,11 @@ async def create_queue(Data, payload, ):
         if isInactive and Data['PlayerData'][player]['Inactive'] == "315" and player in endorsingPlayers:
             Data['PlayerData'][player]['Inactive'] = None            
             await payload['refs']['players'][player].remove_roles(payload['refs']['roles']['Inactive'])
+
+        if player in endorsingPlayers and player not in willBeEndorsing and not isInactive:
+            await payload['refs']['players'][player].send("As the Queue stands, on the next turn you will be made inactive. Endorse a proposal or create one to stay active.")
+
+            
 
 
     print('..Queue Updated')
