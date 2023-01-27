@@ -785,7 +785,9 @@ async def on_message(Data, payload):
         
         # Handle Incactivity
         if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] is None:
-            await p.remove_roles(payload['refs']['roles']['Inactive'])
+            await payload['raw'].author.remove_roles(payload['refs']['roles']['Inactive'])
+            await create_queue(Data, payload)
+
         
         if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] == "315":
             await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
