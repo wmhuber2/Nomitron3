@@ -48,6 +48,7 @@ async def turnStats(Data, payload, *text):
     msg += f"Curr Turn Start Time :   {getTime(Data['CurrTurnStartTime'])}\n"
     msg += f"Next Turn Start Time :   {getTime(Data['NextTurnStartTime'])}\n"
     msg += f"Time Now             :   {getTime(now())}\n"
+    msg += f"Raw Time Now         :   {now()}\n"
     msg += f"Time Elapsed         :   {getTime(now() - Data['CurrTurnStartTime'])}\n"
     msg += f"Time Remaining       :   {getTime(Data['NextTurnStartTime'] - now())}\n"
     msg += f"Votes                :   {Data['Votes']}\n```"
@@ -380,7 +381,7 @@ async def bot_tally(Data, payload, *text):
                     'Proposal' : "", 'Supporters' : [], 'DOB' : now(),
                     'Party': ['Minority', 'Majority'][losers == "Nay"]
                 },
-                'Date': now(), 'Turn': Data['Turn'], 'Voting Channel': None, 'Loser' : losers[0]
+                'Date': (now()//day ) * day, 'Turn': Data['Turn'], 'Voting Channel': None, 'Loser' : losers[0]
             }
             await payload['refs']['channels']['actions'].send(f"**A SUBER has been formed! \n" \
             f"   Assenters: {' '.join([f'<@{pid}>' for pid in Data['Subers'][Data['Votes']['Proposal#']]['Assenter']['Members']])}\n\n" \
@@ -651,20 +652,25 @@ async def on_reaction(Data, payload):
             msg =   f"------\n **{Data['PlayerData'][author]['Name']}'s Proposal Info:**\n```Supporters:"
             for p in Data['PlayerData'][author]['Proposal']['Supporters']: msg += '\n - ' + Data['PlayerData'][p]['Name']
             msg += "```"
-            await payload['user'].send(msg)
+            try:await payload['user'].send(msg)
+            except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
 
             msg = "**\nProposal:**\n"
             for line in Data['PlayerData'][author]['Proposal']['File'].split('\n'):
                 line += '\n'
                 if len(msg + line) > 1900:
-                    await payload['user'].send(msg)
+                    try:await payload['user'].send(msg)
+                    except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                     while len(line) > 1900:
                         msgend = line[1900:].index(' ')
-                        await payload['user'].send(line[:1900+msgend])
+                        try:await payload['user'].send(line[:1900+msgend])
+                        except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                         line = line[1900+msgend:]
                     msg = line
                 else: msg += line
-            if len(msg) > 0: await payload['user'].send(msg)
+            if len(msg) > 0: 
+                try:await payload['user'].send(msg)
+                except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
         else: return
 
         # If Inactive, Make Active
@@ -697,10 +703,12 @@ async def on_reaction(Data, payload):
                 for i in Data['Subers'][suberKey][MajorOrMinor]['Whip']: 
                     if i['Name'] == payload['user'].id: return
                 if payload['user'].id not in Data['Subers'][suberKey][MajorOrMinor]['Members']: 
-                    await payload['user'].send( content = "You are not a member of this Suber Side")
+                    try:await payload['user'].send( content = "You are not a member of this Suber Side")
+                    except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                     return
                 if not Data['Subers'][suberKey][Data['Subers'][suberKey]['Loser']]['Is Official'] and Data['Subers'][suberKey]['Loser'] != MajorOrMinor:
-                    await payload['user'].send( content = "You must wait for the Minority Whip To be Elected before nominating Majority Whips")
+                    try:await payload['user'].send( content = "You must wait for the Minority Whip To be Elected before nominating Majority Whips")
+                    except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                     return
                 Data['Subers'][suberKey][MajorOrMinor]['Whip'].append({'Name':payload['user'].id, 'Supporters':[], 'DOB':now()})
                 await create_array(Data, payload)
@@ -709,7 +717,8 @@ async def on_reaction(Data, payload):
             if not Data['Subers'][suberKey][MajorOrMinor]['Is Official']:
                 endorsedIndex = whipEmojiMap.index(payload['emoji'])
                 if payload['user'].id not in Data['Subers'][suberKey][MajorOrMinor]['Members']: 
-                    await payload['user'].send( content = "You are not a member of this Suber Side")
+                    try: await payload['user'].send( content = "You are not a member of this Suber Side")
+                    except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                     return
                 if payload['user'].id in Data['Subers'][suberKey][MajorOrMinor]['Whip'][endorsedIndex]['Supporters']: 
                     return
@@ -735,20 +744,25 @@ async def on_reaction(Data, payload):
             msg = f"**\nProposal {suberKey}'s SUBER: Suber {Data['Subers'][suberKey][MajorOrMinor]['Party']} Whip Supporters:**\n"
             for p in Data['Subers'][suberKey][MajorOrMinor]['Supporters']: msg += '\n - ' + Data['PlayerData'][p]['Name']
             msg += "\n"
-            await payload['user'].send(msg)
+            try: await payload['user'].send(msg)
+            except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
 
             msg = f"**\nProposal {suberKey}'s SUBER: Suber {Data['Subers'][suberKey][MajorOrMinor]['Party']} Whip Proposal:**\n"
             for line in Data['Subers'][suberKey][MajorOrMinor]['Proposal'].split('\n'):
                 line += '\n'
                 if len(msg + line) > 1900:
-                    await payload['user'].send(msg)
+                    try:await payload['user'].send(msg)
+                    except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                     while len(line) > 1900:
                         msgend = line[1900:].index(' ')
-                        await payload['user'].send(line[:1900+msgend])
+                        try:await payload['user'].send(line[:1900+msgend])
+                        except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
                         line = line[1900+msgend:]
                     msg = line
                 else: msg += line
-            if len(msg) > 0: await payload['user'].send(msg)
+            if len(msg) > 0: 
+                try: await payload['user'].send(msg)
+                except Exception as e: print(f"Error sending msg to { payload['user'].id }, {e}")
     
     if payload['Channel'] == 'DM' and payload['mode'] == 'add' and \
         Data['PlayerData'][payload['user'].id]['Query'] is not None and \
@@ -790,7 +804,8 @@ async def on_message(Data, payload):
 
         
         if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] == "315":
-            await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
+            try:await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
+            except Exception as e: print(f"Error sending msg to { payload['raw'].author.id }, {e}")
             return
             
         # Register Vote
@@ -806,8 +821,8 @@ async def on_message(Data, payload):
             await payload['raw'].add_reaction('✔️')
         else:
             await payload['raw'].add_reaction('❌')
-            await payload['raw'].author.send( content = "Your vote is ambigious, Please use appropriate yay, nay, or withdraw text." )
-
+            try:await payload['raw'].author.send( content = "Your vote is ambigious, Please use appropriate yay, nay, or withdraw text." )
+            except Exception as e: print(f"Error sending msg to { payload['raw'].author.id }, {e}")
         await updateProposal(Data, payload)
 
     if payload['Channel'] in ['voting-1','voting-2', 'voting-3', 'voting-4']:
@@ -823,7 +838,8 @@ async def on_message(Data, payload):
             await p.remove_roles(payload['refs']['roles']['Inactive'])
         
         if isInactive and Data['PlayerData'][payload['Author ID']]['Inactive'] == "315":
-            await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)")
+            try:await payload['raw'].author.send( content = "You must endorse a proposal to become active again. (Rule 315)") 
+            except Exception as e: print(f"Error sending msg to { payload['raw'].author.id }, {e}")
             return
             
         # Register Vote
@@ -839,8 +855,8 @@ async def on_message(Data, payload):
             await payload['raw'].add_reaction('✔️')
         else:
             await payload['raw'].add_reaction('❌')
-            await payload['raw'].author.send( content = "Your vote is ambigious, Please use appropriate yay, nay, or withdraw text." )
-
+            try:await payload['raw'].author.send( content = "Your vote is ambigious, Please use appropriate yay, nay, or withdraw text." )
+            except Exception as e: print(f"Error sending msg to { payload['raw'].author.id }, {e}")
         await updateProposal(Data, payload)
 
     if payload['Channel'] == 'proposals':
@@ -887,7 +903,8 @@ async def on_message(Data, payload):
                     isWhipFor.append([suberKey, MajorOrMinor])
 
         if   len(isWhipFor) == 0:
-             await payload['raw'].author.send( content = "You are not a WHIP for any SUBERs")
+            try: await payload['raw'].author.send( content = "You are not a WHIP for any SUBERs")
+            except Exception as e: print(f"Error sending msg to { payload['raw'].author.id }, {e}")
         
         elif len(isWhipFor) == 1:
             suberKey     = isWhipFor[0][0]
@@ -915,7 +932,11 @@ async def on_message(Data, payload):
                 cont += f"\n   {whipEmojiMap[i]} : Proposal {suberKey}'s SUBER"
                 options[whipEmojiMap[i]] = isWhipFor[i]
 
-            msg = await payload['raw'].author.send( content = cont)
+            msg = None
+            try: msg = await payload['raw'].author.send( content = cont)
+            except Exception as e: 
+                print(f"Error sending msg to { payload['raw'].author.id }, {e}")
+                return
             if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
                 decoded = await list(payload['Attachments'].values())[0].read()
                 proposalText = decoded.decode(encoding="utf-8", errors="strict")
@@ -981,6 +1002,7 @@ async def create_queue(Data, payload, ):
         await payload['refs']['channels']['queue'].purge()
         messages = []
         for pid in sortedQ:  
+            msg = None
             msg = await payload['refs']['channels']['queue'].send("Generating Proposal View")
             messages.append(msg)
             for r in ['👍', '👎', 'ℹ️']: await msg.add_reaction(r)
@@ -1042,8 +1064,8 @@ async def create_queue(Data, payload, ):
             print(player)
             await payload['refs']['players'][player].add_roles(payload['refs']['roles']['Inactive'])
             Data['PlayerData'][player]['Inactive'] = "315"
-            await payload['refs']['players'][player].send("You are now Inactive because you are not endorsing any proposals. Endorse a proposal or create one to become active again. (Rule 315)")
-
+            try: await payload['refs']['players'][player].send("You are now Inactive because you are not endorsing any proposals. Endorse a proposal or create one to become active again. (Rule 315)")
+            except Exception as e: print(f"Error sending msg to { player }, {e}")
         if isInactive and Data['PlayerData'][player]['Inactive'] == "315" and player in endorsingPlayers:
             Data['PlayerData'][player]['Inactive'] = None            
             await payload['refs']['players'][player].remove_roles(payload['refs']['roles']['Inactive'])
