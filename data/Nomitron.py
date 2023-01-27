@@ -226,6 +226,9 @@ class DiscordNomicBot():
         if not found: await self.passToModule('on_message', payload)
         self.saveData()
 
+        copyfile(path + savefile,
+                 path + 'BackupDataFiles/'+ savefile + '-' + str(datetime.datetime.now()))
+
     """
     Handle Reactions
     """
@@ -257,6 +260,9 @@ class DiscordNomicBot():
             await msg.remove_reaction(str('🔄'), user)
 
         self.saveData()
+
+        copyfile(path + savefile,
+                 path + 'BackupDataFiles/'+ savefile + '-' + str(datetime.datetime.now()))
 
 
     """
