@@ -48,6 +48,7 @@ async def getNewCritic(Data, payload, *text):
     if len(activePlayers) == 0: 
         await payload['refs']['channels']['actions'].send('There are no valid Critic Candidates!')
     else:
+        print(len(activePlayers), 'Choices For Critic')
         critic = random.choice(activePlayers)
         Data['Critic']['Banned'].append(critic)
         await payload['refs']['channels']['actions'].send(f'<@{critic}> Is The New Critic!')
@@ -165,8 +166,7 @@ async def removeBuds(Data, payload, *text):
     await buddify(Data, payload)
 
 
-async def tally_buds(Data, payload):
-
+async def tally_buds(Data, payload, *text):
     print('Making Buds!')
     for bud in Data['Buddies']['Buddies']:
         basePID = bud[0]
@@ -186,8 +186,8 @@ async def tally_buds(Data, payload):
         if allSame:
             for b in bud: Data['PlayerData'][b]['Friendship Tokens'] += 1
 
-async def buddify(Data, payload):
-    Data['Buddies']['Time Created'] = ((time.time() - 1673244000)//168 * 60 *60) * 168 * 60 *60
+async def buddify(Data, payload, *text):
+    Data['Buddies']['Time Created'] = ((time.time() - 1673244000)//168 * 60 *60) * 168 * 60 *60 + 1673244000
     Data['Buddies']['Buddies'] = []
     validBuddies = []
     for pid in Data['PlayerData'].keys():
