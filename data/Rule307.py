@@ -90,6 +90,20 @@ async def getPlayer(playerid, payload):
         else: await payload['raw'].channel.send('Player with id, ' + playerid + ' cannot be found.')
     return None
 
+async def judge(Data, payload, *text):
+    pid = payload['Author ID']
+
+    if payload.get('Author') in admins and len(payload['Content'].split(' ')) > 1 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await getPlayer(playerid, payload)
+        pid = player.id
+        print('Setting Judge For ',player.name)
+        if payload['refs']['players'][pid].get_role(payload['refs']['roles']['Judge'].id) is None:
+            await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Judge'])
+        else:
+            await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Judge'])
+
+
 async def green(Data, payload, *text):
     pid = payload['Author ID']
 
