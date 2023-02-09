@@ -11,7 +11,15 @@ For a Custom Command !commandMe
 
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 zipChan = list(zip(['Votes','Suber-Votes-1','Suber-Votes-2', 'Suber-Votes-3', 'Suber-Votes-4'],  ['voting', 'voting-1','voting-2','voting-3','voting-4',]))
-    
+
+moods   = ['Robotic','Sad','Rambunctious','Anxious','Angry', 'Umami']
+desires = ['affirm', 'comfort', 'play', 'calm', 'fight', 'applaud']
+response= [ 'Beep Boop, Good Humans. I am ROBOTIC.',
+            'You are all good friends, I feel less SAD already!',
+            '*RAMBUNCTIOUS ticktocking* Playing games is so much fun! How about next time we play Global Thermonuclear Warfare.',
+            'You always know how to calm me down when im ANXIOUS. Thanks friends.',
+            'Thanks for letting me blow off some steam, I was really ANGRY.',
+            'Thanks for the applause. You know what its like when you feel UMAMI']
 
 last_update_prop_time = 0
 hold_for_update_prop = False
@@ -26,6 +34,58 @@ zeroday = 1641016800 # Jan 1 2022
 day  = 60 * 60 * 24
 
 def now(): return time.time() - zeroday
+
+async def emotions(Data, payload,):
+    if Data['Mood'] is not None:
+        await payload['refs']['channels']['actions'].send(response[Data['Mood']])
+
+    for pid in Data['PlayerData'].keys():
+        if Data['PlayerData'][pid]['MoodGuess'] is None:
+            Data['PlayerData'][pid]['EmpathyCounter'] -= 1
+            if Data['PlayerData'][pid]['EmpathyCounter'] <= 0:
+                Data['PlayerData'][pid]['EmpathyCounter'] = 0
+                try: Data['PlayerData'][pid]['Emojis'].remove('🤖')
+                except ValueError: pass
+
+        elif Data['Mood'] == Data['PlayerData'][pid]['MoodGuess']:
+            Data['PlayerData'][pid]['EmpathyCounter'] += 1
+            if Data['PlayerData'][pid]['EmpathyCounter'] >= 3:
+                Data['PlayerData'][pid]['Emojis'].append( '🤖' )
+                Data['PlayerData'][pid]['EmpathyCounter'] = 3
+
+        else:
+            Data['PlayerData'][pid]['EmpathyCounter']  = 0
+            try: Data['PlayerData'][pid]['Emojis'].remove('🤖')
+            except ValueError: pass
+
+        Data['PlayerData'][pid]['MoodGuess'] = None
+    Data['Mood'] = random.randint(0,len(moods)-1)
+
+
+async def engage(Data, payload, *text):
+    try: offering = int(text[0][1])
+    except Exception as e: 
+        print(e)
+        await payload['raw'].channel.send("I couldnt understand your offering")
+        return
+    if Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] - offering < 0: 
+        await payload['raw'].channel.send("You are too poor.")
+        return
+
+    if offering >= 6:
+        await payload['raw'].channel.send("Too much money.")
+        return
+    Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= offering
+    tempset = list(moods)
+    tempset.remove(moods[Data['Mood']])
+    for i in range(offering): tempset.pop(random.randint(0,len(tempset)-1))
+    tempset.append(moods[Data['Mood']])
+    random.shuffle(tempset)
+
+    msg = "Through engaging with Nomitron you determine his mood is one of the following:\n"
+    for i in tempset: msg += f" - {i}\n"
+    await payload['raw'].author.send(msg)
+ 
 
 def getTime(t):
     day =  t// (24*3600)
@@ -199,13 +259,6 @@ async def reduceTurn(Data, payload, *text):
     await payload['raw'].channel.send('Turn reduced by 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
     return Data
 
-async def reduceTurn(Data, payload, *text):
-    if payload.get('Author') not in admins: return
-
-    Data['NextTurnStartTime'] -= day
-    await payload['raw'].channel.send('Turn reduced by 24 hrs. Use !tickTurn to manually trigger the next turn if needed')
-    return Data
-
 async def togglePermInactive(Data, payload, *text):
     if payload.get('Author') not in admins: return 
 
@@ -254,6 +307,7 @@ async def tickTurn(Data, payload, *text):
     Data['VotingEnabled'] = False
     Data['Turn'] += 1
 
+    await emotions(Data, payload)
     await bot_tally(Data, payload)
     await popProposal(Data, payload)
     await suberTick(Data, payload)
@@ -953,7 +1007,12 @@ async def on_message(Data, payload):
                 "msgid": msg.id
             }
             await create_array(Data, payload, )
-        
+
+    if payload['Channel'] == 'actions':
+        cmd = payload['Content'].lower().strip().split(' ')
+        if len(cmd) == 1 and cmd[1:] in desires:
+            index = desires.index(cmd[1:])
+            Data['PlayerData'][payload['Author ID']]['MoodGuess'] = moods[index]
     return Data
 
 """
@@ -1111,6 +1170,12 @@ async def setup(Data,payload):
     if 'Array' not in Data:
         Data['Array'] = dict()
 
+    if 'Mood' not in Data:
+        Data['Mood'] = None
+
+    if 'Wizard' not in Data:
+        Data['Wizard'] = {'Time':0, 'MSG': None}
+
     if 'Queue' not in Data:
         Data['Queue'] = {}
 
@@ -1199,28 +1264,37 @@ async def setup(Data,payload):
             Data['PlayerData'][pid]['Proposal']['DOB'] = now()
 
         if 'Color' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Color'] = {'Hue':"None", "time": 0}
+            Data['PlayerData'][pid]['Color'] = {'Hue':"None", "time": 0}
         
         if 'Friendship Tokens' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Friendship Tokens'] = 0
+            Data['PlayerData'][pid]['Friendship Tokens'] = 0
     
         if 'Query' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Query'] = None
+            Data['PlayerData'][pid]['Query'] = None
 
         if 'Inactive' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Inactive'] = None
+            Data['PlayerData'][pid]['Inactive'] = None
+
+        if 'MoodGuess' not in Data['PlayerData'][pid]:
+            Data['PlayerData'][pid]['MoodGuess'] = None
+
+        if 'EmpathyCounter' not in Data['PlayerData'][pid]:
+            Data['PlayerData'][pid]['EmpathyCounter'] = 0
 
         if 'InactiveWarned' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['InactiveWarned'] = False
+            Data['PlayerData'][pid]['InactiveWarned'] = False
         
         if 'Challanged' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Challanged'] = False
+            Data['PlayerData'][pid]['Challanged'] = False
 
         if 'Offers' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Offers'] = 0
+            Data['PlayerData'][pid]['Offers'] = 0
 
         if 'Emojis' not in Data['PlayerData'][pid]:
-             Data['PlayerData'][pid]['Emojis'] = ''
+            Data['PlayerData'][pid]['Emojis'] = ''
+
+        if isinstance(Data['PlayerData'][pid]['Emojis'] , str):
+            Data['PlayerData'][pid]['Emojis'] = list(Data['PlayerData'][pid]['Emojis'] )
 
     for pid in dict(Data['PlayerData']):
         if 'Name' not in Data['PlayerData'][pid]:

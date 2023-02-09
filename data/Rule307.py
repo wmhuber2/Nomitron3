@@ -20,9 +20,10 @@ async def toggleEmoji(Data, payload, *text):
         print('Toggleing Emoji For',player.name, [hex(ord(i)) for i in emoji])
 
         if emoji not in Data['PlayerData'][pid]['Emojis']:
-            Data['PlayerData'][pid]['Emojis'] += emoji
+            Data['PlayerData'][pid]['Emojis'].append( emoji )
         elif emoji in Data['PlayerData'][pid]['Emojis']:
-            Data['PlayerData'][pid]['Emojis'] = Data['PlayerData'][pid]['Emojis'].replace(emoji, '')
+            try: Data['PlayerData'][pid]['Emojis'].remove( emoji )
+            except ValueError: pass
         
         await updateEmojis(Data, payload,)
 
@@ -56,10 +57,11 @@ async def getNewCritic(Data, payload, *text):
     for pid in  Data['PlayerData'].keys():
         if pid in Data['Critic']['Starred']:
             if '⭐' not in Data['PlayerData'][pid]['Emojis']:
-                Data['PlayerData'][pid]['Emojis'] += '⭐'
+                Data['PlayerData'][pid]['Emojis'].append( '⭐' )
         else:
             if '⭐' in Data['PlayerData'][pid]['Emojis']:
-                Data['PlayerData'][pid]['Emojis'] = Data['PlayerData'][pid]['Emojis'].replace('⭐', '')
+                try: Data['PlayerData'][pid]['Emojis'].remove( '⭐' )
+                except ValueError: pass
     
     Data['Critic']['Starred'] = []
     await updateEmojis(Data, payload,)
@@ -102,7 +104,6 @@ async def judge(Data, payload, *text):
             await payload['refs']['players'][pid].add_roles(   payload['refs']['roles']['Judge'])
         else:
             await payload['refs']['players'][pid].remove_roles(payload['refs']['roles']['Judge'])
-
 
 async def green(Data, payload, *text):
     pid = payload['Author ID']
@@ -269,10 +270,11 @@ async def challenge(Data, payload, *text):
         gid = gldetr.id
 
         if '⚔️' not in Data['PlayerData'][pid]['Emojis']:
-            Data['PlayerData'][pid]['Emojis'] += '⚔️'
+            Data['PlayerData'][pid]['Emojis'].append( '⚔️' )
         
         if '⚔️' in Data['PlayerData'][gid]['Emojis']:
-            Data['PlayerData'][gid]['Emojis'] = Data['PlayerData'][gid]['Emojis'].replace('⚔️', '')
+            try: Data['PlayerData'][gid]['Emojis'].remove( '⚔️' )
+            except ValueError: pass
 
 
         print(player.nick, gldetr.nick)
@@ -284,16 +286,17 @@ async def challenge(Data, payload, *text):
 async def updateEmojis(Data, payload):
     for pid in Data['PlayerData'].keys():
         player = payload['refs']['players'][pid]
-        emojis = ''.join(sorted(Data['PlayerData'][pid]['Emojis']))
+        emojis = ''.join(sorted(Data['PlayerData'][pid]['Emojis'])).replace(' ','')
         
         nickname = Data['PlayerData'][pid]['Nick'] + emojis
         nickname = nickname.replace('\uFE0F','').replace('\uFE0E','')
         old_nick = player.nick
         if old_nick == None: old_nick = player.name
         if nickname != old_nick:
-            print(nickname, old_nick, str.encode(nickname), str.encode(old_nick) )
-            if Data['admin'] == pid:    await player.send(f"As admin, you must set your nick to {nickname}")
-            else:                       await player.edit(nick = nickname)
+            if Data['admin'] == pid:    pass #await player.send(f"As admin, you must set your nick to {nickname}")
+            else:                       
+                print(nickname, old_nick, '\n',str.encode(nickname), '\n', str.encode(old_nick), '\n' )
+                await player.edit(nick = nickname)
 
 async def setTokens(Data, payload, *text):
     if payload.get('Author') not in admins: return
@@ -460,7 +463,22 @@ async def on_reaction(Data, payload):
         await acceptOffer(Data, payload)
     if payload['emoji'] == '✔️' and payload['Channel'] == 'actions' and f"{payload['user'].name}#{payload['user'].discriminator}" in admins:
         await payOffer(Data, payload)
+    if payload['message'].id == Data['Wizard']['MSG']:
+        Data['Wizard']['MSG'] = None
+        
+        basePID = payload['user'].id
+        baseIsGreen  = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Green'].id) 
+        baseIsOrange = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Orange'].id) 
+        baseIsPurple = payload['refs']['players'][basePID].get_role(payload['refs']['roles']['Purple'].id) 
 
+        for pid in  Data['PlayerData'].keys():
+            isGreen  = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Green'].id) 
+            isOrange = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Orange'].id) 
+            isPurple = payload['refs']['players'][pid].get_role(payload['refs']['roles']['Purple'].id) 
+
+            if isGreen == baseIsGreen and isOrange == baseIsOrange and isPurple == baseIsPurple: 
+                Data['PlayerData'][pid]['Emojis'].append( '🧙' )
+           
     if payload['emoji'] == '✔️' and payload['Channel'] == 'critic-responses':
         Data['Critic']['Starred'].append(payload['message'].author.id)
 
@@ -475,11 +493,20 @@ async def on_message(Data, payload):
 Update Function Called Every 10 Seconds
 """
 async def update(Data, payload):
-    await updateEmojis(Data, payload,)
-
     if  Data['Gladiator']['Player'] not in ['', None] and Data['Gladiator']['DOB'] + 1 == Data['Turn']:
         Data['Gladiator']['DOB'] += 1
         Data['PlayerData'][Data['Gladiator']['Player']]['Friendship Tokens'] += 1
+    if time.time() - Data['Wizard']['Time'] > 3600:
+        Data['Wizard']['Time'] = (time.time()//3600)*3600
+        if int(np.random.random()*100) == 0 :
+            Data['Wizard']['Time'] = ((time.time() - 1673244000)//(168 * 60 *60)) * 168 * 60 *60 + 1673244000
+            msg  = await payload['refs']['channels']['game'].send('GOLDEN SNITCH')
+            Data['Wizard']['MSG'] = msg.id
+            for pid in  Data['PlayerData'].keys():
+                try: Data['PlayerData'][pid]['Emojis'].remove( '🧙' )
+                except ValueError: pass
+    
+    await updateEmojis(Data, payload,)
 
 """
 Setup Log Parameters and Channel List And Whatever You Need to Check on a Bot Reset.
