@@ -1010,7 +1010,8 @@ async def on_message(Data, payload):
 
     if payload['Channel'] == 'actions':
         cmd = payload['Content'].lower().strip().split(' ')
-        if len(cmd) == 1 and cmd[1:] in desires:
+        print(cmd)
+        if len(cmd) == 1 and cmd[0][1:] in desires:
             index = desires.index(cmd[1:])
             Data['PlayerData'][payload['Author ID']]['MoodGuess'] = moods[index]
             await payload['raw'].add_reaction('✔️')
