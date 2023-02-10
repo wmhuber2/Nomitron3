@@ -10,7 +10,7 @@ savefile = 'DiscordBot_Data.yml'
 admins = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969', None]
 player = None
 
-
+'''
 async def stop(Data, payload, *text):
     global player
     print("stop")
@@ -48,7 +48,7 @@ async def play(Data, payload, *text):
         
     else:
         await print('User is not in a channel.')
-
+'''
 
 async def clearAll(Data, payload, *text):
     if payload.get('Author') in ['Fenris#6136', 'Crorem#6962']:

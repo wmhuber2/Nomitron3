@@ -496,7 +496,7 @@ async def update(Data, payload):
     if  Data['Gladiator']['Player'] not in ['', None] and Data['Gladiator']['DOB'] + 1 == Data['Turn']:
         Data['Gladiator']['DOB'] += 1
         Data['PlayerData'][Data['Gladiator']['Player']]['Friendship Tokens'] += 1
-    if time.time() - Data['Wizard']['Time'] > 3600:
+    if time.time() - Data['Wizard']['Time'] > 3600 and False:
         Data['Wizard']['Time'] = (time.time()//3600)*3600
         if int(np.random.random()*100) == 0 :
             Data['Wizard']['Time'] = ((time.time() - 1673244000)//(168 * 60 *60)) * 168 * 60 *60 + 1673244000

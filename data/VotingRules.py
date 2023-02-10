@@ -1013,6 +1013,7 @@ async def on_message(Data, payload):
         if len(cmd) == 1 and cmd[1:] in desires:
             index = desires.index(cmd[1:])
             Data['PlayerData'][payload['Author ID']]['MoodGuess'] = moods[index]
+            await payload['raw'].add_reaction('✔️')
     return Data
 
 """
@@ -1291,7 +1292,10 @@ async def setup(Data,payload):
             Data['PlayerData'][pid]['Offers'] = 0
 
         if 'Emojis' not in Data['PlayerData'][pid]:
-            Data['PlayerData'][pid]['Emojis'] = ''
+            Data['PlayerData'][pid]['Emojis'] = []
+
+        if 'EmojiHold' not in Data['PlayerData'][pid]:
+            Data['PlayerData'][pid]['EmojiHold'] = []
 
         if isinstance(Data['PlayerData'][pid]['Emojis'] , str):
             Data['PlayerData'][pid]['Emojis'] = list(Data['PlayerData'][pid]['Emojis'] )
